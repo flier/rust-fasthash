@@ -9,4 +9,5 @@ keywords = ["hashing", "murmur", "murmur2", "murmur3", "cityhash", "farmhash", "
 license = "Apache-2.0"
 
 [dependencies]
+extprim = "1.1"
 fasthash-sys = { path = "../fasthash-sys" }

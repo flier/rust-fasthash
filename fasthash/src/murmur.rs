@@ -1,63 +1,65 @@
+#![allow(non_camel_case_types)]
+
 use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::Hasher;
+use hasher::FastHasher;
 
-pub struct Murmur {}
+pub struct murmur {}
 
-impl Hasher for Murmur {
+impl FastHasher for murmur {
     type Value = u32;
     type Seed = u32;
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
         unsafe {
-            let buf = bytes.as_ref();
-
-            ffi::MurmurHash1(buf.as_ptr() as *const c_void, buf.len() as i32, seed)
+            ffi::MurmurHash1(bytes.as_ref().as_ptr() as *const c_void,
+                             bytes.as_ref().len() as i32,
+                             seed)
         }
     }
 }
 
-fasthash!(MurmurHasher, Murmur);
+fasthash!(Murmur, murmur);
 
-pub struct MurmurAligned {}
+pub struct murmurAligned {}
 
-impl Hasher for MurmurAligned {
+impl FastHasher for murmurAligned {
     type Value = u32;
     type Seed = u32;
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
         unsafe {
-            let buf = bytes.as_ref();
-
-            ffi::MurmurHash1Aligned(buf.as_ptr() as *const c_void, buf.len() as i32, seed)
+            ffi::MurmurHash1Aligned(bytes.as_ref().as_ptr() as *const c_void,
+                                    bytes.as_ref().len() as i32,
+                                    seed)
         }
     }
 }
 
-fasthash!(MurmurAlignedHasher, MurmurAligned);
+fasthash!(MurmurAligned, murmurAligned);
 
 #[inline]
 pub fn hash32(s: &[u8]) -> u32 {
-    Murmur::hash(&s)
+    murmur::hash(&s)
 }
 
 #[inline]
 pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    Murmur::hash_with_seed(&s, seed)
+    murmur::hash_with_seed(&s, seed)
 }
 
 #[inline]
 pub fn hash32_aligned(s: &[u8]) -> u32 {
-    MurmurAligned::hash(&s)
+    murmurAligned::hash(&s)
 }
 
 #[inline]
 pub fn hash32_aligned_with_seed(s: &[u8], seed: u32) -> u32 {
-    MurmurAligned::hash_with_seed(&s, seed)
+    murmurAligned::hash_with_seed(&s, seed)
 }
 
 #[cfg(test)]
@@ -72,7 +74,7 @@ mod tests {
         assert_eq!(hash32_with_seed(b"hello", 123), 2155802495);
         assert_eq!(hash32(b"helloworld"), 567127608);
 
-        let mut h = MurmurHasher::new();
+        let mut h = Murmur::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 1773990585);
@@ -87,7 +89,7 @@ mod tests {
         assert_eq!(hash32_aligned_with_seed(b"hello", 123), 2155802495);
         assert_eq!(hash32_aligned(b"helloworld"), 567127608);
 
-        let mut h = MurmurAlignedHasher::new();
+        let mut h = MurmurAligned::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 1773990585);
