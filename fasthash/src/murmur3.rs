@@ -9,6 +9,7 @@ use ffi;
 
 use hasher::FastHasher;
 
+#[doc(hidden)]
 pub struct murmur3_x86_32 {}
 
 impl FastHasher for murmur3_x86_32 {
@@ -32,6 +33,7 @@ impl FastHasher for murmur3_x86_32 {
 
 fasthash!(Murmur3_x86_32, murmur3_x86_32);
 
+#[doc(hidden)]
 pub struct murmur3_x86_128 {}
 
 impl FastHasher for murmur3_x86_128 {
@@ -55,6 +57,7 @@ impl FastHasher for murmur3_x86_128 {
 
 fasthash_ext!(Murmur3_x86_128, murmur3_x86_128);
 
+#[doc(hidden)]
 pub struct murmur3_x64_128 {}
 
 impl FastHasher for murmur3_x64_128 {

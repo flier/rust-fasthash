@@ -1,11 +1,11 @@
 #![allow(non_camel_case_types)]
-
 use std::os::raw::c_void;
 
 use ffi;
 
 use hasher::FastHasher;
 
+#[doc(hidden)]
 pub struct murmur2 {}
 
 impl FastHasher for murmur2 {
@@ -24,6 +24,7 @@ impl FastHasher for murmur2 {
 
 fasthash!(Murmur2, murmur2);
 
+#[doc(hidden)]
 pub struct murmur2a {}
 
 impl FastHasher for murmur2a {
@@ -42,6 +43,7 @@ impl FastHasher for murmur2a {
 
 fasthash!(Murmur2A, murmur2a);
 
+#[doc(hidden)]
 pub struct murmur2_neutral {}
 
 impl FastHasher for murmur2_neutral {
@@ -60,6 +62,7 @@ impl FastHasher for murmur2_neutral {
 
 fasthash!(Murmur2Neutral, murmur2_neutral);
 
+#[doc(hidden)]
 pub struct murmur2_aligned {}
 
 impl FastHasher for murmur2_aligned {
@@ -78,6 +81,7 @@ impl FastHasher for murmur2_aligned {
 
 fasthash!(Murmur2Aligned, murmur2_aligned);
 
+#[doc(hidden)]
 pub struct murmur2_x64_64 {}
 
 impl FastHasher for murmur2_x64_64 {
@@ -96,6 +100,7 @@ impl FastHasher for murmur2_x64_64 {
 
 fasthash!(Murmur2_x64_64, murmur2_x64_64);
 
+#[doc(hidden)]
 pub struct murmur2_x86_64 {}
 
 impl FastHasher for murmur2_x86_64 {
