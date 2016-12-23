@@ -1,0 +1,12 @@
+[package]
+name = "fasthash"
+version = "0.1.0"
+authors = ["Flier Lu <flier.lu@gmail.com>"]
+description = "A suite of non-cryptographic hash functions for Rust."
+homepage = "https://github.com/flier/rust-fasthash"
+repository = "https://github.com/flier/rust-fasthash.git"
+keywords = ["hashing", "murmur", "murmur2", "murmur3", "cityhash", "farmhash", "metrohash"]
+license = "Apache-2.0"
+
+[dependencies]
+fasthash-sys = { path = "../fasthash-sys" }

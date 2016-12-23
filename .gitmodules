@@ -1,0 +1,3 @@
+[submodule "fasthash-sys/src/smhasher"]
+	path = fasthash-sys/src/smhasher
+	url = https://github.com/rurban/smhasher
