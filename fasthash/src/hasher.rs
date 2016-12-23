@@ -93,7 +93,7 @@ macro_rules! fasthash {
     ($hasher:ident, $hash:ident) => (
         #[derive(Default, Clone)]
         pub struct $hasher {
-            seed: <$hash as $crate::hasher::FastHasher>::Seed,
+            seed: Option<<$hash as $crate::hasher::FastHasher>::Seed>,
             bytes: Vec<u8>,
         }
 
@@ -101,7 +101,7 @@ macro_rules! fasthash {
             #[inline]
             pub fn new() -> Self {
                 $hasher {
-                    seed: Default::default(),
+                    seed: None,
                     bytes: Vec::with_capacity(16),
                 }
             }
@@ -109,7 +109,7 @@ macro_rules! fasthash {
             #[inline]
             pub fn with_seed(seed: <$hash as $crate::hasher::FastHasher>::Seed) -> Self {
                 $hasher {
-                    seed: seed,
+                    seed: Some(seed),
                     bytes: Vec::with_capacity(16),
                 }
             }
@@ -117,7 +117,9 @@ macro_rules! fasthash {
 
         impl ::std::hash::Hasher for $hasher {
             fn finish(&self) -> u64 {
-                $hash::hash_with_seed(&self.bytes, self.seed).into()
+                self.seed.map_or_else(
+                    || $hash::hash(&self.bytes),
+                    |seed| $hash::hash_with_seed(&self.bytes, seed)).into()
             }
             fn write(&mut self, bytes: &[u8]) {
                 self.bytes.extend_from_slice(bytes)
@@ -131,7 +133,7 @@ macro_rules! fasthash_ext {
     ($hasher:ident, $hash:ident) => (
         #[derive(Default, Clone)]
         pub struct $hasher {
-            seed: <$hash as $crate::hasher::FastHasher>::Seed,
+            seed: Option<<$hash as $crate::hasher::FastHasher>::Seed>,
             bytes: Vec<u8>,
         }
 
@@ -139,7 +141,7 @@ macro_rules! fasthash_ext {
             #[inline]
             pub fn new() -> Self {
                 $hasher {
-                    seed: Default::default(),
+                    seed: None,
                     bytes: Vec::with_capacity(16),
                 }
             }
@@ -147,7 +149,7 @@ macro_rules! fasthash_ext {
             #[inline]
             pub fn with_seed(seed: <$hash as $crate::hasher::FastHasher>::Seed) -> Self {
                 $hasher {
-                    seed: seed,
+                    seed: Some(seed),
                     bytes: Vec::with_capacity(16),
                 }
             }
@@ -155,7 +157,9 @@ macro_rules! fasthash_ext {
 
         impl $crate::hasher::HasherExt for $hasher {
             fn finish(&self) -> u128 {
-                $hash::hash_with_seed(&self.bytes, self.seed)
+                self.seed.map_or_else(
+                    || $hash::hash(&self.bytes),
+                    |seed| $hash::hash_with_seed(&self.bytes, seed))
             }
             fn write(&mut self, bytes: &[u8]) {
                 self.bytes.extend_from_slice(bytes)
