@@ -16,3 +16,13 @@ compiler:
 env:
   global:
     - RUST_BACKTRACE=1
+    - LLVM_VERSION=3.8
+before_script:
+  - .travis/before-install.sh
+  - cd fasthash
+script:
+  - cargo test
+cache:
+  cargo: true
+  directories:
+    - $HOME/.cargo
