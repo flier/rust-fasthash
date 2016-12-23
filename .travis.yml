@@ -1,0 +1,18 @@
+sudo: false
+language: rust
+rust:
+  - stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
+os:
+  - linux
+  - osx
+compiler:
+  - gcc
+  - clang
+env:
+  global:
+    - RUST_BACKTRACE=1
