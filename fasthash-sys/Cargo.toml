@@ -3,13 +3,8 @@ name = "fasthash-sys"
 version = "0.1.0"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
 build = "build.rs"
-links = "smhasher"
 
 [dependencies]
-
-[build.rustflags]
-target-feature = "+ssse4.2"
-target-cpu = "native"
 
 [build-dependencies]
 gcc = "0.3"
