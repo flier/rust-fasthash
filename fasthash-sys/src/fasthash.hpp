@@ -5,6 +5,7 @@
 #include "smhasher/MurmurHash2.h"
 #include "smhasher/MurmurHash3.h"
 #include "smhasher/Spooky.h"
+#include "smhasher/t1ha.h"
 
 void SpookyHasherHash(
     const void *message,  // message to hash

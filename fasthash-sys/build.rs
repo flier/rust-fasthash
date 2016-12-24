@@ -16,7 +16,8 @@ fn main() {
                            "src/smhasher/MurmurHash1.cpp",
                            "src/smhasher/MurmurHash2.cpp",
                            "src/smhasher/MurmurHash3.cpp",
-                           "src/smhasher/Spooky.cpp"]);
+                           "src/smhasher/Spooky.cpp",
+                           "src/smhasher/t1ha.cc"]);
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let _ = libbindgen::builder()
@@ -29,6 +30,7 @@ fn main() {
         .whitelisted_function("^metrohash.*")
         .whitelisted_function("^MurmurHash.*")
         .whitelisted_function("^SpookyHasher.*")
+        .whitelisted_function("^t1ha.*")
         .link_static("fasthash")
         .generate()
         .unwrap()
