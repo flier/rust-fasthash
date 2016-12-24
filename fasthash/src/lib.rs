@@ -21,6 +21,6 @@ pub use metro::{MetroHasher64_1 as MetroHasher, MetroHasher128_1 as MetroHasherE
 pub use murmur::MurmurHasher;
 pub use murmur2::Murmur2Hasher_x64_64 as Murmur2Hasher;
 pub use murmur3::{Murmur3Hasher_x86_32 as Murmur3Hasher, Murmur3Hasher_x64_128 as Murmur3HasherExt};
-pub use spooky::{SpookyHasher, SpookyHasherExt};
+pub use spooky::{SpookyHasher64 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
 pub use t1ha::T1ha64BeHasher as T1haHasher;
 pub use xx::XXHasher64 as XXHasher;

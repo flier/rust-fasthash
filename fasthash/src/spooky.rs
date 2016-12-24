@@ -76,33 +76,34 @@ impl FastHash for SpookyHash128 {
     }
 }
 
-pub struct SpookyHasher(*mut c_void);
+pub struct SpookyHasher64(*mut c_void);
 
-impl SpookyHasher {
+impl SpookyHasher64 {
     #[inline]
-    pub fn new() -> SpookyHasher {
+    pub fn new() -> SpookyHasher64 {
         Self::with_seed(0)
     }
 
     #[inline]
-    pub fn with_seed(seed: u64) -> SpookyHasher {
+    pub fn with_seed(seed: u64) -> SpookyHasher64 {
         let h = unsafe { ffi::SpookyHasherNew() };
 
         unsafe {
             ffi::SpookyHasherInit(h, seed, seed);
         }
 
-        SpookyHasher(h)
+        SpookyHasher64(h)
     }
 }
 
-impl Drop for SpookyHasher {
+impl Drop for SpookyHasher64 {
+    #[inline]
     fn drop(&mut self) {
         unsafe { ffi::SpookyHasherFree(self.0) }
     }
 }
 
-impl Hasher for SpookyHasher {
+impl Hasher for SpookyHasher64 {
     #[inline]
     fn finish(&self) -> u64 {
         let mut hash1 = 0_u64;
@@ -125,33 +126,34 @@ impl Hasher for SpookyHasher {
     }
 }
 
-pub struct SpookyHasherExt(*mut c_void);
+pub struct SpookyHasher128(*mut c_void);
 
-impl SpookyHasherExt {
+impl SpookyHasher128 {
     #[inline]
-    pub fn new() -> SpookyHasherExt {
+    pub fn new() -> SpookyHasher128 {
         Self::with_seed(u128::new(0))
     }
 
     #[inline]
-    pub fn with_seed(seed: u128) -> SpookyHasherExt {
+    pub fn with_seed(seed: u128) -> SpookyHasher128 {
         let h = unsafe { ffi::SpookyHasherNew() };
 
         unsafe {
             ffi::SpookyHasherInit(h, seed.high64(), seed.low64());
         }
 
-        SpookyHasherExt(h)
+        SpookyHasher128(h)
     }
 }
 
-impl Drop for SpookyHasherExt {
+impl Drop for SpookyHasher128 {
+    #[inline]
     fn drop(&mut self) {
         unsafe { ffi::SpookyHasherFree(self.0) }
     }
 }
 
-impl Hasher for SpookyHasherExt {
+impl Hasher for SpookyHasher128 {
     #[inline]
     fn finish(&self) -> u64 {
         self.finish_ext().low64()
@@ -167,7 +169,7 @@ impl Hasher for SpookyHasherExt {
     }
 }
 
-impl HasherExt for SpookyHasherExt {
+impl HasherExt for SpookyHasher128 {
     #[inline]
     fn finish_ext(&self) -> u128 {
         let mut hash1 = 0_u64;
@@ -211,7 +213,6 @@ pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
     SpookyHash128::hash_with_seed(&s, seed)
 }
 
-
 #[cfg(test)]
 mod tests {
     use std::hash::Hasher;
@@ -234,6 +235,14 @@ mod tests {
         assert_eq!(SpookyHash64::hash_with_seed(b"hello", 123),
                    8819086853393477700);
         assert_eq!(SpookyHash64::hash(b"helloworld"), 18412934266828208920);
+
+        let mut h = SpookyHasher64::new();
+
+        h.write(b"hello");
+        assert_eq!(h.finish(), 6105954949053820864);
+
+        h.write(b"world");
+        assert_eq!(h.finish(), 18412934266828208920);
     }
 
     #[test]
@@ -244,22 +253,8 @@ mod tests {
                    u128::from_parts(7262466432451564128, 15030932129358977799));
         assert_eq!(SpookyHash128::hash(b"helloworld"),
                    u128::from_parts(18412934266828208920, 13883738476858207693));
-    }
 
-    #[test]
-    fn test_spooky_hasher() {
-        let mut h = SpookyHasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 6105954949053820864);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 18412934266828208920);
-    }
-
-    #[test]
-    fn test_spooky_hasher_ext() {
-        let mut h = SpookyHasherExt::new();
+        let mut h = SpookyHasher128::new();
 
         h.write(b"hello");
         assert_eq!(h.finish_ext(),
