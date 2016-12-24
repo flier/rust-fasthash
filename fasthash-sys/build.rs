@@ -9,9 +9,9 @@ fn main() {
                          &["src/fasthash.cpp",
                            "src/smhasher/City.cpp",
                            "src/smhasher/farmhash-c.c",
-                           // "src/smhasher/metrohash64.cpp",
+                           "src/smhasher/metrohash64.cpp",
                            // "src/smhasher/metrohash64crc.cpp",
-                           // "src/smhasher/metrohash128.cpp",
+                           "src/smhasher/metrohash128.cpp",
                            // "src/smhasher/metrohash128crc.cpp",
                            "src/smhasher/MurmurHash1.cpp",
                            "src/smhasher/MurmurHash2.cpp",
@@ -26,6 +26,7 @@ fn main() {
         .no_unstable_rust()
         .whitelisted_function("^CityHash.*")
         .whitelisted_function("^farmhash.*")
+        .whitelisted_function("^metrohash.*")
         .whitelisted_function("^MurmurHash.*")
         .whitelisted_function("^SpookyHasher.*")
         .link_static("fasthash")

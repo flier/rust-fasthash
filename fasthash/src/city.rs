@@ -106,7 +106,6 @@ pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
     CityHash128::hash_with_seed(&s, seed)
 }
 
-
 #[cfg(test)]
 mod tests {
     use std::hash::Hasher;
