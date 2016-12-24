@@ -6,7 +6,8 @@ use std::path::Path;
 
 fn main() {
     gcc::compile_library("libfasthash.a",
-                         &["src/smhasher/City.cpp",
+                         &["src/fasthash.cpp",
+                           "src/smhasher/City.cpp",
                            "src/smhasher/farmhash-c.c",
                            // "src/smhasher/metrohash64.cpp",
                            // "src/smhasher/metrohash64crc.cpp",
@@ -25,9 +26,16 @@ fn main() {
         .no_unstable_rust()
         .whitelisted_function("^MurmurHash.*")
         .whitelisted_function("^CityHash.*")
+        .whitelisted_function("^SpookyHasher.*")
         .link_static("fasthash")
         .generate()
         .unwrap()
         .write_to_file(Path::new(&out_dir).join("fasthash.rs"))
         .expect("Couldn't write bindings!");
+
+    if cfg!(target_os = "macos") {
+        println!("cargo:rustc-link-lib=dylib=c++");
+    } else {
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+    }
 }

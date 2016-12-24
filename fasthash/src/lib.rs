@@ -7,6 +7,7 @@ pub mod city;
 pub mod murmur;
 pub mod murmur2;
 pub mod murmur3;
+pub mod spooky;
 
 pub use hasher::HasherExt;
 pub use city::{CityHash32, CityHash64, CityHash128};
