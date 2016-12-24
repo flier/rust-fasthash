@@ -1,17 +1,15 @@
-#![allow(non_camel_case_types)]
-
 use std::mem;
 
 use extprim::u128::u128;
 
 use ffi;
 
-use hasher::FastHasher;
+use hasher::FastHash;
 
 #[doc(hidden)]
-pub struct farmhash32 {}
+pub struct FarmHash32 {}
 
-impl FastHasher for farmhash32 {
+impl FastHash for FarmHash32 {
     type Value = u32;
     type Seed = u32;
 
@@ -30,11 +28,12 @@ impl FastHasher for farmhash32 {
     }
 }
 
-fasthash!(FarmHash32, farmhash32);
+impl_hasher!(FarmHasher32, FarmHash32);
 
-pub struct farmhash64 {}
+#[doc(hidden)]
+pub struct FarmHash64 {}
 
-impl FastHasher for farmhash64 {
+impl FastHash for FarmHash64 {
     type Value = u64;
     type Seed = u64;
 
@@ -53,12 +52,12 @@ impl FastHasher for farmhash64 {
     }
 }
 
-fasthash!(FarmHash64, farmhash64);
+impl_hasher!(FarmHasher64, FarmHash64);
 
 #[doc(hidden)]
-pub struct farmhash128 {}
+pub struct FarmHash128 {}
 
-impl FastHasher for farmhash128 {
+impl FastHash for FarmHash128 {
     type Value = u128;
     type Seed = u128;
 
@@ -80,36 +79,36 @@ impl FastHasher for farmhash128 {
     }
 }
 
-fasthash_ext!(FarmHash128, farmhash128);
+impl_hasher_ext!(FarmHasher128, FarmHash128);
 
 #[inline]
 pub fn hash32(s: &[u8]) -> u32 {
-    farmhash32::hash(&s)
+    FarmHash32::hash(&s)
 }
 
 #[inline]
 pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    farmhash32::hash_with_seed(&s, seed)
+    FarmHash32::hash_with_seed(&s, seed)
 }
 
 #[inline]
 pub fn hash64(s: &[u8]) -> u64 {
-    farmhash64::hash(&s)
+    FarmHash64::hash(&s)
 }
 
 #[inline]
 pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    farmhash64::hash_with_seed(&s, seed)
+    FarmHash64::hash_with_seed(&s, seed)
 }
 
 #[inline]
 pub fn hash128(s: &[u8]) -> u128 {
-    farmhash128::hash(&s)
+    FarmHash128::hash(&s)
 }
 
 #[inline]
 pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
-    farmhash128::hash_with_seed(&s, seed)
+    FarmHash128::hash_with_seed(&s, seed)
 }
 
 
@@ -119,16 +118,16 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHasher, HasherExt};
+    use hasher::{FastHash, HasherExt};
     use super::*;
 
     #[test]
     fn test_farmhash32() {
-        assert_eq!(farmhash32::hash(b"hello"), 3111026382);
-        assert_eq!(farmhash32::hash_with_seed(b"hello", 123), 1449662659);
-        assert_eq!(farmhash32::hash(b"helloworld"), 3283552592);
+        assert_eq!(FarmHash32::hash(b"hello"), 3111026382);
+        assert_eq!(FarmHash32::hash_with_seed(b"hello", 123), 1449662659);
+        assert_eq!(FarmHash32::hash(b"helloworld"), 3283552592);
 
-        let mut h = FarmHash32::new();
+        let mut h = FarmHasher32::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 3111026382);
@@ -139,12 +138,12 @@ mod tests {
 
     #[test]
     fn test_farmhash64() {
-        assert_eq!(farmhash64::hash(b"hello"), 14403600180753024522);
-        assert_eq!(farmhash64::hash_with_seed(b"hello", 123),
+        assert_eq!(FarmHash64::hash(b"hello"), 14403600180753024522);
+        assert_eq!(FarmHash64::hash_with_seed(b"hello", 123),
                    6856739100025169098);
-        assert_eq!(farmhash64::hash(b"helloworld"), 1077737941828767314);
+        assert_eq!(FarmHash64::hash(b"helloworld"), 1077737941828767314);
 
-        let mut h = FarmHash64::new();
+        let mut h = FarmHasher64::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 14403600180753024522);
@@ -155,21 +154,21 @@ mod tests {
 
     #[test]
     fn test_farmhash128() {
-        assert_eq!(farmhash128::hash(b"hello"),
+        assert_eq!(FarmHash128::hash(b"hello"),
                    u128::from_parts(14545675544334878584, 15888401098353921598));
-        assert_eq!(farmhash128::hash_with_seed(b"hello", u128::new(123)),
+        assert_eq!(FarmHash128::hash_with_seed(b"hello", u128::new(123)),
                    u128::from_parts(15212901187400903054, 13320390559359511083));
-        assert_eq!(farmhash128::hash(b"helloworld"),
+        assert_eq!(FarmHash128::hash(b"helloworld"),
                    u128::from_parts(16066658700231169910, 1119455499735156801));
 
-        let mut h = FarmHash128::new();
+        let mut h = FarmHasher128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish(),
+        assert_eq!(h.finish_ext(),
                    u128::from_parts(14545675544334878584, 15888401098353921598));
 
         h.write(b"world");
-        assert_eq!(h.finish(),
+        assert_eq!(h.finish_ext(),
                    u128::from_parts(16066658700231169910, 1119455499735156801));
     }
 }

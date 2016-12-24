@@ -3,12 +3,12 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHasher;
+use hasher::FastHash;
 
 #[doc(hidden)]
-pub struct murmur2 {}
+pub struct Murmur2 {}
 
-impl FastHasher for murmur2 {
+impl FastHash for Murmur2 {
     type Value = u32;
     type Seed = u32;
 
@@ -22,12 +22,12 @@ impl FastHasher for murmur2 {
     }
 }
 
-fasthash!(Murmur2, murmur2);
+impl_hasher!(Murmur2Hasher, Murmur2);
 
 #[doc(hidden)]
-pub struct murmur2a {}
+pub struct Murmur2A {}
 
-impl FastHasher for murmur2a {
+impl FastHash for Murmur2A {
     type Value = u32;
     type Seed = u32;
 
@@ -41,12 +41,12 @@ impl FastHasher for murmur2a {
     }
 }
 
-fasthash!(Murmur2A, murmur2a);
+impl_hasher!(Murmur2AHasher, Murmur2A);
 
 #[doc(hidden)]
-pub struct murmur2_neutral {}
+pub struct Murmur2Neutral {}
 
-impl FastHasher for murmur2_neutral {
+impl FastHash for Murmur2Neutral {
     type Value = u32;
     type Seed = u32;
 
@@ -60,12 +60,12 @@ impl FastHasher for murmur2_neutral {
     }
 }
 
-fasthash!(Murmur2Neutral, murmur2_neutral);
+impl_hasher!(Murmur2NeutralHasher, Murmur2Neutral);
 
 #[doc(hidden)]
-pub struct murmur2_aligned {}
+pub struct Murmur2Aligned {}
 
-impl FastHasher for murmur2_aligned {
+impl FastHash for Murmur2Aligned {
     type Value = u32;
     type Seed = u32;
 
@@ -79,12 +79,12 @@ impl FastHasher for murmur2_aligned {
     }
 }
 
-fasthash!(Murmur2Aligned, murmur2_aligned);
+impl_hasher!(Murmur2AlignedHasher, Murmur2Aligned);
 
 #[doc(hidden)]
-pub struct murmur2_x64_64 {}
+pub struct Murmur2_x64_64 {}
 
-impl FastHasher for murmur2_x64_64 {
+impl FastHash for Murmur2_x64_64 {
     type Value = u64;
     type Seed = u64;
 
@@ -98,12 +98,12 @@ impl FastHasher for murmur2_x64_64 {
     }
 }
 
-fasthash!(Murmur2_x64_64, murmur2_x64_64);
+impl_hasher!(Murmur2Hasher_x64_64, Murmur2_x64_64);
 
 #[doc(hidden)]
-pub struct murmur2_x86_64 {}
+pub struct Murmur2_x86_64 {}
 
-impl FastHasher for murmur2_x86_64 {
+impl FastHash for Murmur2_x86_64 {
     type Value = u64;
     type Seed = u64;
 
@@ -117,42 +117,42 @@ impl FastHasher for murmur2_x86_64 {
     }
 }
 
-fasthash!(Murmur2_x86_64, murmur2_x86_64);
+impl_hasher!(Murmur2Hasher_x86_64, Murmur2_x86_64);
 
 #[inline]
 pub fn hash32(s: &[u8]) -> u32 {
-    murmur2::hash(&s)
+    Murmur2::hash(&s)
 }
 
 #[inline]
 pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    murmur2::hash_with_seed(&s, seed)
+    Murmur2::hash_with_seed(&s, seed)
 }
 
 #[inline]
 pub fn hash64(s: &[u8]) -> u64 {
-    murmur2_x64_64::hash(&s)
+    Murmur2_x64_64::hash(&s)
 }
 
 #[inline]
 pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    murmur2_x64_64::hash_with_seed(&s, seed)
+    Murmur2_x64_64::hash_with_seed(&s, seed)
 }
 
 #[cfg(test)]
 mod tests {
     use std::hash::Hasher;
 
-    use hasher::FastHasher;
+    use hasher::FastHash;
     use super::*;
 
     #[test]
     fn test_murmur2() {
-        assert_eq!(murmur2::hash(b"hello"), 3848350155);
-        assert_eq!(murmur2::hash_with_seed(b"hello", 123), 2385981934);
-        assert_eq!(murmur2::hash(b"helloworld"), 2155944146);
+        assert_eq!(Murmur2::hash(b"hello"), 3848350155);
+        assert_eq!(Murmur2::hash_with_seed(b"hello", 123), 2385981934);
+        assert_eq!(Murmur2::hash(b"helloworld"), 2155944146);
 
-        let mut h = Murmur2::new();
+        let mut h = Murmur2Hasher::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 3848350155);
@@ -163,11 +163,11 @@ mod tests {
 
     #[test]
     fn test_murmur2a() {
-        assert_eq!(murmur2a::hash(b"hello"), 259931098);
-        assert_eq!(murmur2a::hash_with_seed(b"hello", 123), 509510832);
-        assert_eq!(murmur2a::hash(b"helloworld"), 403945221);
+        assert_eq!(Murmur2A::hash(b"hello"), 259931098);
+        assert_eq!(Murmur2A::hash_with_seed(b"hello", 123), 509510832);
+        assert_eq!(Murmur2A::hash(b"helloworld"), 403945221);
 
-        let mut h = Murmur2A::new();
+        let mut h = Murmur2AHasher::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 259931098);
@@ -178,11 +178,11 @@ mod tests {
 
     #[test]
     fn test_murmur2_neutral() {
-        assert_eq!(murmur2_neutral::hash(b"hello"), 3848350155);
-        assert_eq!(murmur2_neutral::hash_with_seed(b"hello", 123), 2385981934);
-        assert_eq!(murmur2_neutral::hash(b"helloworld"), 2155944146);
+        assert_eq!(Murmur2Neutral::hash(b"hello"), 3848350155);
+        assert_eq!(Murmur2Neutral::hash_with_seed(b"hello", 123), 2385981934);
+        assert_eq!(Murmur2Neutral::hash(b"helloworld"), 2155944146);
 
-        let mut h = Murmur2Neutral::new();
+        let mut h = Murmur2NeutralHasher::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 3848350155);
@@ -193,11 +193,11 @@ mod tests {
 
     #[test]
     fn test_murmur2_aligned() {
-        assert_eq!(murmur2_aligned::hash(b"hello"), 3848350155);
-        assert_eq!(murmur2_aligned::hash_with_seed(b"hello", 123), 2385981934);
-        assert_eq!(murmur2_aligned::hash(b"helloworld"), 2155944146);
+        assert_eq!(Murmur2Aligned::hash(b"hello"), 3848350155);
+        assert_eq!(Murmur2Aligned::hash_with_seed(b"hello", 123), 2385981934);
+        assert_eq!(Murmur2Aligned::hash(b"helloworld"), 2155944146);
 
-        let mut h = Murmur2Aligned::new();
+        let mut h = Murmur2AlignedHasher::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 3848350155);
@@ -208,12 +208,12 @@ mod tests {
 
     #[test]
     fn test_murmur2_x64_64() {
-        assert_eq!(murmur2_x64_64::hash(b"hello"), 2191231550387646743);
-        assert_eq!(murmur2_x64_64::hash_with_seed(b"hello", 123),
+        assert_eq!(Murmur2_x64_64::hash(b"hello"), 2191231550387646743);
+        assert_eq!(Murmur2_x64_64::hash_with_seed(b"hello", 123),
                    2597646618390559622);
-        assert_eq!(murmur2_x64_64::hash(b"helloworld"), 2139823713852166039);
+        assert_eq!(Murmur2_x64_64::hash(b"helloworld"), 2139823713852166039);
 
-        let mut h = Murmur2_x64_64::new();
+        let mut h = Murmur2Hasher_x64_64::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 2191231550387646743);
@@ -224,12 +224,12 @@ mod tests {
 
     #[test]
     fn test_murmur2_x86_64() {
-        assert_eq!(murmur2_x86_64::hash(b"hello"), 17658855022785723775);
-        assert_eq!(murmur2_x86_64::hash_with_seed(b"hello", 123),
+        assert_eq!(Murmur2_x86_64::hash(b"hello"), 17658855022785723775);
+        assert_eq!(Murmur2_x86_64::hash_with_seed(b"hello", 123),
                    1883382312211796549);
-        assert_eq!(murmur2_x86_64::hash(b"helloworld"), 14017254558097603378);
+        assert_eq!(Murmur2_x86_64::hash(b"helloworld"), 14017254558097603378);
 
-        let mut h = Murmur2_x86_64::new();
+        let mut h = Murmur2Hasher_x86_64::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 17658855022785723775);
