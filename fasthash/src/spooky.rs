@@ -77,33 +77,33 @@ impl FastHasher for spooky128 {
     }
 }
 
-pub struct SpookyHasher(*mut c_void);
+pub struct Spooky(*mut c_void);
 
-impl SpookyHasher {
+impl Spooky {
     #[inline]
-    pub fn new() -> SpookyHasher {
+    pub fn new() -> Spooky {
         Self::with_seed(u128::new(0))
     }
 
     #[inline]
-    pub fn with_seed(seed: u128) -> SpookyHasher {
+    pub fn with_seed(seed: u128) -> Spooky {
         let h = unsafe { ffi::SpookyHasherNew() };
 
         unsafe {
             ffi::SpookyHasherInit(h, seed.high64(), seed.low64());
         }
 
-        SpookyHasher(h)
+        Spooky(h)
     }
 }
 
-impl Drop for SpookyHasher {
+impl Drop for Spooky {
     fn drop(&mut self) {
         unsafe { ffi::SpookyHasherFree(self.0) }
     }
 }
 
-impl HasherExt for SpookyHasher {
+impl HasherExt for Spooky {
     #[inline]
     fn finish(&self) -> u128 {
         let mut hash1 = 0_u64;
@@ -159,8 +159,6 @@ pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
 
 #[cfg(test)]
 mod tests {
-    use std::hash::Hasher;
-
     use extprim::u128::u128;
 
     use hasher::{FastHasher, HasherExt};
@@ -192,7 +190,7 @@ mod tests {
 
     #[test]
     fn test_spooky_hasher() {
-        let mut h = SpookyHasher::new();
+        let mut h = Spooky::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(),
