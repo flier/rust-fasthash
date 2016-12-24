@@ -1,12 +1,15 @@
 #include "smhasher/City.h"
 #include "smhasher/farmhash-c.h"
 #include "smhasher/metrohash.h"
+#include "smhasher/mum.h"
 #include "smhasher/MurmurHash1.h"
 #include "smhasher/MurmurHash2.h"
 #include "smhasher/MurmurHash3.h"
 #include "smhasher/Spooky.h"
 #include "smhasher/t1ha.h"
 #include "smhasher/xxhash.h"
+
+uint64_t mum_hash_(const void *key, size_t len, uint64_t seed);
 
 void SpookyHasherHash(
     const void *message,  // message to hash

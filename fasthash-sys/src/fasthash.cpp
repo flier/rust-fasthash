@@ -1,5 +1,9 @@
 #include "fasthash.hpp"
 
+uint64_t mum_hash_(const void *key, size_t len, uint64_t seed) {
+    return mum_hash(key, len, seed);
+}
+
 void SpookyHasherHash(
     const void *message,  // message to hash
     size_t length,        // length of message in bytes

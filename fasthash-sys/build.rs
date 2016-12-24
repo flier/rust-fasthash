@@ -9,6 +9,7 @@ fn main() {
                          &["src/fasthash.cpp",
                            "src/smhasher/City.cpp",
                            "src/smhasher/farmhash-c.c",
+                           "src/smhasher/mum.cc",
                            "src/smhasher/metrohash64.cpp",
                            // "src/smhasher/metrohash64crc.cpp",
                            "src/smhasher/metrohash128.cpp",
@@ -29,6 +30,7 @@ fn main() {
         .whitelisted_function("^CityHash.*")
         .whitelisted_function("^farmhash.*")
         .whitelisted_function("^metrohash.*")
+        .whitelisted_function("^mum_hash.*")
         .whitelisted_function("^MurmurHash.*")
         .whitelisted_function("^SpookyHasher.*")
         .whitelisted_function("^t1ha.*")
