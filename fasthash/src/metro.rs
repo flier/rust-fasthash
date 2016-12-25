@@ -133,7 +133,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_cityhash64_1() {
+    fn test_metrohash64_1() {
         assert_eq!(MetroHash64_1::hash(b"hello"), 15663805623366682943);
         assert_eq!(MetroHash64_1::hash_with_seed(b"hello", 123),
                    1128464039211059189);
@@ -149,7 +149,7 @@ mod tests {
     }
 
     #[test]
-    fn test_cityhash64_2() {
+    fn test_metrohash64_2() {
         assert_eq!(MetroHash64_2::hash(b"hello"), 12352443828090181231);
         assert_eq!(MetroHash64_2::hash_with_seed(b"hello", 123),
                    5558499743061241201);
@@ -165,7 +165,7 @@ mod tests {
     }
 
     #[test]
-    fn test_cityhash128_1() {
+    fn test_metrohash128_1() {
         assert_eq!(MetroHash128_1::hash(b"hello"),
                    u128::from_parts(3402816320040206173, 8267579177094204812));
         assert_eq!(MetroHash128_1::hash_with_seed(b"hello", 123),
@@ -185,7 +185,7 @@ mod tests {
     }
 
     #[test]
-    fn test_cityhash128_2() {
+    fn test_metrohash128_2() {
         assert_eq!(MetroHash128_2::hash(b"hello"),
                    u128::from_parts(8645868589955642073, 18321434607751955537));
         assert_eq!(MetroHash128_2::hash_with_seed(b"hello", 123),
