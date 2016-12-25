@@ -7,6 +7,11 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
+  include:
+    - os: linux
+      env: LLVM_VERSION=3.9
+    - os: osx
+      env: LLVM_VERSION=devtools
 os:
   - linux
   - osx
@@ -22,7 +27,6 @@ compiler:
 env:
   global:
     - RUST_BACKTRACE=1
-    - LLVM_VERSION=3.9
 before_script:
   - .travis/before-install.sh
   - cd fasthash

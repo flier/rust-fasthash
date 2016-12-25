@@ -16,7 +16,7 @@ function llvm_version_triple() {
 
 function linux() {
     export LLVM_VERSION_TRIPLE=`llvm_version_triple ${LLVM_VERSION}`
-    export LLVM=clang+llvm-${LLVM_VERSION_TRIPLE}-x86_64-$1
+    export LLVM=clang+llvm-${LLVM_VERSION_TRIPLE}-x86_64-linux-gnu-ubuntu-14.04
 
     wget http://llvm.org/releases/${LLVM_VERSION_TRIPLE}/${LLVM}.tar.xz
     mkdir llvm
