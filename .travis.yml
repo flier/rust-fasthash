@@ -12,9 +12,15 @@ os:
   - osx
 addons:
   apt:
+    sources: &apt_sources
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise
+      - llvm-toolchain-precise-3.9
     packages:
-      - llvm-3.6-dev
-      - libclang-3.6-dev
+      - gcc-5
+      - g++-5
+      - llvm-3.9-dev
+      - libclang-3.9-dev
 compiler:
   - gcc
   - clang
