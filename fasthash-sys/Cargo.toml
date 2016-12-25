@@ -5,7 +5,7 @@ authors = ["Flier Lu <flier.lu@gmail.com>"]
 description = "A suite of non-cryptographic hash functions for Rust."
 homepage = "https://github.com/flier/rust-fasthash"
 repository = "https://github.com/flier/rust-fasthash.git"
-keywords = ["hashing", "murmur", "murmur2", "murmur3", "cityhash", "farmhash", "metrohash"]
+keywords = ["hashing"]
 license = "Apache-2.0"
 build = "build.rs"
 
