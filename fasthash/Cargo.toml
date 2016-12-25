@@ -11,7 +11,7 @@ build = "build.rs"
 
 [dependencies]
 extprim = "1.1"
-fasthash-sys = { path = "../fasthash-sys" }
+fasthash-sys = { version = "0.1.0", path = "../fasthash-sys" }
 
 [dev-dependencies]
 rand = "^0.3"
