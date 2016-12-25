@@ -35,4 +35,46 @@ fn bench_{hash}_{method}_key_{keysize}(b: &mut Bencher) {{
             }
         }
     }
+
+    let hashers = vec!["SipHasher",
+                       "CityHasher",
+                       "CityHasherExt",
+                       "FarmHasher",
+                       "FarmHasherExt",
+                       "MetroHasher",
+                       "MetroHasherExt",
+                       "MumHasher",
+                       "MurmurHasher",
+                       "Murmur2Hasher",
+                       "Murmur3Hasher",
+                       "Murmur3HasherExt",
+                       "SpookyHasher",
+                       "SpookyHasherExt",
+                       "T1haHasher",
+                       "XXHasher"];
+
+    for hasher in hashers {
+        let name = hasher.chars()
+            .map(|c| if c.is_uppercase() {
+                format!("_{}", c.to_lowercase().next().unwrap())
+            } else {
+                format!("{}", c)
+            })
+            .collect::<Vec<String>>()
+            .join("");
+
+        for shift in 4..10 {
+            let bench = format!("
+#[bench]
+fn bench{name}_key_{keysize}(b: &mut \
+                                 Bencher) {{
+    bench_hasher::<{hasher}>(b, {keysize});
+}}",
+                                name = name,
+                                hasher = hasher,
+                                keysize = 1 << shift);
+
+            f.write_all(bench.as_str().as_bytes()).unwrap();
+        }
+    }
 }

@@ -96,10 +96,10 @@ impl SpookyHasher64 {
     }
 }
 
-impl Drop for SpookyHasher64 {
+impl Default for SpookyHasher64 {
     #[inline]
-    fn drop(&mut self) {
-        unsafe { ffi::SpookyHasherFree(self.0) }
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -143,6 +143,12 @@ impl SpookyHasher128 {
         }
 
         SpookyHasher128(h)
+    }
+}
+
+impl Default for SpookyHasher128 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

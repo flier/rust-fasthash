@@ -79,6 +79,12 @@ impl XXHasher32 {
     }
 }
 
+impl Default for XXHasher32 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Drop for XXHasher32 {
     #[inline]
     fn drop(&mut self) {
@@ -121,6 +127,12 @@ impl XXHasher64 {
         }
 
         XXHasher64(h)
+    }
+}
+
+impl Default for XXHasher64 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

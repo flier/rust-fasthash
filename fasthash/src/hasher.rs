@@ -50,7 +50,7 @@ macro_rules! impl_hasher {
             pub fn new() -> Self {
                 $hasher {
                     seed: None,
-                    bytes: Vec::with_capacity(16),
+                    bytes: Vec::with_capacity(64),
                 }
             }
 
@@ -58,7 +58,7 @@ macro_rules! impl_hasher {
             pub fn with_seed(seed: <$hash as $crate::hasher::FastHash>::Seed) -> Self {
                 $hasher {
                     seed: Some(seed),
-                    bytes: Vec::with_capacity(16),
+                    bytes: Vec::with_capacity(64),
                 }
             }
         }
@@ -93,7 +93,7 @@ macro_rules! impl_hasher_ext {
             pub fn new() -> Self {
                 $hasher {
                     seed: None,
-                    bytes: Vec::with_capacity(16),
+                    bytes: Vec::with_capacity(64),
                 }
             }
 
@@ -101,7 +101,7 @@ macro_rules! impl_hasher_ext {
             pub fn with_seed(seed: <$hash as $crate::hasher::FastHash>::Seed) -> Self {
                 $hasher {
                     seed: Some(seed),
-                    bytes: Vec::with_capacity(16),
+                    bytes: Vec::with_capacity(64),
                 }
             }
 
