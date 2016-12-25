@@ -13,8 +13,8 @@ os:
 addons:
   apt:
     packages:
-      - llvm-3.9-dev
-      - libclang-3.9-dev
+      - llvm-3.6-dev
+      - libclang-3.6-dev
 compiler:
   - gcc
   - clang
