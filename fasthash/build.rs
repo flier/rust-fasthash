@@ -37,6 +37,7 @@ fn bench_{hash}_{method}_key_{keysize}(b: &mut Bencher) {{
     }
 
     let hashers = vec!["SipHasher",
+                       "FnvHasher",
                        "CityHasher",
                        "CityHasherExt",
                        "FarmHasher",

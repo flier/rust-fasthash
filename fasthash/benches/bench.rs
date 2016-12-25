@@ -3,6 +3,7 @@
 #![feature(test)]
 extern crate test;
 extern crate rand;
+extern crate fnv;
 
 extern crate fasthash;
 
@@ -10,6 +11,7 @@ use std::hash::*;
 
 use test::Bencher;
 use rand::{thread_rng, Rng};
+use fnv::*;
 
 use fasthash::*;
 

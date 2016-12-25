@@ -15,3 +15,4 @@ fasthash-sys = { path = "../fasthash-sys" }
 
 [dev-dependencies]
 rand = "^0.3"
+fnv = "1.0"
