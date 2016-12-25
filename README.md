@@ -1,7 +1,7 @@
 # rust-fasthash [![travis build](https://travis-ci.org/flier/rust-fasthash.svg?branch=master)](https://travis-ci.org/flier/rust-fasthash) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash)
 A suite of non-cryptographic hash functions for Rust, base on a forked [smhasher](https://github.com/rurban/smhasher/).
 
-[Document](https://docs.rs/fasthash)
+[API Document](https://docs.rs/crate/fasthash/)
 
 # Usage
 
@@ -39,7 +39,7 @@ hash(&"hello world");
 # Goal
 - High performance
 - Zero cost
-- Compatibility with [std::hash::Hasher]()
+- Compatibility with [std::hash::Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
 
 # Features
 
