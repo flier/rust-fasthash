@@ -103,6 +103,25 @@ impl FastHash for MetroHash128_2 {
 
 impl_hasher_ext!(MetroHasher128_2, MetroHash128_2);
 
+#[inline]
+pub fn hash64(s: &[u8]) -> u64 {
+    MetroHash64_1::hash(&s)
+}
+
+#[inline]
+pub fn hash64_with_seed(s: &[u8], seed: u32) -> u64 {
+    MetroHash64_1::hash_with_seed(&s, seed)
+}
+
+#[inline]
+pub fn hash128(s: &[u8]) -> u128 {
+    MetroHash128_1::hash(&s)
+}
+
+#[inline]
+pub fn hash128_with_seed(s: &[u8], seed: u32) -> u128 {
+    MetroHash128_1::hash_with_seed(&s, seed)
+}
 
 #[cfg(test)]
 mod tests {
