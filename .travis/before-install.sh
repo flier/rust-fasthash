@@ -10,13 +10,13 @@ function llvm_version_triple() {
     elif [ "$1" == "3.8" ]; then
         echo "3.8.0"
     elif [ "$1" == "3.9" ]; then
-        echo "3.9.1"
+        echo "3.9.0"
     fi
 }
 
 function linux() {
     export LLVM_VERSION_TRIPLE=`llvm_version_triple ${LLVM_VERSION}`
-    export LLVM=clang+llvm-${LLVM_VERSION_TRIPLE}-x86_64-linux-gnu-ubuntu-14.04
+    export LLVM=clang+llvm-${LLVM_VERSION_TRIPLE}-x86_64-$1
 
     wget http://llvm.org/releases/${LLVM_VERSION_TRIPLE}/${LLVM}.tar.xz
     mkdir llvm
@@ -32,7 +32,7 @@ function osx() {
         brew update >/dev/null
         brew install llvm3${LLVM_VERSION#3.}
 
-        export LLVM_CONFIG_PATH=`brew --prefix llvm3${LLVM_VERSION#3.}`/lib/llvm-${LLVM_VERSION}/bin/llvm-config
+        export LLVM_CONFIG_PATH=`brew --prefix llvm3${LLVM_VERSION#3.}`/bin/llvm-config
     fi
 }
 
