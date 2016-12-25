@@ -12,12 +12,9 @@ os:
   - osx
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
-      - gcc-5
-      - llvm-3.8-dev
-      - libclang-3.8-dev
+      - llvm-3.9-dev
+      - libclang-3.9-dev
 compiler:
   - gcc
   - clang
