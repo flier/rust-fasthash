@@ -33,6 +33,18 @@ impl_hasher!(FarmHasher32, FarmHash32);
 #[doc(hidden)]
 pub struct FarmHash64 {}
 
+impl FarmHash64 {
+    #[inline]
+    pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
+        unsafe {
+            ffi::farmhash64_with_seeds(bytes.as_ref().as_ptr() as *const i8,
+                                       bytes.as_ref().len(),
+                                       seed0,
+                                       seed1)
+        }
+    }
+}
+
 impl FastHash for FarmHash64 {
     type Value = u64;
     type Seed = u64;
@@ -101,6 +113,10 @@ pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
     FarmHash64::hash_with_seed(&s, seed)
 }
 
+pub fn hash64_with_seeds(s: &[u8], seed0: u64, seed1: u64) -> u64 {
+    FarmHash64::hash_with_seeds(&s, seed0, seed1)
+}
+
 #[inline]
 pub fn hash128(s: &[u8]) -> u128 {
     FarmHash128::hash(&s)
@@ -141,6 +157,8 @@ mod tests {
         assert_eq!(FarmHash64::hash(b"hello"), 14403600180753024522);
         assert_eq!(FarmHash64::hash_with_seed(b"hello", 123),
                    6856739100025169098);
+        assert_eq!(FarmHash64::hash_with_seeds(b"hello", 123, 456),
+                   15077713332534145879);
         assert_eq!(FarmHash64::hash(b"helloworld"), 1077737941828767314);
 
         let mut h = FarmHasher64::new();
