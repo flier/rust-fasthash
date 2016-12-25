@@ -1,3 +1,24 @@
+//! A suite of non-cryptographic hash functions for Rust.
+//!
+//! # Example
+//!
+//! ```
+//! use std::hash::{Hash, Hasher};
+//!
+//! use fasthash::{metro, MetroHasher};
+//!
+//! fn hash<T: Hash>(t: &T) -> u64 {
+//!     let mut s = MetroHasher::new();
+//!     t.hash(&mut s);
+//!     s.finish()
+//! }
+//!
+//! let h = metro::hash64(b"hello world\xff");
+//!
+//! assert_eq!(h, hash(&"hello world"));
+//! ```
+//!
+
 extern crate extprim;
 extern crate fasthash_sys as ffi;
 
