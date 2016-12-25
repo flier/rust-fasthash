@@ -7,11 +7,6 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
-  include:
-    - os: linux
-      env: LLVM_VERSION=3.9
-    - os: osx
-      env: LLVM_VERSION=devtools
 os:
   - linux
   - osx
@@ -21,6 +16,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - gcc-5
+      - llvm-3.8-dev
+      - libclang-3.8-dev
 compiler:
   - gcc
   - clang
@@ -28,7 +25,7 @@ env:
   global:
     - RUST_BACKTRACE=1
 before_script:
-  - .travis/before-install.sh
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install llvm; fi
   - cd fasthash
 script:
   - cargo test
