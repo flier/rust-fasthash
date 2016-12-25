@@ -12,23 +12,21 @@ os:
   - osx
 addons:
   apt:
-    sources: &apt_sources
+    sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise
-      - llvm-toolchain-precise-3.9
     packages:
       - gcc-5
       - g++-5
-      - llvm-3.9-dev
-      - libclang-3.9-dev
 compiler:
   - gcc
   - clang
 env:
   global:
     - RUST_BACKTRACE=1
+    - LLVM_VERSION=3.9
 before_script:
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install llvm; fi
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then . ./.travis/before_install.sh llvm; fi
   - cd fasthash
 script:
   - cargo test
