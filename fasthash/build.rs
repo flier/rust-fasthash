@@ -43,6 +43,7 @@ fn main() {
                             "Murmur2_x64_64",
                             "Murmur2_x86_64"]),
                       ("murmur3", vec!["Murmur3_x86_32", "Murmur3_x86_128", "Murmur3_x64_128"]),
+                      ("sea", vec!["SeaHash"]),
                       ("spooky", vec!["SpookyHash32", "SpookyHash64", "SpookyHash128"]),
                       ("t1ha", vec!["T1ha32Le", "T1ha32Be", "T1ha64Le", "T1ha64Be", "T1ha64Crc"]),
                       ("xx", vec!["XXHash32", "XXHash64"])];
@@ -78,6 +79,7 @@ fn bench_{name}_key_{keysize}(b: &mut Bencher) {{
                        "Murmur2Hasher",
                        "Murmur3Hasher",
                        "Murmur3HasherExt",
+                       "SeaHasher",
                        "SpookyHasher",
                        "SpookyHasherExt",
                        "T1haHasher",

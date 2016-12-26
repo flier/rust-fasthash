@@ -20,6 +20,7 @@
 //!
 
 extern crate extprim;
+extern crate seahash;
 extern crate fasthash_sys as ffi;
 
 #[macro_use]
@@ -31,6 +32,7 @@ pub mod mum;
 pub mod murmur;
 pub mod murmur2;
 pub mod murmur3;
+pub mod sea;
 pub mod spooky;
 pub mod t1ha;
 pub mod xx;
@@ -45,6 +47,8 @@ pub use murmur::MurmurHasher;
 pub use murmur2::Murmur2Hasher_x64_64 as Murmur2Hasher;
 pub use murmur3::{Murmur3Hasher_x64_128 as Murmur3Hasher,
                   Murmur3Hasher_x64_128 as Murmur3HasherExt};
+#[doc(no_inline)]
+pub use sea::SeaHasher64 as SeaHasher;
 pub use spooky::{SpookyHasher64 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
 pub use t1ha::T1ha64LeHasher as T1haHasher;
 pub use xx::XXHasher64 as XXHasher;
