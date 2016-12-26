@@ -42,7 +42,7 @@ hash(&"hello world");
 # Goal
 - High performance
 - Zero cost
-- Compatibility with [std::hash::Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
+- Compatibility with [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
 
 # Features
 
