@@ -72,7 +72,7 @@
 //! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
-use std::hash::Hasher;
+use std::hash::{Hasher, BuildHasher};
 use std::os::raw::c_void;
 
 use ffi;
@@ -239,6 +239,14 @@ impl Hasher for XXHasher64 {
                               bytes.as_ref().as_ptr() as *const c_void,
                               bytes.as_ref().len());
         }
+    }
+}
+
+impl BuildHasher for XXHash64 {
+    type Hasher = XXHasher64;
+
+    fn build_hasher(&self) -> Self::Hasher {
+        XXHasher64::new()
     }
 }
 
