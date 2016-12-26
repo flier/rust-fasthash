@@ -88,6 +88,36 @@ impl FastHash for CityHash128 {
 
 impl_hasher_ext!(CityHasher128, CityHash128);
 
+#[cfg(feature = "sse42")]
+#[doc(hidden)]
+pub struct CityHashCrc128 {}
+
+#[cfg(feature = "sse42")]
+impl FastHash for CityHashCrc128 {
+    type Value = u128;
+    type Seed = u128;
+
+    #[inline]
+    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
+        unsafe {
+            mem::transmute(ffi::CityHashCrc128(bytes.as_ref().as_ptr() as *const i8,
+                                               bytes.as_ref().len()))
+        }
+    }
+
+    #[inline]
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
+        unsafe {
+            mem::transmute(ffi::CityHashCrc128WithSeed(bytes.as_ref().as_ptr() as *const i8,
+                                                       bytes.as_ref().len(),
+                                                       mem::transmute(seed)))
+        }
+    }
+}
+
+#[cfg(feature = "sse42")]
+impl_hasher_ext!(CityHasherCrc128, CityHashCrc128);
+
 #[inline]
 pub fn hash32(s: &[u8]) -> u32 {
     CityHash32::hash(&s)
@@ -121,6 +151,18 @@ pub fn hash128(s: &[u8]) -> u128 {
 #[inline]
 pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
     CityHash128::hash_with_seed(&s, seed)
+}
+
+#[cfg(feature = "sse42")]
+#[inline]
+pub fn hash128crc(s: &[u8]) -> u128 {
+    CityHashCrc128::hash(&s)
+}
+
+#[cfg(feature = "sse42")]
+#[inline]
+pub fn hash128crc_with_seed(s: &[u8], seed: u128) -> u128 {
+    CityHashCrc128::hash_with_seed(&s, seed)
 }
 
 #[cfg(test)]
@@ -175,6 +217,27 @@ mod tests {
                    u128::from_parts(7450567370945444069, 787832070172609324));
 
         let mut h = CityHasher128::new();
+
+        h.write(b"hello");
+        assert_eq!(h.finish_ext(),
+                   u128::from_parts(17404193039403234796, 13523890104784088047));
+
+        h.write(b"world");
+        assert_eq!(h.finish_ext(),
+                   u128::from_parts(7450567370945444069, 787832070172609324));
+    }
+
+    #[cfg(feature = "sse42")]
+    #[test]
+    fn test_cityhash128crc() {
+        assert_eq!(CityHashCrc128::hash(b"hello"),
+                   u128::from_parts(17404193039403234796, 13523890104784088047));
+        assert_eq!(CityHashCrc128::hash_with_seed(b"hello", u128::new(123)),
+                   u128::from_parts(10365139276371188890, 13112352013023211873));
+        assert_eq!(CityHashCrc128::hash(b"helloworld"),
+                   u128::from_parts(7450567370945444069, 787832070172609324));
+
+        let mut h = CityHasherCrc128::new();
 
         h.write(b"hello");
         assert_eq!(h.finish_ext(),

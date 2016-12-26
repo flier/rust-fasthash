@@ -9,6 +9,11 @@ keywords = ["hashing"]
 license = "Apache-2.0"
 build = "build.rs"
 
+[features]
+default = ["sse42"]
+doc = []
+sse42 = ["fasthash-sys/sse42"]
+
 [dependencies]
 extprim = "1.1"
 fasthash-sys = { version = "0.1.0", path = "../fasthash-sys" }

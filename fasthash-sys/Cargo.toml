@@ -9,6 +9,10 @@ keywords = ["hashing"]
 license = "Apache-2.0"
 build = "build.rs"
 
+[features]
+default = ["sse42"]
+sse42 = []
+
 [dependencies]
 
 [build-dependencies]

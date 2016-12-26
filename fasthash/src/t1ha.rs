@@ -80,6 +80,28 @@ impl FastHash for T1ha32Be {
 
 impl_hasher!(T1ha32BeHasher, T1ha32Be);
 
+#[cfg(feature = "sse42")]
+#[doc(hidden)]
+pub struct T1ha64Crc {}
+
+#[cfg(feature = "sse42")]
+impl FastHash for T1ha64Crc {
+    type Value = u64;
+    type Seed = u64;
+
+    #[inline]
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
+        unsafe {
+            ffi::t1ha_ia32crc(bytes.as_ref().as_ptr() as *const c_void,
+                              bytes.as_ref().len(),
+                              seed)
+        }
+    }
+}
+
+#[cfg(feature = "sse42")]
+impl_hasher!(T1ha64CrcHasher, T1ha64Crc);
+
 #[inline]
 pub fn hash32(s: &[u8]) -> u64 {
     T1ha32Le::hash(&s)
@@ -98,6 +120,18 @@ pub fn hash64(s: &[u8]) -> u64 {
 #[inline]
 pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
     T1ha64Le::hash_with_seed(&s, seed)
+}
+
+#[cfg(feature = "sse42")]
+#[inline]
+pub fn hash64crc(s: &[u8]) -> u64 {
+    T1ha64Crc::hash(&s)
+}
+
+#[cfg(feature = "sse42")]
+#[inline]
+pub fn hash64crc_with_seed(s: &[u8], seed: u64) -> u64 {
+    T1ha64Crc::hash_with_seed(&s, seed)
 }
 
 #[cfg(test)]

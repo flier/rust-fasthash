@@ -5,26 +5,38 @@ use std::env;
 use std::path::Path;
 
 fn main() {
-    gcc::compile_library("libfasthash.a",
-                         &["src/fasthash.cpp",
-                           "src/smhasher/City.cpp",
-                           "src/smhasher/farmhash-c.c",
-                           "src/smhasher/mum.cc",
-                           "src/smhasher/metrohash64.cpp",
-                           // "src/smhasher/metrohash64crc.cpp",
-                           "src/smhasher/metrohash128.cpp",
-                           // "src/smhasher/metrohash128crc.cpp",
-                           "src/smhasher/MurmurHash1.cpp",
-                           "src/smhasher/MurmurHash2.cpp",
-                           "src/smhasher/MurmurHash3.cpp",
-                           "src/smhasher/Spooky.cpp",
-                           "src/smhasher/t1ha.cc",
-                           "src/smhasher/xxhash.c"]);
+    let mut gcc_config = gcc::Config::new();
+
+    gcc_config.file("src/fasthash.cpp")
+        .file("src/smhasher/City.cpp")
+        .file("src/smhasher/farmhash-c.c")
+        .file("src/smhasher/mum.cc")
+        .file("src/smhasher/metrohash64.cpp")
+        .file("src/smhasher/metrohash128.cpp")
+        .file("src/smhasher/MurmurHash1.cpp")
+        .file("src/smhasher/MurmurHash2.cpp")
+        .file("src/smhasher/MurmurHash3.cpp")
+        .file("src/smhasher/Spooky.cpp")
+        .file("src/smhasher/t1ha.cc")
+        .file("src/smhasher/xxhash.c");
+
+    if cfg!(feature = "sse42") {
+        gcc_config.flag("-msse4.2")
+            .file("src/smhasher/metrohash64crc.cpp")
+            .file("src/smhasher/metrohash128crc.cpp");
+    }
+
+    gcc_config.compile("libfasthash.a");
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let _ = libbindgen::builder()
         .clang_arg("-xc++")
         .clang_arg("--std=c++11")
+        .clang_arg(if cfg!(feature = "sse42") {
+            "-msse4.2"
+        } else {
+            "-march=native"
+        })
         .header("src/fasthash.hpp")
         .no_unstable_rust()
         .whitelisted_function("^CityHash.*")

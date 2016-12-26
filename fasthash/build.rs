@@ -8,15 +8,15 @@ fn main() {
     let dest_path = Path::new(&out_dir).join("benches.rs");
     let mut f = File::create(&dest_path).unwrap();
 
-    let hashes = vec![("city", vec!["hash32", "hash64", "hash128"]),
+    let hashes = vec![("city", vec!["hash32", "hash64", "hash128", "hash128crc"]),
                       ("farm", vec!["hash32", "hash64", "hash128"]),
-                      ("metro", vec!["hash64", "hash128"]),
+                      ("metro", vec!["hash64", "hash128", "hash64crc", "hash128crc"]),
                       ("mum", vec!["hash64"]),
                       ("murmur", vec!["hash32"]),
                       ("murmur2", vec!["hash32", "hash64"]),
                       ("murmur3", vec!["hash32", "hash128"]),
                       ("spooky", vec!["hash32", "hash64", "hash128"]),
-                      ("t1ha", vec!["hash32", "hash64"]),
+                      ("t1ha", vec!["hash32", "hash64", "hash64crc"]),
                       ("xx", vec!["hash32", "hash64"])];
 
     for (hash, methods) in hashes {
