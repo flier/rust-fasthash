@@ -1,3 +1,77 @@
+//! xxHash - Extremely fast hash algorithm
+//!
+//! by Yann Collet
+//!
+//! http://cyan4973.github.io/xxHash/
+//!
+//! xxHash is an Extremely fast Hash algorithm, running at RAM speed limits.
+//! It successfully completes the SMHasher test suite which evaluates collision,
+//! dispersion and randomness qualities of hash functions. Code is highly portable,
+//! and hashes are identical on all platforms (little / big endian).
+//!
+//!
+//! Benchmarks
+//! -------------------------
+//!
+//! The benchmark uses SMHasher speed test,
+//! compiled with Visual 2010 on a Windows Seven 32-bits box.
+//! The reference system uses a Core 2 Duo @3GHz
+//!
+//!
+//! | Name          |   Speed  | Quality | Author           |
+//! |---------------|----------|:-------:|------------------|
+//! | [xxHash]      | 5.4 GB/s |   10    | Y.C.             |
+//! | MurmurHash 3a | 2.7 GB/s |   10    | Austin Appleby   |
+//! | SBox          | 1.4 GB/s |    9    | Bret Mulvey      |
+//! | Lookup3       | 1.2 GB/s |    9    | Bob Jenkins      |
+//! | CityHash64    | 1.05 GB/s|   10    | Pike & Alakuijala|
+//! | FNV           | 0.55 GB/s|    5    | Fowler, Noll, Vo |
+//! | CRC32         | 0.43 GB/s|    9    |                  |
+//! | MD5-32        | 0.33 GB/s|   10    | Ronald L.Rivest  |
+//! | SHA1-32       | 0.28 GB/s|   10    |                  |
+//!
+//! [xxHash]: http://www.xxhash.com
+//!
+//! Q.Score is a measure of quality of the hash function.
+//! It depends on successfully passing SMHasher test set.
+//! 10 is a perfect score.
+//! Algorithms with a score < 5 are not listed on this table.
+//!
+//! A new version, XXH64, has been created thanks to [Mathias Westerdahl]'s contribution,
+//! which offers superior speed and dispersion for 64-bits systems.
+//! Note however that 32-bits applications will still run faster using the 32-bits version.
+//! [Mathias Westerdahl]: https://github.com/JCash
+//!
+//! SMHasher speed test, compiled using GCC 4.8.2, on Linux Mint 64-bits.
+//! The reference system uses a Core i5-3340M @2.7GHz
+//!
+//! | Version    | Speed on 64-bits | Speed on 32-bits |
+//! |------------|------------------|------------------|
+//! | XXH64      | 13.8 GB/s        |  1.9 GB/s        |
+//! | XXH32      |  6.8 GB/s        |  6.0 GB/s        |
+//!
+//! This project also includes a command line utility, named `xxhsum`,
+//! offering similar features as `md5sum`, thanks to
+//! [Takayuki Matsuoka](https://github.com/t-mat) contributions.
+//!
+//! # Example
+//!
+//! ```
+//! use std::hash::{Hash, Hasher};
+//!
+//! use fasthash::{xx, XXHasher};
+//!
+//! fn hash<T: Hash>(t: &T) -> u64 {
+//!     let mut s = XXHasher::new();
+//!     t.hash(&mut s);
+//!     s.finish()
+//! }
+//!
+//! let h = xx::hash64(b"hello world\xff");
+//!
+//! assert_eq!(h, hash(&"hello world"));
+//! ```
+//!
 use std::hash::Hasher;
 use std::os::raw::c_void;
 
@@ -5,7 +79,7 @@ use ffi;
 
 use hasher::FastHash;
 
-#[doc(hidden)]
+/// xxHash 32-bit hash functions
 pub struct XXHash32 {}
 
 impl FastHash for XXHash32 {
@@ -22,7 +96,7 @@ impl FastHash for XXHash32 {
     }
 }
 
-#[doc(hidden)]
+/// xxHash 64-bit hash functions
 pub struct XXHash64 {}
 
 impl FastHash for XXHash64 {
@@ -39,26 +113,33 @@ impl FastHash for XXHash64 {
     }
 }
 
+/// xxHash 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     XXHash32::hash(v)
 }
 
+/// xxHash 32-bit hash function for a byte array.
+/// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
     XXHash32::hash_with_seed(v, seed)
 }
 
+/// xxHash 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     XXHash64::hash(v)
 }
 
+/// xxHash 64-bit hash function for a byte array.
+/// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     XXHash64::hash_with_seed(v, seed)
 }
 
+/// An implementation of `std::hash::Hasher`.
 pub struct XXHasher32(*mut ffi::XXH32_state_t);
 
 impl XXHasher32 {
@@ -110,6 +191,7 @@ impl Hasher for XXHasher32 {
     }
 }
 
+/// An implementation of `std::hash::Hasher`.
 pub struct XXHasher64(*mut ffi::XXH64_state_t);
 
 impl XXHasher64 {

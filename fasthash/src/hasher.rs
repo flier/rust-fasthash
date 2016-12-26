@@ -5,17 +5,22 @@ use std::hash::Hasher;
 use extprim::i128::i128;
 use extprim::u128::u128;
 
+/// Generate a good, portable, forever-fixed hash value
 pub trait Fingerprint<T> {
+    /// This is intended to be a good fingerprinting primitive.
     fn fingerprint(&self) -> T;
 }
 
-#[doc(hidden)]
+/// Fast non-cryptographic hash functions
 pub trait FastHash {
     type Value;
     type Seed: Default;
 
+    /// Hash functions for a byte array.
+    /// For convenience, a seed is also hashed into the result.
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: Self::Seed) -> Self::Value;
 
+    /// Hash functions for a byte array.
     fn hash<T: AsRef<[u8]>>(bytes: &T) -> Self::Value {
         Self::hash_with_seed(bytes, Default::default())
     }
@@ -42,7 +47,8 @@ pub trait HasherExt: Hasher {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! impl_hasher {
-    ($hasher:ident, $hash:ident) => (
+    ($(#[$attr:meta])*  $hasher:ident, $hash:ident) => (
+        /// An implementation of `std::hash::Hasher`.
         #[derive(Default, Clone)]
         pub struct $hasher {
             seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
@@ -79,6 +85,14 @@ macro_rules! impl_hasher {
                 self.bytes.extend_from_slice(bytes)
             }
         }
+
+        impl ::std::hash::BuildHasher for $hash {
+            type Hasher = $hasher;
+
+            fn build_hasher(&self) -> Self::Hasher {
+                $hasher::new()
+            }
+        }
     )
 }
 
@@ -86,6 +100,7 @@ macro_rules! impl_hasher {
 #[macro_export]
 macro_rules! impl_hasher_ext {
     ($hasher:ident, $hash:ident) => (
+        /// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
         #[derive(Default, Clone)]
         pub struct $hasher {
             seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
@@ -132,6 +147,14 @@ macro_rules! impl_hasher_ext {
             #[inline]
             fn finish_ext(&self) -> u128 {
                 self._final()
+            }
+        }
+
+        impl ::std::hash::BuildHasher for $hash {
+            type Hasher = $hasher;
+
+            fn build_hasher(&self) -> Self::Hasher {
+                $hasher::new()
             }
         }
     )

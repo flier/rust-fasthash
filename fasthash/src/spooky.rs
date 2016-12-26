@@ -1,4 +1,50 @@
-use std::hash::Hasher;
+//! SpookyHash: a 128-bit noncryptographic hash function
+//!
+//! by Bob Jenkins
+//!
+//! http://www.burtleburtle.net/bob/hash/spooky.html
+//!
+//!  - Oct 31 2010: alpha, framework + SpookyHash::Mix appears right
+//!  - Oct 31 2011: alpha again, Mix only good to 2^^69 but rest appears right
+//!  - Dec 31 2011: beta, improved Mix, tested it for 2-bit deltas
+//!  - Feb  2 2012: production, same bits as beta
+//!  - Feb  5 2012: adjusted definitions of uint* to be more portable
+//!
+//! Up to 4 bytes/cycle for long messages.  Reasonably fast for short messages.
+//! All 1 or 2 bit deltas achieve avalanche within 1% bias per output bit.
+//!
+//! This was developed for and tested on 64-bit x86-compatible processors.
+//! It assumes the processor is little-endian.  There is a macro
+//! controlling whether unaligned reads are allowed (by default they are).
+//! This should be an equally good hash on big-endian machines, but it will
+//! compute different results on them than on little-endian machines.
+//!
+//! Google's CityHash has similar specs to SpookyHash, and CityHash is faster
+//! on some platforms.  MD4 and MD5 also have similar specs, but they are orders
+//! of magnitude slower.  CRCs are two or more times slower, but unlike
+//! SpookyHash, they have nice math for combining the CRCs of pieces to form
+//! the CRCs of wholes.  There are also cryptographic hashes, but those are even
+//! slower than MD5.
+//!
+//! # Examples
+//!
+//! ```
+//! use std::hash::{Hash, Hasher};
+//!
+//! use fasthash::{spooky, SpookyHasher};
+//!
+//! fn hash<T: Hash>(t: &T) -> u64 {
+//!     let mut s = SpookyHasher::new();
+//!     t.hash(&mut s);
+//!     s.finish()
+//! }
+//!
+//! let h = spooky::hash64(b"hello world\xff");
+//!
+//! assert_eq!(h, hash(&"hello world"));
+//! ```
+//!
+use std::hash::{Hasher, BuildHasher};
 use std::os::raw::c_void;
 
 use extprim::u128::u128;
@@ -7,7 +53,7 @@ use ffi;
 
 use hasher::{FastHash, HasherExt};
 
-#[doc(hidden)]
+/// SpookyHash 32-bit hash functions
 pub struct SpookyHash32 {}
 
 impl FastHash for SpookyHash32 {
@@ -30,7 +76,7 @@ impl FastHash for SpookyHash32 {
     }
 }
 
-#[doc(hidden)]
+/// SpookyHash 64-bit hash functions
 pub struct SpookyHash64 {}
 
 impl FastHash for SpookyHash64 {
@@ -53,7 +99,7 @@ impl FastHash for SpookyHash64 {
     }
 }
 
-#[doc(hidden)]
+/// SpookyHash 128-bit hash functions
 pub struct SpookyHash128 {}
 
 impl FastHash for SpookyHash128 {
@@ -76,6 +122,7 @@ impl FastHash for SpookyHash128 {
     }
 }
 
+/// An implementation of `std::hash::Hasher`.
 pub struct SpookyHasher64(*mut c_void);
 
 impl SpookyHasher64 {
@@ -126,6 +173,15 @@ impl Hasher for SpookyHasher64 {
     }
 }
 
+impl BuildHasher for SpookyHash64 {
+    type Hasher = SpookyHasher64;
+
+    fn build_hasher(&self) -> Self::Hasher {
+        SpookyHasher64::new()
+    }
+}
+
+/// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
 pub struct SpookyHasher128(*mut c_void);
 
 impl SpookyHasher128 {
@@ -189,31 +245,48 @@ impl HasherExt for SpookyHasher128 {
     }
 }
 
+impl BuildHasher for SpookyHash128 {
+    type Hasher = SpookyHasher128;
+
+    fn build_hasher(&self) -> Self::Hasher {
+        SpookyHasher128::new()
+    }
+}
+
+/// SpookyHash 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     SpookyHash32::hash(v)
 }
 
+/// SpookyHash 32-bit hash functions for a byte array.
+/// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
     SpookyHash32::hash_with_seed(v, seed)
 }
 
+/// SpookyHash 64-bit hash functions for a byte array.
+/// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     SpookyHash64::hash(v)
 }
 
+/// SpookyHash 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     SpookyHash64::hash_with_seed(v, seed)
 }
 
+/// SpookyHash 128-bit hash functions for a byte array.
+/// For convenience, a 128-bit seed is also hashed into the result.
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     SpookyHash128::hash(v)
 }
 
+/// SpookyHash 128-bit hash functions for a byte array.
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
     SpookyHash128::hash_with_seed(v, seed)

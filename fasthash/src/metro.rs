@@ -1,3 +1,44 @@
+//! MetroHash, Exceptionally fast and statistically robust hash functions
+//!
+//! by J. Andrew Rogers
+//!
+//! https://github.com/jandrewrogers/MetroHash
+//!
+//! MetroHash is a set of state-of-the-art hash functions for non-cryptographic use cases.
+//! They are notable for being algorithmically generated in addition to their exceptional
+//! performance. The set of published hash functions may be expanded in the future,
+//! having been selected from a very large set of hash functions that have been
+//! constructed this way.
+//!
+//! Fastest general-purpose functions for bulk hashing.
+//! Fastest general-purpose functions for small, variable length keys.
+//! Robust statistical bias profile, similar to the MD5 cryptographic hash.
+//! Hashes can be constructed incrementally (new)
+//! 64-bit, 128-bit, and 128-bit CRC variants currently available.
+//! Optimized for modern x86-64 microarchitectures.
+//! Elegant, compact, readable functions.
+//!
+//! You can read more about the design and history
+//! [here](http://www.jandrewrogers.com/2015/05/27/metrohash/).
+//!
+//! # Example
+//!
+//! ```
+//! use std::hash::{Hash, Hasher};
+//!
+//! use fasthash::{metro, MetroHasher};
+//!
+//! fn hash<T: Hash>(t: &T) -> u64 {
+//!     let mut s = MetroHasher::new();
+//!     t.hash(&mut s);
+//!     s.finish()
+//! }
+//!
+//! let h = metro::hash64(b"hello world\xff");
+//!
+//! assert_eq!(h, hash(&"hello world"));
+//! ```
+//!
 #![allow(non_camel_case_types)]
 use std::mem;
 
@@ -7,7 +48,7 @@ use ffi;
 
 use hasher::FastHash;
 
-#[doc(hidden)]
+/// MetroHash 64-bit hash functions
 pub struct MetroHash64_1 {}
 
 impl FastHash for MetroHash64_1 {
@@ -31,7 +72,7 @@ impl FastHash for MetroHash64_1 {
 
 impl_hasher!(MetroHasher64_1, MetroHash64_1);
 
-#[doc(hidden)]
+/// MetroHash 64-bit hash functions
 pub struct MetroHash64_2 {}
 
 impl FastHash for MetroHash64_2 {
@@ -55,7 +96,7 @@ impl FastHash for MetroHash64_2 {
 
 impl_hasher!(MetroHasher64_2, MetroHash64_2);
 
-#[doc(hidden)]
+/// MetroHash 128-bit hash functions
 pub struct MetroHash128_1 {}
 
 impl FastHash for MetroHash128_1 {
@@ -79,7 +120,7 @@ impl FastHash for MetroHash128_1 {
 
 impl_hasher_ext!(MetroHasher128_1, MetroHash128_1);
 
-#[doc(hidden)]
+/// MetroHash 128-bit hash functions
 pub struct MetroHash128_2 {}
 
 impl FastHash for MetroHash128_2 {
@@ -103,8 +144,8 @@ impl FastHash for MetroHash128_2 {
 
 impl_hasher_ext!(MetroHasher128_2, MetroHash128_2);
 
+/// MetroHash 64-bit hash functions using HW CRC instruction.
 #[cfg(feature = "sse42")]
-#[doc(hidden)]
 pub struct MetroHash64Crc_1 {}
 
 #[cfg(feature = "sse42")]
@@ -128,9 +169,9 @@ impl FastHash for MetroHash64Crc_1 {
 }
 
 #[cfg(feature = "sse42")]
-#[doc(hidden)]
 impl_hasher!(MetroHasher64Crc_1, MetroHash64Crc_1);
 
+/// MetroHash 64-bit hash functions using HW CRC instruction.
 #[cfg(feature = "sse42")]
 pub struct MetroHash64Crc_2 {}
 
@@ -157,8 +198,8 @@ impl FastHash for MetroHash64Crc_2 {
 #[cfg(feature = "sse42")]
 impl_hasher!(MetroHasher64Crc_2, MetroHash64Crc_2);
 
+/// MetroHash 128-bit hash functions using HW CRC instruction.
 #[cfg(feature = "sse42")]
-#[doc(hidden)]
 pub struct MetroHash128Crc_1 {}
 
 #[cfg(feature = "sse42")]
@@ -184,8 +225,8 @@ impl FastHash for MetroHash128Crc_1 {
 #[cfg(feature = "sse42")]
 impl_hasher_ext!(MetroHasher128Crc_1, MetroHash128Crc_1);
 
+/// MetroHash 128-bit hash functions using HW CRC instruction.
 #[cfg(feature = "sse42")]
-#[doc(hidden)]
 pub struct MetroHash128Crc_2 {}
 
 #[cfg(feature = "sse42")]
@@ -211,45 +252,57 @@ impl FastHash for MetroHash128Crc_2 {
 #[cfg(feature = "sse42")]
 impl_hasher_ext!(MetroHasher128Crc_2, MetroHash128Crc_2);
 
+/// MetroHash 64-bit hash function for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     MetroHash64_1::hash(v)
 }
 
+/// MetroHash 64-bit hash function for a byte array.
+/// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
     MetroHash64_1::hash_with_seed(v, seed)
 }
 
+/// MetroHash 128-bit hash function for a byte array.
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     MetroHash128_1::hash(v)
 }
 
+/// MetroHash 128-bit hash function for a byte array.
+/// For convenience, a 128-bit seed is also hashed into the result.
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
     MetroHash128_1::hash_with_seed(v, seed)
 }
 
-#[cfg(feature = "sse42")]
+/// MetroHash 64-bit hash function for a byte array using HW CRC instruction.
+#[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
 pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
     MetroHash64Crc_1::hash(v)
 }
 
-#[cfg(feature = "sse42")]
+/// MetroHash 64-bit hash function for a byte array using HW CRC instruction.
+/// For convenience, a 64-bit seed is also hashed into the result.
+#[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
 pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
     MetroHash64Crc_1::hash_with_seed(v, seed)
 }
 
-#[cfg(feature = "sse42")]
+/// MetroHash 128-bit hash function for a byte array using HW CRC instruction.
+#[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
 pub fn hash128crc<T: AsRef<[u8]>>(v: &T) -> u128 {
     MetroHash128Crc_1::hash(v)
 }
 
-#[cfg(feature = "sse42")]
+/// MetroHash 128-bit hash function for a byte array. using HW CRC instruction.
+/// For convenience, a 128-bit seed is also hashed into the result.
+#[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
 pub fn hash128crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
     MetroHash128Crc_1::hash_with_seed(v, seed)

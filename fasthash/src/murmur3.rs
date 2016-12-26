@@ -1,3 +1,34 @@
+//! Murmur, a suite of non-cryptographic hash functions that was used for hash-based lookups.
+//!
+//! by Austin Appleby (aappleby (AT) gmail)
+//!
+//! https://sites.google.com/site/murmurhash/
+//!
+//! # Note
+//!
+//! The x86 and x64 versions do _not_ produce the same results, as the
+//! algorithms are optimized for their respective platforms. You can still
+//! compile and run any of them on any platform, but your performance with the
+//! non-native version will be less than optimal.
+//!
+//! # Example
+//!
+//! ```
+//! use std::hash::{Hash, Hasher};
+//!
+//! use fasthash::{murmur3, Murmur3Hasher};
+//!
+//! fn hash<T: Hash>(t: &T) -> u64 {
+//!     let mut s = Murmur3Hasher::new();
+//!     t.hash(&mut s);
+//!     s.finish()
+//! }
+//!
+//! let h = murmur3::hash128(b"hello world\xff").low64();
+//!
+//! assert_eq!(h, hash(&"hello world"));
+//! ```
+//!
 #![allow(non_camel_case_types)]
 use std::mem;
 use std::os::raw::c_void;
@@ -8,7 +39,7 @@ use ffi;
 
 use hasher::FastHash;
 
-#[doc(hidden)]
+/// MurmurHash3 32-bit hash functions
 pub struct Murmur3_x86_32 {}
 
 impl FastHash for Murmur3_x86_32 {
@@ -32,7 +63,7 @@ impl FastHash for Murmur3_x86_32 {
 
 impl_hasher!(Murmur3Hasher_x86_32, Murmur3_x86_32);
 
-#[doc(hidden)]
+/// MurmurHash3 128-bit hash functions for 32-bit processors
 pub struct Murmur3_x86_128 {}
 
 impl FastHash for Murmur3_x86_128 {
@@ -56,7 +87,7 @@ impl FastHash for Murmur3_x86_128 {
 
 impl_hasher_ext!(Murmur3Hasher_x86_128, Murmur3_x86_128);
 
-#[doc(hidden)]
+/// MurmurHash3 128-bit hash functions for 64-bit processors
 pub struct Murmur3_x64_128 {}
 
 impl FastHash for Murmur3_x64_128 {
@@ -80,21 +111,27 @@ impl FastHash for Murmur3_x64_128 {
 
 impl_hasher_ext!(Murmur3Hasher_x64_128, Murmur3_x64_128);
 
+/// MurmurHash3 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     Murmur3_x86_32::hash(v)
 }
 
+/// MurmurHash3 32-bit hash functions for a byte array.
+/// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
     Murmur3_x86_32::hash_with_seed(v, seed)
 }
 
+/// MurmurHash3 128-bit hash functions for a byte array.
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     Murmur3_x64_128::hash(v)
 }
 
+/// MurmurHash3 128-bit hash functions for a byte array.
+/// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
     Murmur3_x64_128::hash_with_seed(v, seed)

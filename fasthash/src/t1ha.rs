@@ -1,3 +1,51 @@
+//! Fast Positive Hash, aka "Позитивный Хэш"
+//!
+//! by Positive Technologies.
+//!
+//! https://github.com/leo-yuriev/t1ha
+//!
+//! Briefly, it is a 64-bit Hash Function:
+//!
+//! Created for 64-bit little-endian platforms, in predominantly for x86_64,
+//! but without penalties could runs on any 64-bit CPU.
+//! In most cases up to 15% faster than City64, xxHash, mum-hash,
+//! metro-hash and all others which are not use specific hardware tricks.
+//! Not suitable for cryptography.
+//! Please see t1ha.c for implementation details.
+//!
+//! Acknowledgement:
+//!
+//! The t1ha was originally developed by Leonid Yuriev (Леонид Юрьев)
+//! for The 1Hippeus project - zerocopy messaging in the spirit of Sparta!
+//!
+//! Requirements and Portability:
+//!
+//! t1ha designed for modern 64-bit architectures. But on the other hand,
+//! t1ha doesn't uses any one tricks nor instructions specific to any particular architecture:
+//! therefore t1ha could be used on any CPU for which GCC provides support 64-bit arithmetics.
+//! but unfortunately t1ha could be dramatically slowly on architectures
+//! without native 64-bit operations.
+//! This implementation of t1ha requires modern GNU C compatible compiler,
+//! includes Clang/LLVM; or MSVC++ 14.0 (Visual Studio 2015).
+//!
+//! # Example
+//!
+//! ```
+//! use std::hash::{Hash, Hasher};
+//!
+//! use fasthash::{t1ha, T1haHasher};
+//!
+//! fn hash<T: Hash>(t: &T) -> u64 {
+//!     let mut s = T1haHasher::new();
+//!     t.hash(&mut s);
+//!     s.finish()
+//! }
+//!
+//! let h = t1ha::hash64(b"hello world\xff");
+//!
+//! assert_eq!(h, hash(&"hello world"));
+//! ```
+//!
 use std::os::raw::c_void;
 
 use ffi;
@@ -102,33 +150,44 @@ impl FastHash for T1ha64Crc {
 #[cfg(feature = "sse42")]
 impl_hasher!(T1ha64CrcHasher, T1ha64Crc);
 
+/// T1Hash 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha32Le::hash(v)
 }
 
+/// T1Hash 32-bit hash function for a byte array.
+/// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha32Le::hash_with_seed(v, seed)
 }
 
+/// T1Hash 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Le::hash(v)
 }
 
+/// T1Hash 64-bit hash function for a byte array.
+/// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Le::hash_with_seed(v, seed)
 }
 
-#[cfg(feature = "sse42")]
+/// T1Hash 64-bit hash function for a byte array using HW CRC instruction.
+/// That require SSE4.2 instructions to be available.
+#[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
 pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Crc::hash(v)
 }
 
-#[cfg(feature = "sse42")]
+/// T1Hash 64-bit hash function for a byte array using HW CRC instruction.
+/// That require SSE4.2 instructions to be available.
+/// For convenience, a 64-bit seed is also hashed into the result.
+#[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
 pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Crc::hash_with_seed(v, seed)
