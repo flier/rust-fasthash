@@ -17,7 +17,4 @@ sse42 = []
 
 [build-dependencies]
 gcc = "0.3"
-
-[build-dependencies.libbindgen]
-git = "https://github.com/servo/rust-bindgen"
-features = ["llvm_stable"]
+libbindgen = "0.1"

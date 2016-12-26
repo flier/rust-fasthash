@@ -17,7 +17,7 @@ sse42 = ["fasthash-sys/sse42"]
 
 [dependencies]
 extprim = "1.1"
-fasthash-sys = { version = "0.1.0", path = "../fasthash-sys" }
+fasthash-sys = { version = "0.2.0", path = "../fasthash-sys" }
 
 [dev-dependencies]
 rand = "^0.3"
