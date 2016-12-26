@@ -40,23 +40,23 @@ impl FastHash for XXHash64 {
 }
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u32 {
-    XXHash32::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    XXHash32::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    XXHash32::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    XXHash32::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash64(s: &[u8]) -> u64 {
-    XXHash64::hash(&s)
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    XXHash64::hash(v)
 }
 
 #[inline]
-pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    XXHash64::hash_with_seed(&s, seed)
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    XXHash64::hash_with_seed(v, seed)
 }
 
 pub struct XXHasher32(*mut ffi::XXH32_state_t);

@@ -17,18 +17,20 @@ use fasthash::*;
 
 const ITERATERS: usize = 1000;
 
+fn gen_key(size: usize) -> Vec<u8> {
+    thread_rng().gen_iter::<u8>().take(size).collect::<Vec<u8>>()
+}
+
 #[inline]
-fn bench_hash<F, T>(b: &mut Bencher, func: F, size: usize)
-    where F: Fn(&[u8]) -> T
-{
-    let key = thread_rng().gen_iter::<u8>().take(size).collect::<Vec<u8>>();
+fn bench_fasthash<H: FastHash>(b: &mut Bencher, size: usize) {
+    let key = gen_key(size);
 
     b.bytes = (size * ITERATERS) as u64;
     b.iter(|| {
         let n = test::black_box(ITERATERS);
 
         (0..n).fold(0, |_, _| {
-            func(key.as_slice());
+            H::hash(&key);
             0
         })
     });
@@ -36,7 +38,7 @@ fn bench_hash<F, T>(b: &mut Bencher, func: F, size: usize)
 
 #[inline]
 fn bench_hasher<H: Hasher + Default>(b: &mut Bencher, size: usize) {
-    let key = thread_rng().gen_iter::<u8>().take(size).collect::<Vec<u8>>();
+    let key = gen_key(size);
 
     b.bytes = (size * ITERATERS) as u64;
     b.iter(|| {

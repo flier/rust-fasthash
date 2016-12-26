@@ -103,35 +103,35 @@ impl FastHash for T1ha64Crc {
 impl_hasher!(T1ha64CrcHasher, T1ha64Crc);
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u64 {
-    T1ha32Le::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u64 {
+    T1ha32Le::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u64) -> u64 {
-    T1ha32Le::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    T1ha32Le::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash64(s: &[u8]) -> u64 {
-    T1ha64Le::hash(&s)
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    T1ha64Le::hash(v)
 }
 
 #[inline]
-pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    T1ha64Le::hash_with_seed(&s, seed)
-}
-
-#[cfg(feature = "sse42")]
-#[inline]
-pub fn hash64crc(s: &[u8]) -> u64 {
-    T1ha64Crc::hash(&s)
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    T1ha64Le::hash_with_seed(v, seed)
 }
 
 #[cfg(feature = "sse42")]
 #[inline]
-pub fn hash64crc_with_seed(s: &[u8], seed: u64) -> u64 {
-    T1ha64Crc::hash_with_seed(&s, seed)
+pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
+    T1ha64Crc::hash(v)
+}
+
+#[cfg(feature = "sse42")]
+#[inline]
+pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    T1ha64Crc::hash_with_seed(v, seed)
 }
 
 #[cfg(test)]

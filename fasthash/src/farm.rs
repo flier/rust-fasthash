@@ -94,37 +94,37 @@ impl FastHash for FarmHash128 {
 impl_hasher_ext!(FarmHasher128, FarmHash128);
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u32 {
-    FarmHash32::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    FarmHash32::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    FarmHash32::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    FarmHash32::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash64(s: &[u8]) -> u64 {
-    FarmHash64::hash(&s)
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    FarmHash64::hash(v)
 }
 
 #[inline]
-pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    FarmHash64::hash_with_seed(&s, seed)
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    FarmHash64::hash_with_seed(v, seed)
 }
 
-pub fn hash64_with_seeds(s: &[u8], seed0: u64, seed1: u64) -> u64 {
-    FarmHash64::hash_with_seeds(&s, seed0, seed1)
-}
-
-#[inline]
-pub fn hash128(s: &[u8]) -> u128 {
-    FarmHash128::hash(&s)
+pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
+    FarmHash64::hash_with_seeds(v, seed0, seed1)
 }
 
 #[inline]
-pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
-    FarmHash128::hash_with_seed(&s, seed)
+pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+    FarmHash128::hash(v)
+}
+
+#[inline]
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+    FarmHash128::hash_with_seed(v, seed)
 }
 
 #[inline]

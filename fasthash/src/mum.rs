@@ -25,13 +25,13 @@ impl FastHash for MumHash {
 impl_hasher!(MumHasher, MumHash);
 
 #[inline]
-pub fn hash64(s: &[u8]) -> u64 {
-    MumHash::hash(&s)
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    MumHash::hash(v)
 }
 
 #[inline]
-pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    MumHash::hash_with_seed(&s, seed)
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    MumHash::hash_with_seed(v, seed)
 }
 
 #[cfg(test)]

@@ -43,23 +43,23 @@ impl FastHash for MurmurAligned {
 impl_hasher!(MurmurAlignedHasher, MurmurAligned);
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u32 {
-    Murmur::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    Murmur::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    Murmur::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    Murmur::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash32_aligned(s: &[u8]) -> u32 {
-    MurmurAligned::hash(&s)
+pub fn hash32_aligned<T: AsRef<[u8]>>(v: &T) -> u32 {
+    MurmurAligned::hash(v)
 }
 
 #[inline]
-pub fn hash32_aligned_with_seed(s: &[u8], seed: u32) -> u32 {
-    MurmurAligned::hash_with_seed(&s, seed)
+pub fn hash32_aligned_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    MurmurAligned::hash_with_seed(v, seed)
 }
 
 #[cfg(test)]

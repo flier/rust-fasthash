@@ -81,23 +81,23 @@ impl FastHash for Murmur3_x64_128 {
 impl_hasher_ext!(Murmur3Hasher_x64_128, Murmur3_x64_128);
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u32 {
-    Murmur3_x86_32::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    Murmur3_x86_32::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    Murmur3_x86_32::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    Murmur3_x86_32::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash128(s: &[u8]) -> u128 {
-    Murmur3_x64_128::hash(&s)
+pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+    Murmur3_x64_128::hash(v)
 }
 
 #[inline]
-pub fn hash128_with_seed(s: &[u8], seed: u32) -> u128 {
-    Murmur3_x64_128::hash_with_seed(&s, seed)
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
+    Murmur3_x64_128::hash_with_seed(v, seed)
 }
 
 

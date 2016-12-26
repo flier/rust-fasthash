@@ -120,23 +120,23 @@ impl FastHash for Murmur2_x86_64 {
 impl_hasher!(Murmur2Hasher_x86_64, Murmur2_x86_64);
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u32 {
-    Murmur2::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    Murmur2::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    Murmur2::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    Murmur2::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash64(s: &[u8]) -> u64 {
-    Murmur2_x64_64::hash(&s)
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    Murmur2_x64_64::hash(v)
 }
 
 #[inline]
-pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    Murmur2_x64_64::hash_with_seed(&s, seed)
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    Murmur2_x64_64::hash_with_seed(v, seed)
 }
 
 #[cfg(test)]

@@ -190,33 +190,33 @@ impl HasherExt for SpookyHasher128 {
 }
 
 #[inline]
-pub fn hash32(s: &[u8]) -> u32 {
-    SpookyHash32::hash(&s)
+pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    SpookyHash32::hash(v)
 }
 
 #[inline]
-pub fn hash32_with_seed(s: &[u8], seed: u32) -> u32 {
-    SpookyHash32::hash_with_seed(&s, seed)
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+    SpookyHash32::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash64(s: &[u8]) -> u64 {
-    SpookyHash64::hash(&s)
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    SpookyHash64::hash(v)
 }
 
 #[inline]
-pub fn hash64_with_seed(s: &[u8], seed: u64) -> u64 {
-    SpookyHash64::hash_with_seed(&s, seed)
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+    SpookyHash64::hash_with_seed(v, seed)
 }
 
 #[inline]
-pub fn hash128(s: &[u8]) -> u128 {
-    SpookyHash128::hash(&s)
+pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+    SpookyHash128::hash(v)
 }
 
 #[inline]
-pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
-    SpookyHash128::hash_with_seed(&s, seed)
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+    SpookyHash128::hash_with_seed(v, seed)
 }
 
 #[cfg(test)]
