@@ -9,7 +9,7 @@ To use `fasthash`, first add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-fasthash = "0.1"
+fasthash = "0.2"
 ```
 
 Then, add this to your crate root:
