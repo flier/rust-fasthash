@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `farm` mod in crate `fasthash`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, farm">
+
+    <title>fasthash::farm - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>fasthash</a></p><script>window.sidebarCurrent = {name: 'farm', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>fasthash</a>::<wbr><a class='mod' href=''>farm</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-238' class='srclink' href='../../src/fasthash/src/farm.rs.html#1-387' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>FarmHash, a family of hash functions.</p>
+
+<p>by Geoff Pike</p>
+
+<p><a href="https://github.com/google/farmhash">https://github.com/google/farmhash</a></p>
+
+<h1 id='introduction' class='section-header'><a href='#introduction'>Introduction</a></h1>
+<p>FarmHash provides hash functions for strings and other data.  The functions
+mix the input bits thoroughly but are not suitable for cryptography.  See
+&quot;Hash Quality,&quot; below, for details on how FarmHash was tested and so on.</p>
+
+<p>We provide reference implementations in C++, with a friendly MIT license.</p>
+
+<p>All members of the FarmHash family were designed with heavy reliance on
+previous work by Jyrki Alakuijala, Austin Appleby, Bob Jenkins, and others.</p>
+
+<h1 id='recommended-usage' class='section-header'><a href='#recommended-usage'>Recommended Usage</a></h1>
+<p>Our belief is that the typical hash function is mostly used for in-memory hash
+tables and similar.  That use case allows hash functions that differ on
+different platforms, and that change from time to time.  For this, I recommend
+using wrapper functions in a .h file with comments such as, &quot;may change from
+time to time, may differ on different platforms, and may change depending on
+NDEBUG.&quot;</p>
+
+<p>Some projects may also require a forever-fixed, portable hash function.  Again
+we recommend using wrapper functions in a .h, but in this case the comments on
+them would be very different.</p>
+
+<p>We have provided a sample of these wrapper functions in src/farmhash.h.  Our
+hope is that most people will need nothing more than src/farmhash.h and
+src/farmhash.cc.  Those two files are a usable and relatively portable library.
+(One portability snag: if your compiler doesn&#39;t have __builtin_expect then
+you may need to define FARMHASH_NO_BUILTIN_EXPECT.)  For those that prefer
+using a configure script (perhaps because they want to &quot;make install&quot; later),
+FarmHash has one, but for many people it&#39;s best to ignore it.</p>
+
+<p>Note that the wrapper functions such as Hash() in src/farmhash.h can select
+one of several hash functions.  The selection is done at compile time, based
+on your machine architecture (e.g., sizeof(size_t)) and the availability of
+vector instructions (e.g., SSE4.1).</p>
+
+<p>To get the best performance from FarmHash, one will need to think a bit about
+when to use compiler flags that allow vector instructions and such: -maes,
+-msse4.2, -mavx, etc., or their equivalents for other compilers.  Those are
+the g++ flags that make g++ emit more types of machine instructions than it
+otherwise would.  For example, if you are confident that you will only be
+using FarmHash on systems with SSE4.2 and/or AES, you may communicate that to
+the compiler as explained in src/farmhash.cc.  If not, use -maes, -mavx, etc.,
+when you can, and the appropriate choices will be made by via conditional
+compilation in src/farmhash.cc.</p>
+
+<p>It may be beneficial to try -O3 or other compiler flags as well.  I also have
+found feedback-directed optimization (FDO) to improve the speed of FarmHash.</p>
+
+<h1 id='further-details' class='section-header'><a href='#further-details'>Further Details</a></h1>
+<p>The above instructions will produce a single source-level library that
+includes multiple hash functions.  It will use conditional compilation, and
+perhaps GCC&#39;s multiversioning, to select among the functions.  In addition,
+&quot;make all check&quot; will create an object file using your chosen compiler, and
+test it.  The object file won&#39;t necessarily contain all the code that would be
+used if you were to compile the code on other platforms.  The downside of this
+is obvious: the paths not tested may not actually work if and when you try
+them.  The FarmHash developers try hard to prevent such problems; please let
+us know if you find bugs.</p>
+
+<p>To aid your cross-platform testing, for each relevant platform you may
+compile your program that uses farmhash.cc with the preprocessor flag
+FARMHASHSELFTEST equal to 1.  This causes a FarmHash self test to run
+at program startup; the self test writes output to stdout and then
+calls std::exit().  You can see this in action by running &quot;make check&quot;:
+see src/farm-test.cc for details.</p>
+
+<p>There&#39;s also a trivial workaround to force particular functions to be used:
+modify the wrapper functions in hash.h.  You can prevent choices being made via
+conditional compilation or multiversioning by choosing FarmHash variants with
+names like farmhashaa::Hash32, farmhashab::Hash64, etc.: those compute the same
+hash function regardless of conditional compilation, multiversioning, or
+endianness.  Consult their comments and ifdefs to learn their requirements: for
+example, they are not all guaranteed to work on all platforms.</p>
+
+<h1 id='known-issues' class='section-header'><a href='#known-issues'>Known Issues</a></h1>
+<p>1) FarmHash was developed with little-endian architectures in mind.  It should
+work on big-endian too, but less work has gone into optimizing for those
+platforms.  To make FarmHash work properly on big-endian platforms you may
+need to modify the wrapper .h file and/or your compiler flags to arrange for
+FARMHASH_BIG_ENDIAN to be defined, though there is logic that tries to figure
+it out automatically.</p>
+
+<p>2) FarmHash&#39;s implementation is fairly complex.</p>
+
+<p>3) The techniques described in dev/INSTRUCTIONS to let hash function
+developers regenerate src/*.cc from dev/* are hacky and not so portable.</p>
+
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>hash</span>::{<span class='ident'>Hash</span>, <span class='ident'>Hasher</span>};
+
+<span class='kw'>use</span> <span class='ident'>fasthash</span>::{<span class='ident'>farm</span>, <span class='ident'>FarmHasher</span>};
+
+<span class='kw'>fn</span> <span class='ident'>hash</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Hash</span><span class='op'>&gt;</span>(<span class='ident'>t</span>: <span class='kw-2'>&amp;</span><span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>u64</span> {
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>s</span> <span class='op'>=</span> <span class='ident'>FarmHasher</span>::<span class='ident'>new</span>();
+    <span class='ident'>t</span>.<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>s</span>);
+    <span class='ident'>s</span>.<span class='ident'>finish</span>()
+}
+
+<span class='kw'>let</span> <span class='ident'>h</span> <span class='op'>=</span> <span class='ident'>farm</span>::<span class='ident'>hash64</span>(<span class='string'>b&quot;hello world\xff&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>h</span>, <span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;hello world&quot;</span>));<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.FarmHash128.html'
+                                  title='fasthash::farm::FarmHash128'>FarmHash128</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 128-bit hash functions</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.FarmHash32.html'
+                                  title='fasthash::farm::FarmHash32'>FarmHash32</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 32-bit hash functions</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.FarmHash64.html'
+                                  title='fasthash::farm::FarmHash64'>FarmHash64</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 64-bit hash functions</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.FarmHasher128.html'
+                                  title='fasthash::farm::FarmHasher128'>FarmHasher128</a></td>
+                           <td class='docblock-short'>
+                                <p>An implementation of <code>std::hash::Hasher</code> and <code>fasthash::HasherExt</code>.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.FarmHasher32.html'
+                                  title='fasthash::farm::FarmHasher32'>FarmHasher32</a></td>
+                           <td class='docblock-short'>
+                                <p>An implementation of <code>std::hash::Hasher</code>.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.FarmHasher64.html'
+                                  title='fasthash::farm::FarmHasher64'>FarmHasher64</a></td>
+                           <td class='docblock-short'>
+                                <p>An implementation of <code>std::hash::Hasher</code>.</p>
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.fingerprint128.html'
+                                  title='fasthash::farm::fingerprint128'>fingerprint128</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 128-bit fingerprint function for a byte array.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.fingerprint32.html'
+                                  title='fasthash::farm::fingerprint32'>fingerprint32</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 32-bit fingerprint function for a byte array.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.fingerprint64.html'
+                                  title='fasthash::farm::fingerprint64'>fingerprint64</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 64-bit fingerprint function for a byte array.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash128.html'
+                                  title='fasthash::farm::hash128'>hash128</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 128-bit hash function for a byte array.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash128_with_seed.html'
+                                  title='fasthash::farm::hash128_with_seed'>hash128_with_seed</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 128-bit hash function for a byte array.
+For convenience, a 128-bit seed is also hashed into the result.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash32.html'
+                                  title='fasthash::farm::hash32'>hash32</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 32-bit hash function for a byte array.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash32_with_seed.html'
+                                  title='fasthash::farm::hash32_with_seed'>hash32_with_seed</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 32-bit hash function for a byte array.
+For convenience, a 32-bit seed is also hashed into the result.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash64.html'
+                                  title='fasthash::farm::hash64'>hash64</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 64-bit hash function for a byte array.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash64_with_seed.html'
+                                  title='fasthash::farm::hash64_with_seed'>hash64_with_seed</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 64-bit hash function for a byte array.
+For convenience, a 64-bit seed is also hashed into the result.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hash64_with_seeds.html'
+                                  title='fasthash::farm::hash64_with_seeds'>hash64_with_seeds</a></td>
+                           <td class='docblock-short'>
+                                <p>FarmHash 64-bit hash function for a byte array.
+For convenience, two seeds are also hashed into the result.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "fasthash";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>
