@@ -4,7 +4,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{Fingerprint, FastHash};
 
 #[doc(hidden)]
 pub struct FarmHash32 {}
@@ -127,6 +127,37 @@ pub fn hash128_with_seed(s: &[u8], seed: u128) -> u128 {
     FarmHash128::hash_with_seed(&s, seed)
 }
 
+#[inline]
+pub fn fingerprint32<T: AsRef<[u8]>>(v: &T) -> u32 {
+    unsafe { ffi::farmhash_fingerprint32(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
+}
+
+#[inline]
+pub fn fingerprint64<T: AsRef<[u8]>>(v: &T) -> u64 {
+    unsafe { ffi::farmhash_fingerprint64(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
+}
+
+#[inline]
+pub fn fingerprint128<T: AsRef<[u8]>>(v: &T) -> u128 {
+    unsafe {
+        mem::transmute(ffi::farmhash_fingerprint128(v.as_ref().as_ptr() as *const i8,
+                                                    v.as_ref().len()))
+    }
+}
+
+impl Fingerprint<u64> for u64 {
+    #[inline]
+    fn fingerprint(&self) -> u64 {
+        unsafe { ffi::farmhash_fingerprint_uint64(*self) }
+    }
+}
+
+impl Fingerprint<u64> for u128 {
+    #[inline]
+    fn fingerprint(&self) -> u64 {
+        unsafe { ffi::farmhash_fingerprint_uint128(mem::transmute(*self)) }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -134,7 +165,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt};
+    use hasher::{Fingerprint, FastHash, HasherExt};
     use super::*;
 
     #[test]
@@ -188,5 +219,15 @@ mod tests {
         h.write(b"world");
         assert_eq!(h.finish_ext(),
                    u128::from_parts(16066658700231169910, 1119455499735156801));
+    }
+
+    #[test]
+    fn test_fingerprint() {
+        assert_eq!(fingerprint32(b"hello word"), 4146030890);
+        assert_eq!(fingerprint64(b"hello word"), 2862784602449412590_u64);
+        assert_eq!(fingerprint128(b"hello word"),
+                   u128::from_parts(3993975538242800734, 12454188156902618296));
+        assert_eq!(123_u64.fingerprint(), 4781265650859502840);
+        assert_eq!(u128::new(123).fingerprint(), 4011577241381678309);
     }
 }

@@ -9,7 +9,13 @@ fn main() {
     let mut f = File::create(&dest_path).unwrap();
 
     let hashes = vec![("city", vec!["hash32", "hash64", "hash128", "hash128crc"]),
-                      ("farm", vec!["hash32", "hash64", "hash128"]),
+                      ("farm",
+                       vec!["hash32",
+                            "hash64",
+                            "hash128",
+                            "fingerprint32",
+                            "fingerprint64",
+                            "fingerprint128"]),
                       ("metro", vec!["hash64", "hash128", "hash64crc", "hash128crc"]),
                       ("mum", vec!["hash64"]),
                       ("murmur", vec!["hash32"]),

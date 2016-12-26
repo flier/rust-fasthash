@@ -9,6 +9,10 @@
 #include "smhasher/t1ha.h"
 #include "smhasher/xxhash.h"
 
+uint64_t farmhash_fingerprint_uint128(uint128_c_t x);
+
+uint64_t farmhash_fingerprint_uint64(uint64_t x);
+
 uint64_t mum_hash_(const void *key, size_t len, uint64_t seed);
 
 void SpookyHasherHash(

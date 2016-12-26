@@ -5,6 +5,10 @@ use std::hash::Hasher;
 use extprim::i128::i128;
 use extprim::u128::u128;
 
+pub trait Fingerprint<T> {
+    fn fingerprint(&self) -> T;
+}
+
 #[doc(hidden)]
 pub trait FastHash {
     type Value;
