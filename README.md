@@ -52,8 +52,9 @@ hash(&"hello world");
   - [x] [Metro Hash](https://github.com/jandrewrogers/MetroHash)
   - [x] [Mum Hash](https://github.com/vnmakarov/mum-hash)
   - [x] [Murmur Hash](https://sites.google.com/site/murmurhash/)
+  - [x] [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
   - [x] [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
-  - [x] [t1ha Hash](https://github.com/leo-yuriev/t1ha)
+  - [x] [T1 Hash](https://github.com/leo-yuriev/t1ha)
   - [x] [xx Hash](https://github.com/Cyan4973/xxHash)
 
 # Performance
