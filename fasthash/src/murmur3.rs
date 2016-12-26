@@ -1,4 +1,4 @@
-//! Murmur, a suite of non-cryptographic hash functions that was used for hash-based lookups.
+//! Murmur3, a suite of non-cryptographic hash functions that was used for hash-based lookups.
 //!
 //! by Austin Appleby (aappleby (AT) gmail)
 //!

@@ -1,12 +1,12 @@
 [package]
 name = "fasthash"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
 description = "A suite of non-cryptographic hash functions for Rust."
 homepage = "https://github.com/flier/rust-fasthash"
 repository = "https://github.com/flier/rust-fasthash.git"
 documentation = "https://flier.github.io/rust-fasthash/"
-keywords = ["hashing"]
+keywords = ["hash", "hashing"]
 license = "Apache-2.0"
 build = "build.rs"
 
@@ -17,6 +17,7 @@ sse42 = ["fasthash-sys/sse42"]
 
 [dependencies]
 extprim = "1.1"
+seahash = "3.0"
 fasthash-sys = { version = "0.2.0", path = "../fasthash-sys" }
 
 [dev-dependencies]
