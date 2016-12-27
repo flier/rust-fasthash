@@ -34,24 +34,24 @@
 //! use fasthash::{spooky, SpookyHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = SpookyHasher::new();
+//!     let mut s: SpookyHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
 //!
-//! let h = spooky::hash64(b"hello world\xff");
+//! let h = spooky::hash128(b"hello world\xff");
 //!
-//! assert_eq!(h, hash(&"hello world"));
+//! assert_eq!(h.low64(), hash(&"hello world"));
 //! ```
 //!
-use std::hash::{Hasher, BuildHasher};
+use std::hash::Hasher;
 use std::os::raw::c_void;
 
 use extprim::u128::u128;
 
 use ffi;
 
-use hasher::{FastHash, HasherExt, StreamHasher};
+use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 
 /// SpookyHash 32-bit hash functions
 pub struct SpookyHash32 {}
@@ -76,6 +76,8 @@ impl FastHash for SpookyHash32 {
     }
 }
 
+impl_fasthash!(SpookyHasher128, SpookyHash32);
+
 /// SpookyHash 64-bit hash functions
 pub struct SpookyHash64 {}
 
@@ -98,6 +100,8 @@ impl FastHash for SpookyHash64 {
         hash1
     }
 }
+
+impl_fasthash!(SpookyHasher128, SpookyHash64);
 
 /// SpookyHash 128-bit hash functions
 pub struct SpookyHash128 {}
@@ -122,87 +126,8 @@ impl FastHash for SpookyHash128 {
     }
 }
 
-/// An implementation of `std::hash::Hasher`.
-pub struct SpookyHasher64(*mut c_void);
-
-impl SpookyHasher64 {
-    #[inline]
-    pub fn new() -> SpookyHasher64 {
-        Self::with_seed(0)
-    }
-
-    #[inline]
-    pub fn with_seed(seed: u64) -> SpookyHasher64 {
-        let h = unsafe { ffi::SpookyHasherNew() };
-
-        unsafe {
-            ffi::SpookyHasherInit(h, seed, seed);
-        }
-
-        SpookyHasher64(h)
-    }
-}
-
-impl Default for SpookyHasher64 {
-    #[inline]
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl Hasher for SpookyHasher64 {
-    #[inline]
-    fn finish(&self) -> u64 {
-        let mut hash1 = 0_u64;
-        let mut hash2 = 0_u64;
-
-        unsafe {
-            ffi::SpookyHasherFinal(self.0, &mut hash1, &mut hash2);
-        }
-
-        hash1
-    }
-
-    #[inline]
-    fn write(&mut self, bytes: &[u8]) {
-        unsafe {
-            ffi::SpookyHasherUpdate(self.0,
-                                    bytes.as_ref().as_ptr() as *const c_void,
-                                    bytes.as_ref().len())
-        }
-    }
-}
-
-impl StreamHasher for SpookyHasher64 {}
-
-impl BuildHasher for SpookyHash64 {
-    type Hasher = SpookyHasher64;
-
-    fn build_hasher(&self) -> Self::Hasher {
-        SpookyHasher64::new()
-    }
-}
-
 /// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
 pub struct SpookyHasher128(*mut c_void);
-
-impl SpookyHasher128 {
-    #[inline]
-    pub fn new() -> SpookyHasher128 {
-        Self::with_seed(u128::new(0))
-    }
-
-    #[inline]
-    pub fn with_seed(seed: u128) -> SpookyHasher128 {
-        let h = unsafe { ffi::SpookyHasherNew() };
-
-        unsafe {
-            ffi::SpookyHasherInit(h, seed.high64(), seed.low64());
-        }
-
-        SpookyHasher128(h)
-    }
-}
 
 impl Default for SpookyHasher128 {
     fn default() -> Self {
@@ -247,15 +172,24 @@ impl HasherExt for SpookyHasher128 {
     }
 }
 
-impl StreamHasher for SpookyHasher128 {}
+impl FastHasher for SpookyHasher128 {
+    type Seed = (u64, u64);
 
-impl BuildHasher for SpookyHash128 {
-    type Hasher = SpookyHasher128;
+    #[inline]
+    fn with_seed(seed: Self::Seed) -> SpookyHasher128 {
+        let h = unsafe { ffi::SpookyHasherNew() };
 
-    fn build_hasher(&self) -> Self::Hasher {
-        SpookyHasher128::new()
+        unsafe {
+            ffi::SpookyHasherInit(h, seed.0, seed.1);
+        }
+
+        SpookyHasher128(h)
     }
 }
+
+impl StreamHasher for SpookyHasher128 {}
+
+impl_fasthash!(SpookyHasher128, SpookyHash128);
 
 /// SpookyHash 32-bit hash functions for a byte array.
 #[inline]
@@ -303,7 +237,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt, StreamHasher};
+    use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
     use super::*;
 
     #[test]
@@ -319,17 +253,6 @@ mod tests {
         assert_eq!(SpookyHash64::hash_with_seed(b"hello", 123),
                    8819086853393477700);
         assert_eq!(SpookyHash64::hash(b"helloworld"), 18412934266828208920);
-
-        let mut h = SpookyHasher64::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 6105954949053820864);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 18412934266828208920);
-
-        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
-        assert_eq!(h.finish(), 6899760100143828040);
     }
 
     #[test]

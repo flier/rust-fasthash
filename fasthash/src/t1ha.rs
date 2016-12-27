@@ -36,7 +36,7 @@
 //! use fasthash::{t1ha, T1haHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = T1haHasher::new();
+//!     let mut s: T1haHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -50,9 +50,9 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
-#[doc(hidden)]
+/// T1ha 64-bit hash functions for 64-bit little-endian platforms.
 pub struct T1ha64Le {}
 
 impl FastHash for T1ha64Le {
@@ -71,7 +71,7 @@ impl FastHash for T1ha64Le {
 
 impl_hasher!(T1ha64LeHasher, T1ha64Le);
 
-#[doc(hidden)]
+/// T1ha 64-bit hash functions for 64-bit big-endian platforms.
 pub struct T1ha64Be {}
 
 impl FastHash for T1ha64Be {
@@ -90,7 +90,7 @@ impl FastHash for T1ha64Be {
 
 impl_hasher!(T1ha64BeHasher, T1ha64Be);
 
-#[doc(hidden)]
+/// T1ha 32-bit hash functions for 32-bit little-endian platforms.
 pub struct T1ha32Le {}
 
 impl FastHash for T1ha32Le {
@@ -109,7 +109,7 @@ impl FastHash for T1ha32Le {
 
 impl_hasher!(T1ha32LeHasher, T1ha32Le);
 
-#[doc(hidden)]
+/// T1ha 32-bit hash functions for 32-bit big-endian platforms.
 pub struct T1ha32Be {}
 
 impl FastHash for T1ha32Be {
@@ -128,8 +128,8 @@ impl FastHash for T1ha32Be {
 
 impl_hasher!(T1ha32BeHasher, T1ha32Be);
 
+/// T1ha 64-bit hash functions using HW CRC instruction for 64-bit little-endian platforms.
 #[cfg(feature = "sse42")]
-#[doc(hidden)]
 pub struct T1ha64Crc {}
 
 #[cfg(feature = "sse42")]
@@ -164,6 +164,7 @@ pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 }
 
 /// T1Hash 64-bit hash functions for a byte array.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Le::hash(v)
@@ -171,6 +172,7 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
 
 /// T1Hash 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Le::hash_with_seed(v, seed)
@@ -180,7 +182,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 /// That require SSE4.2 instructions to be available.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Crc::hash(v)
 }
 
@@ -189,7 +191,7 @@ pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Crc::hash_with_seed(v, seed)
 }
 
@@ -197,7 +199,7 @@ pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 mod tests {
     use std::hash::Hasher;
 
-    use hasher::FastHash;
+    use hasher::{FastHash, FastHasher};
     use super::*;
 
     #[test]
@@ -259,5 +261,21 @@ mod tests {
 
         h.write(b"world");
         assert_eq!(h.finish(), 15825971635414726702);
+    }
+
+    #[test]
+    fn test_t1ha_64_crc() {
+        assert_eq!(T1ha64Crc::hash(b"hello"), 12810198970222070563);
+        assert_eq!(T1ha64Crc::hash_with_seed(b"hello", 123),
+                   7105133355958514544);
+        assert_eq!(T1ha64Crc::hash(b"helloworld"), 16997942636322422782);
+
+        let mut h = T1ha64CrcHasher::new();
+
+        h.write(b"hello");
+        assert_eq!(h.finish(), 12810198970222070563);
+
+        h.write(b"world");
+        assert_eq!(h.finish(), 16997942636322422782);
     }
 }

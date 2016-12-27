@@ -110,7 +110,7 @@
 //! use fasthash::{city, CityHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = CityHasher::new();
+//!     let mut s: CityHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -126,7 +126,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// CityHash 32-bit hash functions
 pub struct CityHash32 {}
@@ -144,7 +144,6 @@ impl FastHash for CityHash32 {
         }
     }
 }
-
 
 impl_hasher!(CityHasher32, CityHash32);
 
@@ -275,6 +274,7 @@ pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
 }
 
 /// CityHash 128-bit hash function for a byte array.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     CityHash128::hash(v)
@@ -282,6 +282,7 @@ pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
 
 /// CityHash 128-bit hash function for a byte array.
 /// For convenience, a 128-bit seed is also hashed into the result.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
     CityHash128::hash_with_seed(v, seed)
@@ -291,7 +292,7 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
 /// That require SSE4.2 instructions to be available.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash128crc<T: AsRef<[u8]>>(v: &T) -> u128 {
+pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     CityHashCrc128::hash(v)
 }
 
@@ -300,7 +301,7 @@ pub fn hash128crc<T: AsRef<[u8]>>(v: &T) -> u128 {
 /// That require SSE4.2 instructions to be available.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash128crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
     CityHashCrc128::hash_with_seed(v, seed)
 }
 
@@ -310,7 +311,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt};
+    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
 
     #[test]
