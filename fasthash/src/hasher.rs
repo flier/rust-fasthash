@@ -44,6 +44,7 @@ pub trait BufHasher: Hasher + AsRef<[u8]> {
 
 /// Hasher in the streaming mode without buffer
 pub trait StreamHasher: Hasher + Sized {
+    /// Writes the stream into this hasher.
     fn write_stream<R: io::Read>(&mut self, r: &mut R) -> io::Result<usize> {
         let mut buf = [0_u8; 4096];
         let mut len = 0;
