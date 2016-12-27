@@ -18,8 +18,6 @@ pub trait Fingerprint<T> {
 /// A seeded factory for instances of Hasher
 /// which a HashMap can then use to hash keys independently.
 pub trait BuildHasherExt: BuildHasher {
-    type FastHasher: FastHasher;
-
     fn build_hasher_with_seed(seed: &Seed) -> Self::Hasher;
 }
 
@@ -249,8 +247,6 @@ macro_rules! impl_fasthash {
         }
 
         impl $crate::hasher::BuildHasherExt for $hash {
-            type FastHasher = $hasher;
-
             #[inline]
             fn build_hasher_with_seed(seed: &$crate::hasher::Seed) -> Self::Hasher {
                 $hasher::with_seed((*seed).into())
