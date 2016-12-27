@@ -24,8 +24,18 @@
 //! using the `HashMap::with_hasher` or
 //! `HashMap::with_capacity_and_hasher` methods.
 //!
-//! It could cowork with any hash functions like `CityHash32` with a build-in seed,
-//! or `RandomState<CityHash64>` with a random seed.
+//! It also cowork with `HashMap` or `HashSet`, act as a hash function
+//!
+//! ```rust
+//! use std::collections::HashSet;
+//!
+//! use fasthash::spooky::SpookyHash128;
+//!
+//! let mut set = HashSet::with_hasher(SpookyHash128 {});
+//! set.insert(2);
+//! ```
+//!
+//! Or use RandomState<CityHash64> with a random seed.
 //!
 //! ```rust
 //! use std::hash::{Hash, Hasher};
