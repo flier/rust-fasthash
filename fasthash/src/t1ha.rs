@@ -164,6 +164,7 @@ pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 }
 
 /// T1Hash 64-bit hash functions for a byte array.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Le::hash(v)
@@ -171,6 +172,7 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
 
 /// T1Hash 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Le::hash_with_seed(v, seed)
@@ -180,7 +182,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 /// That require SSE4.2 instructions to be available.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Crc::hash(v)
 }
 
@@ -189,7 +191,7 @@ pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Crc::hash_with_seed(v, seed)
 }
 
@@ -259,5 +261,21 @@ mod tests {
 
         h.write(b"world");
         assert_eq!(h.finish(), 15825971635414726702);
+    }
+
+    #[test]
+    fn test_t1ha_64_crc() {
+        assert_eq!(T1ha64Crc::hash(b"hello"), 12810198970222070563);
+        assert_eq!(T1ha64Crc::hash_with_seed(b"hello", 123),
+                   7105133355958514544);
+        assert_eq!(T1ha64Crc::hash(b"helloworld"), 16997942636322422782);
+
+        let mut h = T1ha64CrcHasher::new();
+
+        h.write(b"hello");
+        assert_eq!(h.finish(), 12810198970222070563);
+
+        h.write(b"world");
+        assert_eq!(h.finish(), 16997942636322422782);
     }
 }

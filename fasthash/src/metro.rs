@@ -253,6 +253,7 @@ impl FastHash for MetroHash128Crc_2 {
 impl_hasher_ext!(MetroHasher128Crc_2, MetroHash128Crc_2);
 
 /// MetroHash 64-bit hash function for a byte array.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     MetroHash64_1::hash(v)
@@ -260,12 +261,14 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
 
 /// MetroHash 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
     MetroHash64_1::hash_with_seed(v, seed)
 }
 
 /// MetroHash 128-bit hash function for a byte array.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     MetroHash128_1::hash(v)
@@ -273,6 +276,7 @@ pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
 
 /// MetroHash 128-bit hash function for a byte array.
 /// For convenience, a 128-bit seed is also hashed into the result.
+#[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
     MetroHash128_1::hash_with_seed(v, seed)
@@ -281,7 +285,7 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
 /// MetroHash 64-bit hash function for a byte array using HW CRC instruction.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
+pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     MetroHash64Crc_1::hash(v)
 }
 
@@ -289,14 +293,14 @@ pub fn hash64crc<T: AsRef<[u8]>>(v: &T) -> u64 {
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash64crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
     MetroHash64Crc_1::hash_with_seed(v, seed)
 }
 
 /// MetroHash 128-bit hash function for a byte array using HW CRC instruction.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash128crc<T: AsRef<[u8]>>(v: &T) -> u128 {
+pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     MetroHash128Crc_1::hash(v)
 }
 
@@ -304,7 +308,7 @@ pub fn hash128crc<T: AsRef<[u8]>>(v: &T) -> u128 {
 /// For convenience, a 128-bit seed is also hashed into the result.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
-pub fn hash128crc_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
     MetroHash128Crc_1::hash_with_seed(v, seed)
 }
 

@@ -39,9 +39,19 @@ pub mod xx;
 
 pub use hasher::{Fingerprint, FastHash, BufHasher, StreamHasher, HasherExt};
 
-pub use city::{CityHasher64 as CityHasher, CityHasher128 as CityHasherExt};
+pub use city::CityHasher64 as CityHasher;
+#[cfg(not(feature = "sse42"))]
+pub use city::CityHasher128 as CityHasherExt;
+#[cfg(feature = "sse42")]
+pub use city::CityHashCrc128 as CityHasherExt;
+
 pub use farm::{FarmHasher64 as FarmHasher, FarmHasher128 as FarmHasherExt};
+
+#[cfg(not(feature = "sse42"))]
 pub use metro::{MetroHasher64_1 as MetroHasher, MetroHasher128_1 as MetroHasherExt};
+#[cfg(feature = "sse42")]
+pub use metro::{MetroHasher64Crc_1 as MetroHasher, MetroHasher128Crc_1 as MetroHasherExt};
+
 pub use mum::MumHasher;
 pub use murmur::MurmurHasher;
 pub use murmur2::Murmur2Hasher_x64_64 as Murmur2Hasher;
@@ -50,5 +60,10 @@ pub use murmur3::{Murmur3Hasher_x64_128 as Murmur3Hasher,
 #[doc(no_inline)]
 pub use sea::SeaHasher64 as SeaHasher;
 pub use spooky::{SpookyHasher64 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
+
+#[cfg(not(feature = "sse42"))]
 pub use t1ha::T1ha64LeHasher as T1haHasher;
+#[cfg(feature = "sse42")]
+pub use t1ha::T1ha64CrcHasher as T1haHasher;
+
 pub use xx::XXHasher64 as XXHasher;
