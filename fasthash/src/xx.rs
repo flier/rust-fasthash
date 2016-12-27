@@ -77,7 +77,7 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, StreamHasher};
 
 /// xxHash 32-bit hash functions
 pub struct XXHash32 {}
@@ -191,6 +191,8 @@ impl Hasher for XXHasher32 {
     }
 }
 
+impl StreamHasher for XXHasher32 {}
+
 /// An implementation of `std::hash::Hasher`.
 pub struct XXHasher64(*mut ffi::XXH64_state_t);
 
@@ -242,6 +244,8 @@ impl Hasher for XXHasher64 {
     }
 }
 
+impl StreamHasher for XXHasher64 {}
+
 impl BuildHasher for XXHash64 {
     type Hasher = XXHasher64;
 
@@ -252,9 +256,10 @@ impl BuildHasher for XXHash64 {
 
 #[cfg(test)]
 mod tests {
+    use std::io::Cursor;
     use std::hash::Hasher;
 
-    use hasher::FastHash;
+    use hasher::{FastHash, StreamHasher};
     use super::*;
 
     #[test]
@@ -270,6 +275,9 @@ mod tests {
 
         h.write(b"world");
         assert_eq!(h.finish(), 593682946);
+
+        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
+        assert_eq!(h.finish(), 2113960620);
     }
 
     #[test]
@@ -285,5 +293,8 @@ mod tests {
 
         h.write(b"world");
         assert_eq!(h.finish(), 9228181307863624271);
+
+        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
+        assert_eq!(h.finish(), 6304142433100597454);
     }
 }

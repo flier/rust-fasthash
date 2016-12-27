@@ -37,7 +37,7 @@ pub mod spooky;
 pub mod t1ha;
 pub mod xx;
 
-pub use hasher::{Fingerprint, FastHash, HasherExt};
+pub use hasher::{Fingerprint, FastHash, BufHasher, StreamHasher, HasherExt};
 
 pub use city::{CityHasher64 as CityHasher, CityHasher128 as CityHasherExt};
 pub use farm::{FarmHasher64 as FarmHasher, FarmHasher128 as FarmHasherExt};

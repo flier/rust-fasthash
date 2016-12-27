@@ -1,4 +1,5 @@
 use std::mem;
+use std::io;
 
 use std::hash::Hasher;
 
@@ -23,6 +24,60 @@ pub trait FastHash {
     /// Hash functions for a byte array.
     fn hash<T: AsRef<[u8]>>(bytes: &T) -> Self::Value {
         Self::hash_with_seed(bytes, Default::default())
+    }
+}
+
+/// Hasher in the buffer mode for short key
+pub trait BufHasher: Hasher + AsRef<[u8]> {
+    /// Returns the number of bytes in the buffer.
+    #[inline]
+    fn len(&self) -> usize {
+        self.as_ref().len()
+    }
+
+    /// Extracts a slice containing the entire buffer.
+    #[inline]
+    fn as_slice(&self) -> &[u8] {
+        self.as_ref()
+    }
+}
+
+/// Hasher in the streaming mode without buffer
+pub trait StreamHasher: Hasher + Sized {
+    fn write_stream<R: io::Read>(&mut self, r: &mut R) -> io::Result<usize> {
+        let mut buf = [0_u8; 4096];
+        let mut len = 0;
+        let mut pos = 0;
+        let ret;
+
+        loop {
+            if pos == buf.len() {
+                self.write(&buf[..]);
+                pos = 0;
+            }
+
+            match r.read(&mut buf[pos..]) {
+                Ok(0) => {
+                    ret = Ok(len);
+                    break;
+                }
+                Ok(n) => {
+                    len += n;
+                    pos += n;
+                }
+                Err(ref e) if e.kind() == io::ErrorKind::Interrupted => {}
+                Err(e) => {
+                    ret = Err(e);
+                    break;
+                }
+            }
+        }
+
+        if pos > 0 {
+            self.write(&buf[..pos])
+        }
+
+        ret
     }
 }
 
@@ -85,6 +140,14 @@ macro_rules! impl_hasher {
                 self.bytes.extend_from_slice(bytes)
             }
         }
+
+        impl ::std::convert::AsRef<[u8]> for $hasher {
+            fn as_ref(&self) -> &[u8] {
+                &self.bytes
+            }
+        }
+
+        impl $crate::hasher::BufHasher for $hasher {}
 
         impl ::std::hash::BuildHasher for $hash {
             type Hasher = $hasher;
@@ -149,6 +212,14 @@ macro_rules! impl_hasher_ext {
                 self._final()
             }
         }
+
+        impl ::std::convert::AsRef<[u8]> for $hasher {
+            fn as_ref(&self) -> &[u8] {
+                &self.bytes
+            }
+        }
+
+        impl $crate::hasher::BufHasher for $hasher {}
 
         impl ::std::hash::BuildHasher for $hash {
             type Hasher = $hasher;

@@ -51,7 +51,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::{FastHash, HasherExt};
+use hasher::{FastHash, HasherExt, StreamHasher};
 
 /// SpookyHash 32-bit hash functions
 pub struct SpookyHash32 {}
@@ -173,6 +173,8 @@ impl Hasher for SpookyHasher64 {
     }
 }
 
+impl StreamHasher for SpookyHasher64 {}
+
 impl BuildHasher for SpookyHash64 {
     type Hasher = SpookyHasher64;
 
@@ -245,6 +247,8 @@ impl HasherExt for SpookyHasher128 {
     }
 }
 
+impl StreamHasher for SpookyHasher128 {}
+
 impl BuildHasher for SpookyHash128 {
     type Hasher = SpookyHasher128;
 
@@ -294,11 +298,12 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
 
 #[cfg(test)]
 mod tests {
+    use std::io::Cursor;
     use std::hash::Hasher;
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt};
+    use hasher::{FastHash, HasherExt, StreamHasher};
     use super::*;
 
     #[test]
@@ -322,6 +327,9 @@ mod tests {
 
         h.write(b"world");
         assert_eq!(h.finish(), 18412934266828208920);
+
+        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
+        assert_eq!(h.finish(), 6899760100143828040);
     }
 
     #[test]
@@ -342,5 +350,8 @@ mod tests {
         h.write(b"world");
         assert_eq!(h.finish_ext(),
                    u128::from_parts(18412934266828208920, 13883738476858207693));
+
+        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
+        assert_eq!(h.finish(), 2977683714085165920);
     }
 }

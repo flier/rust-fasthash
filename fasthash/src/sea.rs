@@ -29,7 +29,9 @@ use std::hash::BuildHasher;
 
 use seahash;
 
-use hasher::FastHash;
+pub use seahash::{SeaHasher as SeaHasher64, hash as hash64, hash_seeded as hash_with_seeds};
+
+use hasher::{FastHash, StreamHasher};
 
 /// SeaHash 64-bit hash functions
 pub struct SeaHash {}
@@ -57,7 +59,7 @@ impl BuildHasher for SeaHash {
     }
 }
 
-pub use seahash::{SeaHasher as SeaHasher64, hash as hash64, hash_seeded as hash_with_seeds};
+impl StreamHasher for SeaHasher64 {}
 
 #[cfg(test)]
 mod tests {
