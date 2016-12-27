@@ -52,7 +52,7 @@ use ffi;
 
 use hasher::FastHash;
 
-#[doc(hidden)]
+/// T1ha 64-bit hash functions for 64-bit little-endian platforms.
 pub struct T1ha64Le {}
 
 impl FastHash for T1ha64Le {
@@ -71,7 +71,7 @@ impl FastHash for T1ha64Le {
 
 impl_hasher!(T1ha64LeHasher, T1ha64Le);
 
-#[doc(hidden)]
+/// T1ha 64-bit hash functions for 64-bit big-endian platforms.
 pub struct T1ha64Be {}
 
 impl FastHash for T1ha64Be {
@@ -90,7 +90,7 @@ impl FastHash for T1ha64Be {
 
 impl_hasher!(T1ha64BeHasher, T1ha64Be);
 
-#[doc(hidden)]
+/// T1ha 32-bit hash functions for 32-bit little-endian platforms.
 pub struct T1ha32Le {}
 
 impl FastHash for T1ha32Le {
@@ -109,7 +109,7 @@ impl FastHash for T1ha32Le {
 
 impl_hasher!(T1ha32LeHasher, T1ha32Le);
 
-#[doc(hidden)]
+/// T1ha 32-bit hash functions for 32-bit big-endian platforms.
 pub struct T1ha32Be {}
 
 impl FastHash for T1ha32Be {
@@ -128,8 +128,8 @@ impl FastHash for T1ha32Be {
 
 impl_hasher!(T1ha32BeHasher, T1ha32Be);
 
+/// T1ha 64-bit hash functions using HW CRC instruction for 64-bit little-endian platforms.
 #[cfg(feature = "sse42")]
-#[doc(hidden)]
 pub struct T1ha64Crc {}
 
 #[cfg(feature = "sse42")]
