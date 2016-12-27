@@ -110,7 +110,7 @@
 //! use fasthash::{city, CityHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = CityHasher::new();
+//!     let mut s: CityHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -126,7 +126,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// CityHash 32-bit hash functions
 pub struct CityHash32 {}
@@ -144,7 +144,6 @@ impl FastHash for CityHash32 {
         }
     }
 }
-
 
 impl_hasher!(CityHasher32, CityHash32);
 
@@ -312,7 +311,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt};
+    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
 
     #[test]

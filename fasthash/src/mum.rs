@@ -1,4 +1,4 @@
-//! MUM Hash, Hashing functions and PRNGs based on them
+//! MumHash, Hashing functions and PRNGs based on them
 //!
 //! by Vladimir Makarov <vmakarov@gcc.gnu.org>
 //!
@@ -42,7 +42,7 @@
 //! use fasthash::{mum, MumHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = MumHasher::new();
+//!     let mut s: MumHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -57,7 +57,7 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// FarmHash 64-bit hash functions
 pub struct MumHash {}
@@ -95,7 +95,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 mod tests {
     use std::hash::Hasher;
 
-    use hasher::FastHash;
+    use hasher::{FastHash, FastHasher};
     use super::*;
 
     #[test]

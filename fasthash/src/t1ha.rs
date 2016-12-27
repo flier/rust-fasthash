@@ -36,7 +36,7 @@
 //! use fasthash::{t1ha, T1haHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = T1haHasher::new();
+//!     let mut s: T1haHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -50,7 +50,7 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// T1ha 64-bit hash functions for 64-bit little-endian platforms.
 pub struct T1ha64Le {}
@@ -199,7 +199,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 mod tests {
     use std::hash::Hasher;
 
-    use hasher::FastHash;
+    use hasher::{FastHash, FastHasher};
     use super::*;
 
     #[test]
