@@ -143,6 +143,7 @@ macro_rules! impl_hasher {
         }
 
         impl ::std::convert::AsRef<[u8]> for $hasher {
+            #[inline]
             fn as_ref(&self) -> &[u8] {
                 &self.bytes
             }
@@ -153,6 +154,7 @@ macro_rules! impl_hasher {
         impl ::std::hash::BuildHasher for $hash {
             type Hasher = $hasher;
 
+            #[inline]
             fn build_hasher(&self) -> Self::Hasher {
                 $hasher::new()
             }
@@ -215,6 +217,7 @@ macro_rules! impl_hasher_ext {
         }
 
         impl ::std::convert::AsRef<[u8]> for $hasher {
+            #[inline]
             fn as_ref(&self) -> &[u8] {
                 &self.bytes
             }
@@ -225,6 +228,7 @@ macro_rules! impl_hasher_ext {
         impl ::std::hash::BuildHasher for $hash {
             type Hasher = $hasher;
 
+            #[inline]
             fn build_hasher(&self) -> Self::Hasher {
                 $hasher::new()
             }
