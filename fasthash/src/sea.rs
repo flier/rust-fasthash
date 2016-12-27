@@ -15,7 +15,7 @@
 //! use fasthash::{sea, SeaHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = SeaHasher::new();
+//!     let mut s: SeaHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }

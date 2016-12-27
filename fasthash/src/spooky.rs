@@ -34,7 +34,7 @@
 //! use fasthash::{spooky, SpookyHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = SpookyHasher::new();
+//!     let mut s: SpookyHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -51,7 +51,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::{FastHash, HasherExt, StreamHasher};
+use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 
 /// SpookyHash 32-bit hash functions
 pub struct SpookyHash32 {}
@@ -125,24 +125,6 @@ impl FastHash for SpookyHash128 {
 /// An implementation of `std::hash::Hasher`.
 pub struct SpookyHasher64(*mut c_void);
 
-impl SpookyHasher64 {
-    #[inline]
-    pub fn new() -> SpookyHasher64 {
-        Self::with_seed(0)
-    }
-
-    #[inline]
-    pub fn with_seed(seed: u64) -> SpookyHasher64 {
-        let h = unsafe { ffi::SpookyHasherNew() };
-
-        unsafe {
-            ffi::SpookyHasherInit(h, seed, seed);
-        }
-
-        SpookyHasher64(h)
-    }
-}
-
 impl Default for SpookyHasher64 {
     #[inline]
     fn default() -> Self {
@@ -173,6 +155,21 @@ impl Hasher for SpookyHasher64 {
     }
 }
 
+impl FastHasher for SpookyHasher64 {
+    type Seed = u64;
+
+    #[inline]
+    fn with_seed(seed: u64) -> SpookyHasher64 {
+        let h = unsafe { ffi::SpookyHasherNew() };
+
+        unsafe {
+            ffi::SpookyHasherInit(h, seed, seed);
+        }
+
+        SpookyHasher64(h)
+    }
+}
+
 impl StreamHasher for SpookyHasher64 {}
 
 impl BuildHasher for SpookyHash64 {
@@ -185,24 +182,6 @@ impl BuildHasher for SpookyHash64 {
 
 /// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
 pub struct SpookyHasher128(*mut c_void);
-
-impl SpookyHasher128 {
-    #[inline]
-    pub fn new() -> SpookyHasher128 {
-        Self::with_seed(u128::new(0))
-    }
-
-    #[inline]
-    pub fn with_seed(seed: u128) -> SpookyHasher128 {
-        let h = unsafe { ffi::SpookyHasherNew() };
-
-        unsafe {
-            ffi::SpookyHasherInit(h, seed.high64(), seed.low64());
-        }
-
-        SpookyHasher128(h)
-    }
-}
 
 impl Default for SpookyHasher128 {
     fn default() -> Self {
@@ -244,6 +223,21 @@ impl HasherExt for SpookyHasher128 {
         }
 
         u128::from_parts(hash1, hash2)
+    }
+}
+
+impl FastHasher for SpookyHasher128 {
+    type Seed = u128;
+
+    #[inline]
+    fn with_seed(seed: u128) -> SpookyHasher128 {
+        let h = unsafe { ffi::SpookyHasherNew() };
+
+        unsafe {
+            ffi::SpookyHasherInit(h, seed.high64(), seed.low64());
+        }
+
+        SpookyHasher128(h)
     }
 }
 
@@ -303,7 +297,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt, StreamHasher};
+    use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
     use super::*;
 
     #[test]

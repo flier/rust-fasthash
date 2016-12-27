@@ -2,13 +2,13 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use std::hash::{Hash, Hasher};
 //!
 //! use fasthash::{metro, MetroHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = MetroHasher::new();
+//!     let mut s: MetroHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -18,8 +18,35 @@
 //! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
+//! By default, HashMap uses a hashing algorithm selected to
+//! provide resistance against HashDoS attacks.
+//! The hashing algorithm can be replaced on a per-HashMap basis
+//! using the `HashMap::with_hasher` or
+//! `HashMap::with_capacity_and_hasher` methods.
+//!
+//! It could cowork with any hash functions like `CityHash32` with a fixed seed,
+//! or `RandomState<CityHash64>` with a random seed.
+//!
+//! ```rust
+//! use std::hash::{Hash, Hasher};
+//! use std::collections::HashMap;
+//!
+//! use fasthash::RandomState;
+//! use fasthash::city::CityHash64;
+//!
+//! let s: RandomState<CityHash64> = Default::default();
+//! let mut map = HashMap::with_hasher(s);
+//!
+//! assert_eq!(map.insert(37, "a"), None);
+//! assert_eq!(map.is_empty(), false);
+//!
+//! map.insert(37, "b");
+//! assert_eq!(map.insert(37, "c"), Some("b"));
+//! assert_eq!(map[&37], "c");
+//! ```
 
 extern crate extprim;
+extern crate rand;
 extern crate seahash;
 extern crate fasthash_sys as ffi;
 
@@ -38,7 +65,8 @@ pub mod spooky;
 pub mod t1ha;
 pub mod xx;
 
-pub use hasher::{Fingerprint, FastHash, BufHasher, StreamHasher, HasherExt};
+pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt, Seed,
+                 RandomState};
 
 pub use city::CityHasher64 as CityHasher;
 #[cfg(not(feature = "sse42"))]

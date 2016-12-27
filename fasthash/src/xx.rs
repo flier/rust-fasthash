@@ -62,7 +62,7 @@
 //! use fasthash::{xx, XXHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = XXHasher::new();
+//!     let mut s: XXHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -77,7 +77,7 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::{FastHash, StreamHasher};
+use hasher::{FastHash, FastHasher, StreamHasher};
 
 /// xxHash 32-bit hash functions
 pub struct XXHash32 {}
@@ -142,24 +142,6 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 /// An implementation of `std::hash::Hasher`.
 pub struct XXHasher32(*mut ffi::XXH32_state_t);
 
-impl XXHasher32 {
-    #[inline]
-    pub fn new() -> Self {
-        Self::with_seed(0)
-    }
-
-    #[inline]
-    pub fn with_seed(seed: u32) -> Self {
-        let h = unsafe { ffi::XXH32_createState() };
-
-        unsafe {
-            ffi::XXH32_reset(h, seed);
-        }
-
-        XXHasher32(h)
-    }
-}
-
 impl Default for XXHasher32 {
     fn default() -> Self {
         Self::new()
@@ -191,28 +173,25 @@ impl Hasher for XXHasher32 {
     }
 }
 
+impl FastHasher for XXHasher32 {
+    type Seed = u32;
+
+    #[inline]
+    fn with_seed(seed: u32) -> Self {
+        let h = unsafe { ffi::XXH32_createState() };
+
+        unsafe {
+            ffi::XXH32_reset(h, seed);
+        }
+
+        XXHasher32(h)
+    }
+}
+
 impl StreamHasher for XXHasher32 {}
 
 /// An implementation of `std::hash::Hasher`.
 pub struct XXHasher64(*mut ffi::XXH64_state_t);
-
-impl XXHasher64 {
-    #[inline]
-    pub fn new() -> Self {
-        Self::with_seed(0)
-    }
-
-    #[inline]
-    pub fn with_seed(seed: u64) -> Self {
-        let h = unsafe { ffi::XXH64_createState() };
-
-        unsafe {
-            ffi::XXH64_reset(h, seed);
-        }
-
-        XXHasher64(h)
-    }
-}
 
 impl Default for XXHasher64 {
     fn default() -> Self {
@@ -244,6 +223,21 @@ impl Hasher for XXHasher64 {
     }
 }
 
+impl FastHasher for XXHasher64 {
+    type Seed = u64;
+
+    #[inline]
+    fn with_seed(seed: u64) -> Self {
+        let h = unsafe { ffi::XXH64_createState() };
+
+        unsafe {
+            ffi::XXH64_reset(h, seed);
+        }
+
+        XXHasher64(h)
+    }
+}
+
 impl StreamHasher for XXHasher64 {}
 
 impl BuildHasher for XXHash64 {
@@ -259,7 +253,7 @@ mod tests {
     use std::io::Cursor;
     use std::hash::Hasher;
 
-    use hasher::{FastHash, StreamHasher};
+    use hasher::{FastHash, FastHasher, StreamHasher};
     use super::*;
 
     #[test]

@@ -30,7 +30,7 @@
 //! use fasthash::{murmur, MurmurHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = MurmurHasher::new();
+//!     let mut s: MurmurHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -44,7 +44,7 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// MurmurHash 32-bit hash functions
 pub struct Murmur {}
@@ -114,7 +114,7 @@ pub fn hash32_aligned_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
 mod tests {
     use std::hash::Hasher;
 
-    use hasher::FastHash;
+    use hasher::{FastHash, FastHasher};
     use super::*;
 
     #[test]

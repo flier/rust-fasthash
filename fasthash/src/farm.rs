@@ -108,7 +108,7 @@
 //! use fasthash::{farm, FarmHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = FarmHasher::new();
+//!     let mut s: FarmHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -124,7 +124,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::{Fingerprint, FastHash};
+use hasher::{Fingerprint, FastHash, FastHasher};
 
 /// FarmHash 32-bit hash functions
 pub struct FarmHash32 {}
@@ -319,7 +319,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{Fingerprint, FastHash, HasherExt};
+    use hasher::{Fingerprint, FastHash, FastHasher, HasherExt};
     use super::*;
 
     #[test]
