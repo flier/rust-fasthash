@@ -4,7 +4,7 @@ A suite of non-cryptographic hash functions for Rust, base on a forked [smhasher
 ## API Document
 
 - [master](https://flier.github.io/rust-fasthash/docs/master/fasthash/index.html)
-- [v0.2.0](https://flier.github.io/rust-fasthash/docs/v0.2.0/fasthash/index.html)
+- [v0.2.1](https://flier.github.io/rust-fasthash/docs/v0.2.1/fasthash/index.html)
 
 # Usage
 
