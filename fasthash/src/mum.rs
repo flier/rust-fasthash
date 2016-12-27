@@ -1,4 +1,4 @@
-//! MUM Hash, Hashing functions and PRNGs based on them
+//! MumHash, Hashing functions and PRNGs based on them
 //!
 //! by Vladimir Makarov <vmakarov@gcc.gnu.org>
 //!

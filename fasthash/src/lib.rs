@@ -68,11 +68,10 @@ pub mod xx;
 pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt,
                  BuildHasherExt, RandomState};
 
-pub use city::CityHasher64 as CityHasher;
 #[cfg(not(feature = "sse42"))]
-pub use city::CityHasher128 as CityHasherExt;
+pub use city::{CityHasher64 as CityHasher, CityHasher128 as CityHasherExt};
 #[cfg(feature = "sse42")]
-pub use city::CityHasherCrc128 as CityHasherExt;
+pub use city::{CityHasher64 as CityHasher, CityHasherCrc128 as CityHasherExt};
 
 pub use farm::{FarmHasher64 as FarmHasher, FarmHasher128 as FarmHasherExt};
 pub use lookup3::Lookup3Hasher;

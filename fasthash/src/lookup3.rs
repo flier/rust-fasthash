@@ -1,4 +1,4 @@
-//! lookup3, non-cryptographic hash.
+//! Lookup3, non-cryptographic hash.
 //!
 //! by Bob Jekins
 //!

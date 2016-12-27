@@ -15,7 +15,7 @@ pub trait Fingerprint<T> {
     fn fingerprint(&self) -> T;
 }
 
-/// A BuildHasherExt is typically used as a seeded factory for instances of Hasher
+/// A seeded factory for instances of Hasher
 /// which a HashMap can then use to hash keys independently.
 pub trait BuildHasherExt: BuildHasher {
     type FastHasher: FastHasher;
@@ -207,12 +207,12 @@ impl From<Seed> for (u64, u64, u64, u64) {
 /// assert_eq!(map.insert(37, "c"), Some("b"));
 /// assert_eq!(map[&37], "c");
 /// ```
-pub struct RandomState<T: FastHash + BuildHasherExt> {
+pub struct RandomState<T: FastHash> {
     seed: Seed,
     phantom: PhantomData<T>,
 }
 
-impl<T: FastHash + BuildHasherExt> RandomState<T> {
+impl<T: FastHash> RandomState<T> {
     pub fn new() -> Self {
         RandomState {
             seed: Seed::gen(),
@@ -221,16 +221,16 @@ impl<T: FastHash + BuildHasherExt> RandomState<T> {
     }
 }
 
-impl<T: FastHash + BuildHasherExt> BuildHasher for RandomState<T> {
+impl<T: FastHash> BuildHasher for RandomState<T> {
     type Hasher = T::Hasher;
 
     #[inline]
     fn build_hasher(&self) -> Self::Hasher {
-        <T as BuildHasherExt>::build_hasher_with_seed(&self.seed)
+        T::build_hasher_with_seed(&self.seed)
     }
 }
 
-impl<T: FastHash + BuildHasherExt> Default for RandomState<T> {
+impl<T: FastHash> Default for RandomState<T> {
     fn default() -> Self {
         RandomState::new()
     }
