@@ -27,6 +27,7 @@ extern crate fasthash_sys as ffi;
 mod hasher;
 pub mod city;
 pub mod farm;
+pub mod lookup3;
 pub mod metro;
 pub mod mum;
 pub mod murmur;
@@ -43,9 +44,10 @@ pub use city::CityHasher64 as CityHasher;
 #[cfg(not(feature = "sse42"))]
 pub use city::CityHasher128 as CityHasherExt;
 #[cfg(feature = "sse42")]
-pub use city::CityHashCrc128 as CityHasherExt;
+pub use city::CityHasherCrc128 as CityHasherExt;
 
 pub use farm::{FarmHasher64 as FarmHasher, FarmHasher128 as FarmHasherExt};
+pub use lookup3::Lookup3Hasher;
 
 #[cfg(not(feature = "sse42"))]
 pub use metro::{MetroHasher64_1 as MetroHasher, MetroHasher128_1 as MetroHasherExt};

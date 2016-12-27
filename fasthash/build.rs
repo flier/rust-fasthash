@@ -24,6 +24,7 @@ fn main() {
 
     let hashes = vec![("city", vec!["CityHash32", "CityHash64", "CityHash128", "CityHashCrc128"]),
                       ("farm", vec!["FarmHash32", "FarmHash64", "FarmHash128"]),
+                      ("lookup3", vec!["Lookup3"]),
                       ("metro",
                        vec!["MetroHash64_1",
                             "MetroHash64_2",
@@ -72,6 +73,7 @@ fn bench_{name}_key_{keysize}(b: &mut Bencher) {{
                        "CityHasherExt",
                        "FarmHasher",
                        "FarmHasherExt",
+                       "Lookup3Hasher",
                        "MetroHasher",
                        "MetroHasherExt",
                        "MumHasher",
