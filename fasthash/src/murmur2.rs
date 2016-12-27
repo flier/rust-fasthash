@@ -86,7 +86,7 @@ impl FastHash for Murmur2 {
     }
 }
 
-impl_hasher!(MurmurHasher2, Murmur2);
+impl_hasher!(Murmur2Hasher, Murmur2);
 
 /// MurmurHash2A 32-bit hash functions
 pub struct Murmur2A {}
@@ -105,7 +105,7 @@ impl FastHash for Murmur2A {
     }
 }
 
-impl_hasher!(MurmurHasher2A, Murmur2A);
+impl_hasher!(Murmur2AHasher, Murmur2A);
 
 /// MurmurHash2 32-bit neutral hash functions for the (slower) endian-neutral implementation
 pub struct MurmurNeutral2 {}
@@ -186,14 +186,14 @@ impl_hasher!(Murmur2Hasher_x86_64, Murmur2_x86_64);
 /// MurmurHash2 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    Murmur2::hash(v)
+    Murmur2A::hash(v)
 }
 
 /// MurmurHash2 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    Murmur2::hash_with_seed(v, seed)
+    Murmur2A::hash_with_seed(v, seed)
 }
 
 /// MurmurHash2 64-bit hash functions for a byte array.
@@ -222,7 +222,7 @@ mod tests {
         assert_eq!(Murmur2::hash_with_seed(b"hello", 123), 2385981934);
         assert_eq!(Murmur2::hash(b"helloworld"), 2155944146);
 
-        let mut h = MurmurHasher2::new();
+        let mut h = Murmur2Hasher::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 3848350155);
@@ -237,7 +237,7 @@ mod tests {
         assert_eq!(Murmur2A::hash_with_seed(b"hello", 123), 509510832);
         assert_eq!(Murmur2A::hash(b"helloworld"), 403945221);
 
-        let mut h = MurmurHasher2A::new();
+        let mut h = Murmur2AHasher::new();
 
         h.write(b"hello");
         assert_eq!(h.finish(), 259931098);
