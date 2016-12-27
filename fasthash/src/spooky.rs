@@ -76,6 +76,8 @@ impl FastHash for SpookyHash32 {
     }
 }
 
+impl_fasthash!(SpookyHasher128, SpookyHash32);
+
 /// SpookyHash 64-bit hash functions
 pub struct SpookyHash64 {}
 
@@ -98,6 +100,8 @@ impl FastHash for SpookyHash64 {
         hash1
     }
 }
+
+impl_fasthash!(SpookyHasher128, SpookyHash64);
 
 /// SpookyHash 128-bit hash functions
 pub struct SpookyHash128 {}

@@ -15,6 +15,8 @@ pub trait Fingerprint<T> {
     fn fingerprint(&self) -> T;
 }
 
+/// A BuildHasherExt is typically used as a seeded factory for instances of Hasher
+/// which a HashMap can then use to hash keys independently.
 pub trait BuildHasherExt: BuildHasher {
     type FastHasher: FastHasher;
 
@@ -22,7 +24,7 @@ pub trait BuildHasherExt: BuildHasher {
 }
 
 /// Fast non-cryptographic hash functions
-pub trait FastHash {
+pub trait FastHash: BuildHasherExt {
     type Value;
     type Seed: Default + Copy;
 
@@ -409,7 +411,7 @@ mod tests {
                   Murmur2_x86_64};
     use murmur3::{Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128};
     use sea::SeaHash;
-    use spooky::SpookyHash128;
+    use spooky::{SpookyHash32, SpookyHash64, SpookyHash128};
     use t1ha::{T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be, T1ha64Crc};
     use xx::{XXHash32, XXHash64};
     use super::*;
@@ -505,7 +507,7 @@ mod tests {
                                    Murmur2_x64_64, Murmur2_x86_64];
         test_hashmap_with_hashers![Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128];
         test_hashmap_with_hashers![SeaHash];
-        test_hashmap_with_hashers![SpookyHash128];
+        test_hashmap_with_hashers![SpookyHash32, SpookyHash64, SpookyHash128];
         test_hashmap_with_hashers![T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be, T1ha64Crc];
         test_hashmap_with_hashers![XXHash32, XXHash64];
     }

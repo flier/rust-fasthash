@@ -65,8 +65,8 @@ pub mod spooky;
 pub mod t1ha;
 pub mod xx;
 
-pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt, Seed,
-                 RandomState};
+pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt,
+                 BuildHasherExt, RandomState};
 
 pub use city::CityHasher64 as CityHasher;
 #[cfg(not(feature = "sse42"))]
