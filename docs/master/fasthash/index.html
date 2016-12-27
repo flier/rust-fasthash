@@ -64,7 +64,7 @@
 
 <span class='kw'>let</span> <span class='ident'>h</span> <span class='op'>=</span> <span class='ident'>metro</span>::<span class='ident'>hash64</span>(<span class='string'>b&quot;hello world\xff&quot;</span>);
 
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>h</span>, <span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;hello world&quot;</span>));</pre>
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>h</span>, <span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;hello world&quot;</span>));<a class='test-arrow' target='_blank' href=''>Run</a></pre>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>pub use city::{<a class='struct' href='../fasthash/city/struct.CityHasher64.html' title='fasthash::city::CityHasher64'>CityHasher64</a> as CityHasher, <a class='struct' href='../fasthash/city/struct.CityHasher128.html' title='fasthash::city::CityHasher128'>CityHasher128</a> as CityHasherExt};</code></td></tr><tr><td><code>pub use farm::{<a class='struct' href='../fasthash/farm/struct.FarmHasher64.html' title='fasthash::farm::FarmHasher64'>FarmHasher64</a> as FarmHasher, <a class='struct' href='../fasthash/farm/struct.FarmHasher128.html' title='fasthash::farm::FarmHasher128'>FarmHasher128</a> as FarmHasherExt};</code></td></tr><tr><td><code>pub use metro::{<a class='struct' href='../fasthash/metro/struct.MetroHasher64_1.html' title='fasthash::metro::MetroHasher64_1'>MetroHasher64_1</a> as MetroHasher, <a class='struct' href='../fasthash/metro/struct.MetroHasher128_1.html' title='fasthash::metro::MetroHasher128_1'>MetroHasher128_1</a> as MetroHasherExt};</code></td></tr><tr><td><code>pub use mum::<a class='struct' href='../fasthash/mum/struct.MumHasher.html' title='fasthash::mum::MumHasher'>MumHasher</a>;</code></td></tr><tr><td><code>pub use murmur::<a class='struct' href='../fasthash/murmur/struct.MurmurHasher.html' title='fasthash::murmur::MurmurHasher'>MurmurHasher</a>;</code></td></tr><tr><td><code>pub use murmur2::<a class='struct' href='../fasthash/murmur2/struct.Murmur2Hasher_x64_64.html' title='fasthash::murmur2::Murmur2Hasher_x64_64'>Murmur2Hasher_x64_64</a> as Murmur2Hasher;</code></td></tr><tr><td><code>pub use murmur3::{<a class='struct' href='../fasthash/murmur3/struct.Murmur3Hasher_x64_128.html' title='fasthash::murmur3::Murmur3Hasher_x64_128'>Murmur3Hasher_x64_128</a> as Murmur3Hasher, <a class='struct' href='../fasthash/murmur3/struct.Murmur3Hasher_x64_128.html' title='fasthash::murmur3::Murmur3Hasher_x64_128'>Murmur3Hasher_x64_128</a> as Murmur3HasherExt};</code></td></tr><tr><td><code>pub use sea::<a class='struct' href='../fasthash/sea/struct.SeaHasher64.html' title='fasthash::sea::SeaHasher64'>SeaHasher64</a> as SeaHasher;</code></td></tr><tr><td><code>pub use spooky::{<a class='struct' href='../fasthash/spooky/struct.SpookyHasher64.html' title='fasthash::spooky::SpookyHasher64'>SpookyHasher64</a> as SpookyHasher, <a class='struct' href='../fasthash/spooky/struct.SpookyHasher128.html' title='fasthash::spooky::SpookyHasher128'>SpookyHasher128</a> as SpookyHasherExt};</code></td></tr><tr><td><code>pub use t1ha::<a class='struct' href='../fasthash/t1ha/struct.T1ha64LeHasher.html' title='fasthash::t1ha::T1ha64LeHasher'>T1ha64LeHasher</a> as T1haHasher;</code></td></tr><tr><td><code>pub use xx::<a class='struct' href='../fasthash/xx/struct.XXHasher64.html' title='fasthash::xx::XXHasher64'>XXHasher64</a> as XXHasher;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
@@ -147,6 +147,13 @@
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
                        <tr class=' module-item'>
+                           <td><a class='trait' href='trait.BufHasher.html'
+                                  title='fasthash::BufHasher'>BufHasher</a></td>
+                           <td class='docblock-short'>
+                                <p>Hasher in the buffer mode for short key</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class='trait' href='trait.FastHash.html'
                                   title='fasthash::FastHash'>FastHash</a></td>
                            <td class='docblock-short'>
@@ -165,6 +172,13 @@
                                   title='fasthash::HasherExt'>HasherExt</a></td>
                            <td class='docblock-short'>
                                 <p>A trait which represents the ability to hash an arbitrary stream of bytes.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='trait' href='trait.StreamHasher.html'
+                                  title='fasthash::StreamHasher'>StreamHasher</a></td>
+                           <td class='docblock-short'>
+                                <p>Hasher in the streaming mode without buffer</p>
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -222,9 +236,11 @@
     <script>
         window.rootPath = "../";
         window.currentCrate = "fasthash";
+        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
+    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

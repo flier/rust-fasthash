@@ -47,16 +47,16 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-265' class='srclink' href='../../src/fasthash/src/metro.rs.html#203' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-712' class='srclink' href='../../src/fasthash/src/metro.rs.html#203' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct MetroHash128Crc_1 {}</pre><div class='docblock'><p>MetroHash 128-bit hash functions using HW CRC instruction.</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='../../fasthash/trait.FastHash.html' title='fasthash::FastHash'>FastHash</a> for <a class='struct' href='../../fasthash/metro/struct.MetroHash128Crc_1.html' title='fasthash::metro::MetroHash128Crc_1'>MetroHash128Crc_1</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-266' class='srclink' href='../../src/fasthash/src/metro.rs.html#206-223' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='../../fasthash/trait.FastHash.html' title='fasthash::FastHash'>FastHash</a> for <a class='struct' href='../../fasthash/metro/struct.MetroHash128Crc_1.html' title='fasthash::metro::MetroHash128Crc_1'>MetroHash128Crc_1</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-713' class='srclink' href='../../src/fasthash/src/metro.rs.html#206-223' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Value' class='type'><span id='Value.t' class='invisible'><code>type <a href='../../fasthash/trait.FastHash.html#associatedtype.Value' class='type'>Value</a> = u128</code></span></h4>
 <h4 id='associatedtype.Seed' class='type'><span id='Seed.t' class='invisible'><code>type <a href='../../fasthash/trait.FastHash.html#associatedtype.Seed' class='type'>Seed</a> = <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a></code></span></h4>
 <h4 id='method.hash_with_seed' class='method'><span id='hash_with_seed.v' class='invisible'><code>fn <a href='../../fasthash/trait.FastHash.html#tymethod.hash_with_seed' class='fnname'>hash_with_seed</a>&lt;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>[</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>&gt;&gt;(bytes: &amp;T, seed: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>) -&gt; u128</code></span></h4>
 <div class='docblock'><p>Hash functions for a byte array. For convenience, a seed is also hashed into the result. <a href="../../fasthash/trait.FastHash.html#tymethod.hash_with_seed">Read more</a></p>
 </div><h4 id='method.hash' class='method'><span id='hash.v' class='invisible'><code>fn <a href='../../fasthash/trait.FastHash.html#method.hash' class='fnname'>hash</a>&lt;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>[</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>&gt;&gt;(bytes: &amp;T) -&gt; Self::Value</code></span></h4>
 <div class='docblock'><p>Hash functions for a byte array.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.BuildHasher.html' title='core::hash::BuildHasher'>BuildHasher</a> for <a class='struct' href='../../fasthash/metro/struct.MetroHash128Crc_1.html' title='fasthash::metro::MetroHash128Crc_1'>MetroHash128Crc_1</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1152' class='srclink' href='../../src/fasthash/src/hasher.rs.html#153-159' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.BuildHasher.html' title='core::hash::BuildHasher'>BuildHasher</a> for <a class='struct' href='../../fasthash/metro/struct.MetroHash128Crc_1.html' title='fasthash::metro::MetroHash128Crc_1'>MetroHash128Crc_1</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-753' class='srclink' href='../../src/fasthash/src/hasher.rs.html#225-231' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Hasher' class='type'><span id='Hasher.t' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/hash/trait.BuildHasher.html#associatedtype.Hasher' class='type'>Hasher</a> = <a class='struct' href='../../fasthash/metro/struct.MetroHasher128Crc_1.html' title='fasthash::metro::MetroHasher128Crc_1'>MetroHasher128Crc_1</a></code></span></h4>
 <div class='docblock'><p>Type of the hasher that will be created.</p>
 </div><h4 id='method.build_hasher' class='method'><span id='build_hasher.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/hash/trait.BuildHasher.html#tymethod.build_hasher' class='fnname'>build_hasher</a>(&amp;self) -&gt; Self::Hasher</code></span></h4>
@@ -117,9 +117,11 @@
     <script>
         window.rootPath = "../../";
         window.currentCrate = "fasthash";
+        window.playgroundUrl = "";
     </script>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
+    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>

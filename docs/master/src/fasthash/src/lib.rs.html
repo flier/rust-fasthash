@@ -136,7 +136,7 @@
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>t1ha</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>xx</span>;
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>hasher</span>::{<span class='ident'>Fingerprint</span>, <span class='ident'>FastHash</span>, <span class='ident'>HasherExt</span>};
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>hasher</span>::{<span class='ident'>Fingerprint</span>, <span class='ident'>FastHash</span>, <span class='ident'>BufHasher</span>, <span class='ident'>StreamHasher</span>, <span class='ident'>HasherExt</span>};
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>city</span>::{<span class='ident'>CityHasher64</span> <span class='kw'>as</span> <span class='ident'>CityHasher</span>, <span class='ident'>CityHasher128</span> <span class='kw'>as</span> <span class='ident'>CityHasherExt</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>farm</span>::{<span class='ident'>FarmHasher64</span> <span class='kw'>as</span> <span class='ident'>FarmHasher</span>, <span class='ident'>FarmHasher128</span> <span class='kw'>as</span> <span class='ident'>FarmHasherExt</span>};
@@ -208,9 +208,11 @@
     <script>
         window.rootPath = "../../../";
         window.currentCrate = "fasthash";
+        window.playgroundUrl = "";
     </script>
     <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
+    
     <script defer src="../../../search-index.js"></script>
 </body>
 </html>

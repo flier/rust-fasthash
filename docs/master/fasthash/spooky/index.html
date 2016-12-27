@@ -47,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-497' class='srclink' href='../../src/fasthash/src/spooky.rs.html#1-346' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-1399' class='srclink' href='../../src/fasthash/src/spooky.rs.html#1-357' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>SpookyHash: a 128-bit noncryptographic hash function</p>
 
 <p>by Bob Jenkins</p>
@@ -92,7 +92,7 @@ slower than MD5.</p>
 
 <span class='kw'>let</span> <span class='ident'>h</span> <span class='op'>=</span> <span class='ident'>spooky</span>::<span class='ident'>hash64</span>(<span class='string'>b&quot;hello world\xff&quot;</span>);
 
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>h</span>, <span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;hello world&quot;</span>));</pre>
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>h</span>, <span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;hello world&quot;</span>));<a class='test-arrow' target='_blank' href=''>Run</a></pre>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
@@ -231,9 +231,11 @@ For convenience, a 64-bit seed is also hashed into the result.</p>
     <script>
         window.rootPath = "../../";
         window.currentCrate = "fasthash";
+        window.playgroundUrl = "";
     </script>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
+    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>
