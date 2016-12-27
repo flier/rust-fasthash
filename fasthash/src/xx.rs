@@ -72,7 +72,7 @@
 //! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
-use std::hash::{Hasher, BuildHasher};
+use std::hash::Hasher;
 use std::os::raw::c_void;
 
 use ffi;
@@ -190,6 +190,8 @@ impl FastHasher for XXHasher32 {
 
 impl StreamHasher for XXHasher32 {}
 
+impl_fasthash!(XXHasher32, XXHash32);
+
 /// An implementation of `std::hash::Hasher`.
 pub struct XXHasher64(*mut ffi::XXH64_state_t);
 
@@ -240,13 +242,7 @@ impl FastHasher for XXHasher64 {
 
 impl StreamHasher for XXHasher64 {}
 
-impl BuildHasher for XXHash64 {
-    type Hasher = XXHasher64;
-
-    fn build_hasher(&self) -> Self::Hasher {
-        XXHasher64::new()
-    }
-}
+impl_fasthash!(XXHasher64, XXHash64);
 
 #[cfg(test)]
 mod tests {

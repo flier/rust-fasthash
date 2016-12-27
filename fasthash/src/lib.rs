@@ -24,7 +24,7 @@
 //! using the `HashMap::with_hasher` or
 //! `HashMap::with_capacity_and_hasher` methods.
 //!
-//! It could cowork with any hash functions like `CityHash32` with a fixed seed,
+//! It could cowork with any hash functions like `CityHash32` with a build-in seed,
 //! or `RandomState<CityHash64>` with a random seed.
 //!
 //! ```rust
@@ -34,7 +34,7 @@
 //! use fasthash::RandomState;
 //! use fasthash::city::CityHash64;
 //!
-//! let s: RandomState<CityHash64> = Default::default();
+//! let s = RandomState::<CityHash64>::new();
 //! let mut map = HashMap::with_hasher(s);
 //!
 //! assert_eq!(map.insert(37, "a"), None);
@@ -89,7 +89,7 @@ pub use murmur3::{Murmur3Hasher_x64_128 as Murmur3Hasher,
                   Murmur3Hasher_x64_128 as Murmur3HasherExt};
 #[doc(no_inline)]
 pub use sea::SeaHasher64 as SeaHasher;
-pub use spooky::{SpookyHasher64 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
+pub use spooky::{SpookyHasher128 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
 
 #[cfg(not(feature = "sse42"))]
 pub use t1ha::T1ha64LeHasher as T1haHasher;

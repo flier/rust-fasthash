@@ -36,15 +36,18 @@ pub trait FastHash {
     }
 }
 
+/// Fast non-cryptographic hasher
 pub trait FastHasher: Hasher
     where Self: Sized
 {
     type Seed: Default + Copy;
 
+    /// Constructs a new `FastHasher`.
     fn new() -> Self {
         Self::with_seed(Default::default())
     }
 
+    /// Constructs a new `FastHasher` with seed.
     fn with_seed(seed: Self::Seed) -> Self;
 }
 
@@ -121,17 +124,21 @@ pub trait HasherExt: Hasher {
     }
 }
 
+#[doc(hidden)]
 #[derive(Clone, Copy, Debug)]
-pub struct Seed(u64, u64);
+pub struct Seed(u64, u64, u64, u64);
 
 impl Seed {
     pub fn new() -> Seed {
         let mut r = OsRng::new().expect("failed to create an OS RNG");
 
-        Seed(r.gen(), r.gen())
+        Seed(r.gen(), r.gen(), r.gen(), r.gen())
     }
     pub fn next(self) -> Seed {
-        Seed(self.0.wrapping_add(1), self.1.wrapping_sub(1))
+        Seed(self.0.wrapping_add(1),
+             self.1.wrapping_sub(1),
+             self.2.wrapping_add(1),
+             self.3.wrapping_sub(1))
     }
 
     pub fn gen() -> Seed {
@@ -163,6 +170,41 @@ impl From<Seed> for u128 {
     }
 }
 
+impl From<Seed> for (u64, u64) {
+    fn from(seed: Seed) -> (u64, u64) {
+        (seed.0, seed.1)
+    }
+}
+
+impl From<Seed> for (u64, u64, u64, u64) {
+    fn from(seed: Seed) -> (u64, u64, u64, u64) {
+        (seed.0, seed.1, seed.2, seed.3)
+    }
+}
+
+/// `RandomState` provides the default state for `HashMap` or `HashSet` types.
+///
+/// A particular instance `RandomState` will create the same instances of
+/// [`Hasher`], but the hashers created by two different `RandomState`
+/// instances are unlikely to produce the same result for the same values.
+///
+/// ```rust
+/// use std::hash::{Hash, Hasher};
+/// use std::collections::HashMap;
+///
+/// use fasthash::RandomState;
+/// use fasthash::city::CityHash64;
+///
+/// let s = RandomState::<CityHash64>::new();
+/// let mut map = HashMap::with_hasher(s);
+///
+/// assert_eq!(map.insert(37, "a"), None);
+/// assert_eq!(map.is_empty(), false);
+///
+/// map.insert(37, "b");
+/// assert_eq!(map.insert(37, "c"), Some("b"));
+/// assert_eq!(map[&37], "c");
+/// ```
 pub struct RandomState<T: FastHash + BuildHasherExt> {
     seed: Seed,
     phantom: PhantomData<T>,
@@ -193,17 +235,37 @@ impl<T: FastHash + BuildHasherExt> Default for RandomState<T> {
 }
 
 #[doc(hidden)]
+macro_rules! impl_fasthash {
+    ($hasher:ident, $hash:ident) => (
+        impl ::std::hash::BuildHasher for $hash {
+            type Hasher = $hasher;
+
+            #[inline]
+            fn build_hasher(&self) -> Self::Hasher {
+                $hasher::new()
+            }
+        }
+
+        impl $crate::hasher::BuildHasherExt for $hash {
+            type FastHasher = $hasher;
+
+            #[inline]
+            fn build_hasher_with_seed(seed: &$crate::hasher::Seed) -> Self::Hasher {
+                $hasher::with_seed((*seed).into())
+            }
+        }
+    )
+}
+
+#[doc(hidden)]
 #[macro_export]
 macro_rules! impl_hasher {
-    ($(#[$attr:meta])*  $hasher:ident, $hash:ident) => (
+    ($hasher:ident, $hash:ident) => (
         /// An implementation of `std::hash::Hasher`.
         #[derive(Clone)]
         pub struct $hasher {
             seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
             bytes: Vec<u8>,
-        }
-
-        impl $hasher {
         }
 
         impl Default for $hasher {
@@ -254,23 +316,7 @@ macro_rules! impl_hasher {
 
         impl $crate::hasher::BufHasher for $hasher {}
 
-        impl ::std::hash::BuildHasher for $hash {
-            type Hasher = $hasher;
-
-            #[inline]
-            fn build_hasher(&self) -> Self::Hasher {
-                $hasher::new()
-            }
-        }
-
-        impl $crate::hasher::BuildHasherExt for $hash {
-            type FastHasher = $hasher;
-
-            #[inline]
-            fn build_hasher_with_seed(seed: &$crate::hasher::Seed) -> Self::Hasher {
-                $hasher::with_seed((*seed).into())
-            }
-        }
+        impl_fasthash!($hasher, $hash);
     )
 }
 
@@ -341,14 +387,7 @@ macro_rules! impl_hasher_ext {
 
         impl $crate::hasher::BufHasher for $hasher {}
 
-        impl ::std::hash::BuildHasher for $hash {
-            type Hasher = $hasher;
-
-            #[inline]
-            fn build_hasher(&self) -> Self::Hasher {
-                $hasher::new()
-            }
-        }
+        impl_fasthash!($hasher, $hash);
     )
 }
 
@@ -359,7 +398,20 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use city::*;
+    use city::{CityHash32, CityHash64, CityHash128, CityHashCrc128};
+    use farm::{FarmHash32, FarmHash64, FarmHash128};
+    use lookup3::Lookup3;
+    use metro::{MetroHash64_1, MetroHash64_2, MetroHash128_1, MetroHash128_2, MetroHash64Crc_1,
+                MetroHash64Crc_2, MetroHash128Crc_1, MetroHash128Crc_2};
+    use mum::MumHash;
+    use murmur::{Murmur, MurmurAligned};
+    use murmur2::{Murmur2, Murmur2A, MurmurNeutral2, MurmurAligned2, Murmur2_x64_64,
+                  Murmur2_x86_64};
+    use murmur3::{Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128};
+    use sea::SeaHash;
+    use spooky::SpookyHash128;
+    use t1ha::{T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be, T1ha64Crc};
+    use xx::{XXHash32, XXHash64};
     use super::*;
 
     #[test]
@@ -402,16 +454,59 @@ mod tests {
         assert!(u1 != u2.high64());
     }
 
+    macro_rules! test_hashmap_with_fixed_state {
+        ($hash:ident) => {
+            let mut map = HashMap::with_hasher($hash {});
+
+            assert_eq!(map.insert(37, "a"), None);
+            assert_eq!(map.is_empty(), false);
+
+            map.insert(37, "b");
+            assert_eq!(map.insert(37, "c"), Some("b"));
+            assert_eq!(map[&37], "c");
+        }
+    }
+
+    macro_rules! test_hashmap_with_random_state {
+        ($hash:ident) => {
+            let s = RandomState::<$hash>::new();
+            let mut map = HashMap::with_hasher(s);
+
+            assert_eq!(map.insert(37, "a"), None);
+            assert_eq!(map.is_empty(), false);
+
+            map.insert(37, "b");
+            assert_eq!(map.insert(37, "c"), Some("b"));
+            assert_eq!(map[&37], "c");
+        }
+    }
+
+    macro_rules! test_hashmap_with_hashers {
+        [ $( $hash:ident ),* ] => {
+            $( {
+                test_hashmap_with_fixed_state!( $hash );
+                test_hashmap_with_random_state!( $hash );
+            } )*
+        }
+    }
+
     #[test]
-    fn test_hashmap() {
-        let s: RandomState<CityHash64> = Default::default();
-        let mut map = HashMap::with_hasher(s);
-
-        assert_eq!(map.insert(37, "a"), None);
-        assert_eq!(map.is_empty(), false);
-
-        map.insert(37, "b");
-        assert_eq!(map.insert(37, "c"), Some("b"));
-        assert_eq!(map[&37], "c");
+    fn test_hashmap_with_hashers() {
+        test_hashmap_with_hashers![CityHash32, CityHash64, CityHash128, CityHashCrc128];
+        test_hashmap_with_hashers![FarmHash32, FarmHash64, FarmHash128];
+        test_hashmap_with_hashers![Lookup3];
+        test_hashmap_with_hashers![MetroHash64_1, MetroHash64_2,
+                                  MetroHash128_1, MetroHash128_2,
+                                  MetroHash64Crc_1, MetroHash64Crc_2,
+                                  MetroHash128Crc_1, MetroHash128Crc_2];
+        test_hashmap_with_hashers![MumHash];
+        test_hashmap_with_hashers![Murmur, MurmurAligned];
+        test_hashmap_with_hashers![Murmur2, Murmur2A, MurmurNeutral2, MurmurAligned2,
+                                   Murmur2_x64_64, Murmur2_x86_64];
+        test_hashmap_with_hashers![Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128];
+        test_hashmap_with_hashers![SeaHash];
+        test_hashmap_with_hashers![SpookyHash128];
+        test_hashmap_with_hashers![T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be, T1ha64Crc];
+        test_hashmap_with_hashers![XXHash32, XXHash64];
     }
 }

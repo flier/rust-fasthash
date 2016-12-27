@@ -25,13 +25,11 @@
 //! assert_eq!(hash(&"hello world"), 1198299633807023012);
 //! ```
 //!
-use std::hash::BuildHasher;
-
 use seahash;
 
 pub use seahash::{SeaHasher as SeaHasher64, hash as hash64, hash_seeded as hash_with_seeds};
 
-use hasher::{FastHash, StreamHasher};
+use hasher::{FastHash, FastHasher, StreamHasher};
 
 /// SeaHash 64-bit hash functions
 pub struct SeaHash {}
@@ -51,11 +49,19 @@ impl FastHash for SeaHash {
     }
 }
 
-impl BuildHasher for SeaHash {
-    type Hasher = SeaHasher64;
+impl_fasthash!(SeaHasher64, SeaHash);
 
-    fn build_hasher(&self) -> Self::Hasher {
+impl FastHasher for SeaHasher64 {
+    type Seed = (u64, u64, u64, u64);
+
+    #[inline]
+    fn new() -> Self {
         SeaHasher64::new()
+    }
+
+    #[inline]
+    fn with_seed(seed: Self::Seed) -> Self {
+        SeaHasher64::with_seeds(seed.0, seed.1, seed.2, seed.3)
     }
 }
 
