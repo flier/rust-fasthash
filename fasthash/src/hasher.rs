@@ -58,7 +58,10 @@ pub trait FastHasher: Hasher
 }
 
 /// Hasher in the buffer mode for short key
-pub trait BufHasher: Hasher + AsRef<[u8]> {
+pub trait BufHasher: FastHasher + AsRef<[u8]> {
+    /// Constructs a buffered hasher with capacity and seed
+    fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self;
+
     /// Returns the number of bytes in the buffer.
     #[inline]
     fn len(&self) -> usize {
@@ -73,7 +76,7 @@ pub trait BufHasher: Hasher + AsRef<[u8]> {
 }
 
 /// Hasher in the streaming mode without buffer
-pub trait StreamHasher: Hasher + Sized {
+pub trait StreamHasher: FastHasher + Sized {
     /// Writes the stream into this hasher.
     fn write_stream<R: io::Read>(&mut self, r: &mut R) -> io::Result<usize> {
         let mut buf = [0_u8; 4096];
@@ -297,18 +300,12 @@ macro_rules! impl_hasher {
 
             #[inline]
             fn new() -> Self {
-                $hasher {
-                    seed: None,
-                    bytes: Vec::with_capacity(64),
-                }
+                <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, None)
             }
 
             #[inline]
             fn with_seed(seed: Self::Seed) -> Self {
-                $hasher {
-                    seed: Some(seed),
-                    bytes: Vec::with_capacity(64),
-                }
+                <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, Some(seed))
             }
         }
 
@@ -319,7 +316,16 @@ macro_rules! impl_hasher {
             }
         }
 
-        impl $crate::hasher::BufHasher for $hasher {}
+        impl $crate::hasher::BufHasher for $hasher {
+            #[inline]
+            fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self
+            {
+                $hasher {
+                    seed: seed,
+                    bytes: Vec::with_capacity(capacity),
+                }
+            }
+        }
 
         impl_fasthash!($hasher, $hash);
     )
@@ -329,8 +335,8 @@ macro_rules! impl_hasher {
 #[macro_export]
 macro_rules! impl_hasher_ext {
     ($hasher:ident, $hash:ident) => (
-/// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
-        #[derive(Default, Clone)]
+        /// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
+        #[derive(Clone)]
         pub struct $hasher {
             seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
             bytes: Vec<u8>,
@@ -345,6 +351,12 @@ macro_rules! impl_hasher_ext {
             }
         }
 
+        impl Default for $hasher {
+            fn default() -> Self {
+                $hasher::new()
+            }
+        }
+
         impl ::std::hash::Hasher for $hasher {
             #[inline]
             fn finish(&self) -> u64 {
@@ -356,30 +368,24 @@ macro_rules! impl_hasher_ext {
             }
         }
 
+        impl $crate::hasher::HasherExt for $hasher {
+            #[inline]
+            fn finish_ext(&self) -> u128 {
+                self.finalize()
+            }
+        }
+
         impl $crate::hasher::FastHasher for $hasher {
             type Seed = <$hash as $crate::hasher::FastHash>::Seed;
 
             #[inline]
             fn new() -> Self {
-                $hasher {
-                    seed: None,
-                    bytes: Vec::with_capacity(64),
-                }
+                <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, None)
             }
 
             #[inline]
             fn with_seed(seed: Self::Seed) -> Self {
-                $hasher {
-                    seed: Some(seed),
-                    bytes: Vec::with_capacity(64),
-                }
-            }
-        }
-
-        impl $crate::hasher::HasherExt for $hasher {
-            #[inline]
-            fn finish_ext(&self) -> u128 {
-                self.finalize()
+                <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, Some(seed))
             }
         }
 
@@ -390,7 +396,16 @@ macro_rules! impl_hasher_ext {
             }
         }
 
-        impl $crate::hasher::BufHasher for $hasher {}
+        impl $crate::hasher::BufHasher for $hasher {
+            #[inline]
+            fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self
+            {
+                $hasher {
+                    seed: seed,
+                    bytes: Vec::with_capacity(capacity),
+                }
+            }
+        }
 
         impl_fasthash!($hasher, $hash);
     )
