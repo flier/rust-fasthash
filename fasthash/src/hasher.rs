@@ -4,7 +4,8 @@ use std::cell::Cell;
 use std::marker::PhantomData;
 use std::hash::{Hasher, BuildHasher};
 
-use rand::{Rng, OsRng};
+use rand::Rng;
+use xoroshiro128::{SeedableRng, Xoroshiro128Rng};
 
 use extprim::i128::i128;
 use extprim::u128::u128;
@@ -126,19 +127,17 @@ pub trait HasherExt: Hasher {
 
 #[doc(hidden)]
 #[derive(Clone, Copy, Debug)]
-pub struct Seed(u64, u64, u64, u64);
+pub struct Seed(Xoroshiro128Rng);
 
 impl Seed {
     pub fn new() -> Seed {
-        let mut r = OsRng::new().expect("failed to create an OS RNG");
-
-        Seed(r.gen(), r.gen(), r.gen(), r.gen())
+        Seed(Xoroshiro128Rng::new().expect("failed to create an OS RNG"))
     }
+
     pub fn next(self) -> Seed {
-        Seed(self.0.wrapping_add(1),
-             self.1.wrapping_sub(1),
-             self.2.wrapping_add(1),
-             self.3.wrapping_sub(1))
+        let mut rng = self.0;
+
+        Seed(Xoroshiro128Rng::from_seed([rng.next_u64(), rng.next_u64()]))
     }
 
     pub fn gen() -> Seed {
@@ -154,31 +153,44 @@ impl Seed {
 
 impl From<Seed> for u32 {
     fn from(seed: Seed) -> u32 {
-        seed.0 as u32
+        let mut rng = seed.0;
+
+        rng.next_u32()
     }
 }
 
 impl From<Seed> for u64 {
     fn from(seed: Seed) -> u64 {
-        seed.0
+        let mut rng = seed.0;
+
+        rng.next_u64()
     }
 }
 
 impl From<Seed> for u128 {
     fn from(seed: Seed) -> u128 {
-        u128::from_parts(seed.1, seed.0)
+        let mut rng = seed.0;
+
+        let low = rng.next_u64();
+        let high = rng.next_u64();
+
+        u128::from_parts(high, low)
     }
 }
 
 impl From<Seed> for (u64, u64) {
     fn from(seed: Seed) -> (u64, u64) {
-        (seed.0, seed.1)
+        let mut rng = seed.0;
+
+        (rng.next_u64(), rng.next_u64())
     }
 }
 
 impl From<Seed> for (u64, u64, u64, u64) {
     fn from(seed: Seed) -> (u64, u64, u64, u64) {
-        (seed.0, seed.1, seed.2, seed.3)
+        let mut rng = seed.0;
+
+        (rng.next_u64(), rng.next_u64(), rng.next_u64(), rng.next_u64())
     }
 }
 

@@ -57,6 +57,7 @@
 
 extern crate extprim;
 extern crate rand;
+extern crate xoroshiro128;
 extern crate seahash;
 extern crate fasthash_sys as ffi;
 
