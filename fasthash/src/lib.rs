@@ -54,6 +54,10 @@
 //! assert_eq!(map.insert(37, "c"), Some("b"));
 //! assert_eq!(map[&37], "c");
 //! ```
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
+
+#![warn(missing_docs)]
 
 extern crate extprim;
 extern crate rand;
