@@ -1,6 +1,6 @@
 use std::mem;
 use std::io;
-use std::cell::Cell;
+use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::hash::{Hasher, BuildHasher};
 
@@ -161,13 +161,9 @@ impl Seed {
     /// Generate a new seed
     #[inline]
     pub fn gen() -> Seed {
-        thread_local!(static SEEDS: Cell<Seed> = Cell::new(Seed::new()));
+        thread_local!(static SEEDS: RefCell<Seed> = RefCell::new(Seed::new()));
 
-        SEEDS.with(|seeds| {
-            let mut rng = seeds.get().0;
-            seeds.set(Seed(Xoroshiro128Rng::from_seed(rng.gen::<[u64; 2]>())));
-            Seed(rng)
-        })
+        SEEDS.with(|seeds| Seed(Xoroshiro128Rng::from_seed(seeds.borrow_mut().0.gen::<[u64; 2]>())))
     }
 }
 
