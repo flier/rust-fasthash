@@ -34,6 +34,8 @@ fn main() {
 
     if Path::new("src/fasthash.rs").exists() {
         std::fs::copy("src/fasthash.rs", out_file).unwrap();
+
+        println!("cargo:rustc-link-lib=static=fasthash");
     } else {
         let _ = libbindgen::builder()
             .clang_arg("-xc++")
