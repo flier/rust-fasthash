@@ -30,30 +30,36 @@ fn main() {
     gcc_config.compile("libfasthash.a");
 
     let out_dir = env::var("OUT_DIR").unwrap();
-    let _ = libbindgen::builder()
-        .clang_arg("-xc++")
-        .clang_arg("--std=c++11")
-        .clang_arg(if cfg!(feature = "sse42") {
-            "-msse4.2"
-        } else {
-            "-march=native"
-        })
-        .header("src/fasthash.hpp")
-        .no_unstable_rust()
-        .whitelisted_function("^CityHash.*")
-        .whitelisted_function("^farmhash.*")
-        .whitelisted_function("^lookup3.*")
-        .whitelisted_function("^metrohash.*")
-        .whitelisted_function("^mum_hash.*")
-        .whitelisted_function("^MurmurHash.*")
-        .whitelisted_function("^SpookyHasher.*")
-        .whitelisted_function("^t1ha.*")
-        .whitelisted_function("^XXH.*")
-        .link_static("fasthash")
-        .generate()
-        .unwrap()
-        .write_to_file(Path::new(&out_dir).join("fasthash.rs"))
-        .expect("Couldn't write bindings!");
+    let out_file = Path::new(&out_dir).join("src/fasthash.rs");
+
+    if Path::new("src/fasthash.rs").exists() {
+        std::fs::copy("src/fasthash.rs", out_file).unwrap();
+    } else {
+        let _ = libbindgen::builder()
+            .clang_arg("-xc++")
+            .clang_arg("--std=c++11")
+            .clang_arg(if cfg!(feature = "sse42") {
+                "-msse4.2"
+            } else {
+                "-march=native"
+            })
+            .header("src/fasthash.hpp")
+            .no_unstable_rust()
+            .whitelisted_function("^CityHash.*")
+            .whitelisted_function("^farmhash.*")
+            .whitelisted_function("^lookup3.*")
+            .whitelisted_function("^metrohash.*")
+            .whitelisted_function("^mum_hash.*")
+            .whitelisted_function("^MurmurHash.*")
+            .whitelisted_function("^SpookyHasher.*")
+            .whitelisted_function("^t1ha.*")
+            .whitelisted_function("^XXH.*")
+            .link_static("fasthash")
+            .generate()
+            .unwrap()
+            .write_to_file(out_file)
+            .expect("Couldn't write bindings!");
+    }
 
     if cfg!(target_os = "macos") {
         println!("cargo:rustc-link-lib=dylib=c++");

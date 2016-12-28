@@ -17,4 +17,7 @@ sse42 = []
 
 [build-dependencies]
 gcc = "0.3"
-libbindgen = "0.1"
+
+[build-dependencies.libbindgen]
+version = "0.1"
+features = ["static"]
