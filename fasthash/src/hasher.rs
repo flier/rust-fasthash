@@ -427,7 +427,7 @@ mod tests {
 
     use t1ha::{T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be};
     #[cfg(feature = "sse42")]
-    use tiha::T1ha64Crc;
+    use t1ha::T1ha64Crc;
 
     use xx::{XXHash32, XXHash64};
     use super::*;
