@@ -61,6 +61,8 @@ fn main() {
             .unwrap()
             .write_to_file(out_file)
             .expect("Couldn't write bindings!");
+
+        std::fs::copy(out_file, "src/fasthash.rs").unwrap();
     }
 
     if cfg!(target_os = "macos") {
