@@ -125,28 +125,45 @@ pub trait HasherExt: Hasher {
     }
 }
 
-#[doc(hidden)]
+/// Generate hash seeds
+///
+/// It base on the same workflow from `std::collections::RandomState`
+///
+/// > Historically this function did not cache keys from the OS and instead
+/// > simply always called `rand::thread_rng().gen()` twice. In #31356 it
+/// > was discovered, however, that because we re-seed the thread-local RNG
+/// > from the OS periodically that this can cause excessive slowdown when
+/// > many hash maps are created on a thread. To solve this performance
+/// > trap we cache the first set of randomly generated keys per-thread.
+///
+/// > Later in #36481 it was discovered that exposing a deterministic
+/// > iteration order allows a form of DOS attack. To counter that we
+/// > increment one of the seeds on every RandomState creation, giving
+/// > every corresponding HashMap a different iteration order.
+///
+/// # Examples
+///
+/// ```rust
+/// use fasthash::{Seed, city};
+///
+/// city::hash128_with_seed(b"hello world", Seed::gen().into());
+/// ```
 #[derive(Clone, Copy, Debug)]
 pub struct Seed(Xoroshiro128Rng);
 
 impl Seed {
-    pub fn new() -> Seed {
+    fn new() -> Seed {
         Seed(Xoroshiro128Rng::new().expect("failed to create an OS RNG"))
     }
 
-    pub fn next(self) -> Seed {
-        let mut rng = self.0;
-
-        Seed(Xoroshiro128Rng::from_seed([rng.next_u64(), rng.next_u64()]))
-    }
-
+    /// Generate a new seed
     pub fn gen() -> Seed {
         thread_local!(static SEEDS: Cell<Seed> = Cell::new(Seed::new()));
 
         SEEDS.with(|seeds| {
-            let seed = seeds.get();
-            seeds.set(seed.next());
-            seed
+            let mut rng = seeds.get().0;
+            seeds.set(Seed(Xoroshiro128Rng::from_seed([rng.next_u64(), rng.next_u64()])));
+            Seed(rng)
         })
     }
 }
@@ -437,11 +454,11 @@ mod tests {
         assert_eq!(u0, u1 as u32);
         assert_eq!(u1, u2.low64());
 
-        s = s.next();
+        s = Seed::gen();
 
         u1 = s.into();
 
-        s = s.next();
+        s = Seed::gen();
 
         u2 = s.into();
 
