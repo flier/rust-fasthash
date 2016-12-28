@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::hash::{Hasher, BuildHasher};
 
-use rand::Rng;
+use rand::{Rand, Rng};
 use xoroshiro128::{SeedableRng, Xoroshiro128Rng};
 
 use extprim::i128::i128;
@@ -16,16 +16,15 @@ pub trait Fingerprint<T> {
     fn fingerprint(&self) -> T;
 }
 
-/// A seeded factory for instances of Hasher
-/// which a HashMap can then use to hash keys independently.
+#[doc(hidden)]
 pub trait BuildHasherExt: BuildHasher {
-    fn build_hasher_with_seed(seed: &Seed) -> Self::Hasher;
+    type FastHasher: FastHasher;
 }
 
 /// Fast non-cryptographic hash functions
 pub trait FastHash: BuildHasherExt {
     type Value;
-    type Seed: Default + Copy;
+    type Seed: Default + Copy + Rand;
 
     /// Hash functions for a byte array.
     /// For convenience, a seed is also hashed into the result.
@@ -41,12 +40,17 @@ pub trait FastHash: BuildHasherExt {
 pub trait FastHasher: Hasher
     where Self: Sized
 {
-    type Seed: Default + Copy;
+    type Seed: Default + Copy + From<Seed>;
 
     /// Constructs a new `FastHasher`.
     #[inline]
     fn new() -> Self {
         Self::with_seed(Default::default())
+    }
+
+    /// Constructs a new `FastHasher` with a random seed.
+    fn new_with_random_seed() -> Self {
+        Self::with_seed(Seed::gen().into())
     }
 
     /// Constructs a new `FastHasher` with seed.
@@ -225,11 +229,11 @@ impl<T: FastHash> RandomState<T> {
 }
 
 impl<T: FastHash> BuildHasher for RandomState<T> {
-    type Hasher = T::Hasher;
+    type Hasher = T::FastHasher;
 
     #[inline]
     fn build_hasher(&self) -> Self::Hasher {
-        T::build_hasher_with_seed(&self.seed)
+        T::FastHasher::with_seed(self.seed.into())
     }
 }
 
@@ -253,10 +257,7 @@ macro_rules! impl_fasthash {
         }
 
         impl $crate::hasher::BuildHasherExt for $hash {
-            #[inline]
-            fn build_hasher_with_seed(seed: &$crate::hasher::Seed) -> Self::Hasher {
-                $hasher::with_seed((*seed).into())
-            }
+            type FastHasher = $hasher;
         }
     )
 }
