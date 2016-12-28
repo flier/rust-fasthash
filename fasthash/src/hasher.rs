@@ -44,6 +44,7 @@ pub trait FastHasher: Hasher
     type Seed: Default + Copy;
 
     /// Constructs a new `FastHasher`.
+    #[inline]
     fn new() -> Self {
         Self::with_seed(Default::default())
     }
@@ -152,64 +153,42 @@ pub trait HasherExt: Hasher {
 pub struct Seed(Xoroshiro128Rng);
 
 impl Seed {
+    #[inline]
     fn new() -> Seed {
         Seed(Xoroshiro128Rng::new().expect("failed to create an OS RNG"))
     }
 
     /// Generate a new seed
+    #[inline]
     pub fn gen() -> Seed {
         thread_local!(static SEEDS: Cell<Seed> = Cell::new(Seed::new()));
 
         SEEDS.with(|seeds| {
             let mut rng = seeds.get().0;
-            seeds.set(Seed(Xoroshiro128Rng::from_seed([rng.next_u64(), rng.next_u64()])));
+            seeds.set(Seed(Xoroshiro128Rng::from_seed(rng.gen::<[u64; 2]>())));
             Seed(rng)
         })
     }
 }
 
-impl From<Seed> for u32 {
-    fn from(seed: Seed) -> u32 {
-        let mut rng = seed.0;
+macro_rules! impl_from_seed {
+    ($target:ty) => (
+        impl From<Seed> for $target {
+            #[inline]
+            fn from(seed: Seed) -> $target {
+                let mut rng = seed.0;
 
-        rng.next_u32()
-    }
+                rng.gen()
+            }
+        }
+    )
 }
 
-impl From<Seed> for u64 {
-    fn from(seed: Seed) -> u64 {
-        let mut rng = seed.0;
-
-        rng.next_u64()
-    }
-}
-
-impl From<Seed> for u128 {
-    fn from(seed: Seed) -> u128 {
-        let mut rng = seed.0;
-
-        let low = rng.next_u64();
-        let high = rng.next_u64();
-
-        u128::from_parts(high, low)
-    }
-}
-
-impl From<Seed> for (u64, u64) {
-    fn from(seed: Seed) -> (u64, u64) {
-        let mut rng = seed.0;
-
-        (rng.next_u64(), rng.next_u64())
-    }
-}
-
-impl From<Seed> for (u64, u64, u64, u64) {
-    fn from(seed: Seed) -> (u64, u64, u64, u64) {
-        let mut rng = seed.0;
-
-        (rng.next_u64(), rng.next_u64(), rng.next_u64(), rng.next_u64())
-    }
-}
+impl_from_seed!(u32);
+impl_from_seed!(u64);
+impl_from_seed!(u128);
+impl_from_seed!((u64, u64));
+impl_from_seed!((u64, u64, u64, u64));
 
 /// `RandomState` provides the default state for `HashMap` or `HashSet` types.
 ///
@@ -240,6 +219,7 @@ pub struct RandomState<T: FastHash> {
 }
 
 impl<T: FastHash> RandomState<T> {
+    #[inline]
     pub fn new() -> Self {
         RandomState {
             seed: Seed::gen(),
@@ -258,6 +238,7 @@ impl<T: FastHash> BuildHasher for RandomState<T> {
 }
 
 impl<T: FastHash> Default for RandomState<T> {
+    #[inline]
     fn default() -> Self {
         RandomState::new()
     }
@@ -452,7 +433,7 @@ mod tests {
         assert!(u1 != 0);
         assert!(u2 != u128::zero());
         assert_eq!(u0, u1 as u32);
-        assert_eq!(u1, u2.low64());
+        assert_eq!(u1, u2.high64());
 
         s = Seed::gen();
 
