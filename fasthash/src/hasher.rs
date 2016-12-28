@@ -23,7 +23,9 @@ pub trait BuildHasherExt: BuildHasher {
 
 /// Fast non-cryptographic hash functions
 pub trait FastHash: BuildHasherExt {
+    /// The output hash generated value.
     type Value;
+    /// The seed to generate hash value.
     type Seed: Default + Copy + Rand;
 
     /// Hash functions for a byte array.
@@ -40,6 +42,7 @@ pub trait FastHash: BuildHasherExt {
 pub trait FastHasher: Hasher
     where Self: Sized
 {
+    /// The seed to generate hash value.
     type Seed: Default + Copy + From<Seed>;
 
     /// Constructs a new `FastHasher`.
@@ -222,6 +225,7 @@ pub struct RandomState<T: FastHash> {
 }
 
 impl<T: FastHash> RandomState<T> {
+    /// Constructs a new `RandomState` that is initialized with random keys.
     #[inline]
     pub fn new() -> Self {
         RandomState {

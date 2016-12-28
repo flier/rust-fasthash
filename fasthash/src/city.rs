@@ -151,6 +151,8 @@ impl_hasher!(CityHasher32, CityHash32);
 pub struct CityHash64 {}
 
 impl CityHash64 {
+    /// Hash functions for a byte array.
+    /// For convenience, seeds are also hashed into the result.
     #[inline]
     pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
@@ -171,6 +173,8 @@ impl FastHash for CityHash64 {
         unsafe { ffi::CityHash64(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
+    /// Hash functions for a byte array.
+    /// For convenience, a seed is also hashed into the result.
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
         unsafe {
