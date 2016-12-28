@@ -52,7 +52,7 @@
 //! use fasthash::{murmur2, Murmur2Hasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = Murmur2Hasher::new();
+//!     let mut s: Murmur2Hasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -67,7 +67,7 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// MurmurHash2 32-bit hash functions
 pub struct Murmur2 {}
@@ -213,7 +213,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 mod tests {
     use std::hash::Hasher;
 
-    use hasher::FastHash;
+    use hasher::{FastHash, FastHasher};
     use super::*;
 
     #[test]

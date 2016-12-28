@@ -19,7 +19,7 @@
 //! use fasthash::{murmur3, Murmur3Hasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = Murmur3Hasher::new();
+//!     let mut s: Murmur3Hasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -37,7 +37,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// MurmurHash3 32-bit hash functions
 pub struct Murmur3_x86_32 {}
@@ -144,7 +144,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt};
+    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
 
     #[test]

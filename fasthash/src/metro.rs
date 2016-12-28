@@ -29,7 +29,7 @@
 //! use fasthash::{metro, MetroHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s = MetroHasher::new();
+//!     let mut s: MetroHasher = Default::default();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -46,7 +46,7 @@ use extprim::u128::u128;
 
 use ffi;
 
-use hasher::FastHash;
+use hasher::{FastHash, FastHasher};
 
 /// MetroHash 64-bit hash functions
 pub struct MetroHash64_1 {}
@@ -318,7 +318,7 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use hasher::{FastHash, HasherExt};
+    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
 
     #[test]
