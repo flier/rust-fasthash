@@ -263,6 +263,7 @@ mod tests {
         assert_eq!(h.finish(), 15825971635414726702);
     }
 
+    #[cfg(feature = "sse42")]
     #[test]
     fn test_t1ha_64_crc() {
         assert_eq!(T1ha64Crc::hash(b"hello"), 12810198970222070563);

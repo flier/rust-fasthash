@@ -406,11 +406,17 @@ mod tests {
 
     use extprim::u128::u128;
 
-    use city::{CityHash32, CityHash64, CityHash128, CityHashCrc128};
+    use city::{CityHash32, CityHash64, CityHash128};
+    #[cfg(feature = "sse42")]
+    use city::CityHashCrc128;
+
     use farm::{FarmHash32, FarmHash64, FarmHash128};
     use lookup3::Lookup3;
-    use metro::{MetroHash64_1, MetroHash64_2, MetroHash128_1, MetroHash128_2, MetroHash64Crc_1,
-                MetroHash64Crc_2, MetroHash128Crc_1, MetroHash128Crc_2};
+
+    use metro::{MetroHash64_1, MetroHash64_2, MetroHash128_1, MetroHash128_2};
+    #[cfg(feature = "sse42")]
+    use metro::{MetroHash64Crc_1, MetroHash64Crc_2, MetroHash128Crc_1, MetroHash128Crc_2};
+
     use mum::MumHash;
     use murmur::{Murmur, MurmurAligned};
     use murmur2::{Murmur2, Murmur2A, MurmurNeutral2, MurmurAligned2, Murmur2_x64_64,
@@ -418,7 +424,11 @@ mod tests {
     use murmur3::{Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128};
     use sea::SeaHash;
     use spooky::{SpookyHash32, SpookyHash64, SpookyHash128};
-    use t1ha::{T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be, T1ha64Crc};
+
+    use t1ha::{T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be};
+    #[cfg(feature = "sse42")]
+    use tiha::T1ha64Crc;
+
     use xx::{XXHash32, XXHash64};
     use super::*;
 
@@ -500,13 +510,19 @@ mod tests {
 
     #[test]
     fn test_hashmap_with_hashers() {
-        test_hashmap_with_hashers![CityHash32, CityHash64, CityHash128, CityHashCrc128];
+        test_hashmap_with_hashers![CityHash32, CityHash64, CityHash128];
+        #[cfg(feature = "sse42")]
+        test_hashmap_with_hashers![CityHashCrc128];
+
         test_hashmap_with_hashers![FarmHash32, FarmHash64, FarmHash128];
         test_hashmap_with_hashers![Lookup3];
+
         test_hashmap_with_hashers![MetroHash64_1, MetroHash64_2,
-                                  MetroHash128_1, MetroHash128_2,
-                                  MetroHash64Crc_1, MetroHash64Crc_2,
-                                  MetroHash128Crc_1, MetroHash128Crc_2];
+                                  MetroHash128_1, MetroHash128_2];
+        #[cfg(feature = "sse42")]
+        test_hashmap_with_hashers![MetroHash64Crc_1, MetroHash64Crc_2,
+                                   MetroHash128Crc_1, MetroHash128Crc_2];
+
         test_hashmap_with_hashers![MumHash];
         test_hashmap_with_hashers![Murmur, MurmurAligned];
         test_hashmap_with_hashers![Murmur2, Murmur2A, MurmurNeutral2, MurmurAligned2,
@@ -514,7 +530,12 @@ mod tests {
         test_hashmap_with_hashers![Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128];
         test_hashmap_with_hashers![SeaHash];
         test_hashmap_with_hashers![SpookyHash32, SpookyHash64, SpookyHash128];
-        test_hashmap_with_hashers![T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be, T1ha64Crc];
+
+        test_hashmap_with_hashers![T1ha64Le, T1ha64Be, T1ha32Le, T1ha32Be];
+
+        #[cfg(feature = "sse42")]
+        test_hashmap_with_hashers![T1ha64Crc];
+
         test_hashmap_with_hashers![XXHash32, XXHash64];
     }
 }
