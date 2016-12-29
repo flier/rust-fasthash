@@ -30,6 +30,8 @@ fn main() {
     gcc_config.compile("libfasthash.a");
 
     let out_dir = env::var("OUT_DIR").unwrap();
+    let out_file = Path::new(&out_dir).join("src/fasthash.rs");
+
     let _ = libbindgen::builder()
         .clang_arg("-xc++")
         .clang_arg("--std=c++11")
@@ -52,7 +54,7 @@ fn main() {
         .link_static("fasthash")
         .generate()
         .unwrap()
-        .write_to_file(Path::new(&out_dir).join("fasthash.rs"))
+        .write_to_file(out_file)
         .expect("Couldn't write bindings!");
 
     if cfg!(target_os = "macos") {

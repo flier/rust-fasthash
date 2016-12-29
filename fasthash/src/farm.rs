@@ -154,6 +154,8 @@ impl_hasher!(FarmHasher32, FarmHash32);
 pub struct FarmHash64 {}
 
 impl FarmHash64 {
+    /// Hash functions for a byte array.
+    /// For convenience, seeds are also hashed into the result.
     #[inline]
     pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
         unsafe {

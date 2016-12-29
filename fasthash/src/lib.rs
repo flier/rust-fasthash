@@ -54,9 +54,14 @@
 //! assert_eq!(map.insert(37, "c"), Some("b"));
 //! assert_eq!(map[&37], "c");
 //! ```
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
+
+#![warn(missing_docs)]
 
 extern crate extprim;
 extern crate rand;
+extern crate xoroshiro128;
 extern crate seahash;
 extern crate fasthash_sys as ffi;
 
@@ -75,8 +80,8 @@ pub mod spooky;
 pub mod t1ha;
 pub mod xx;
 
-pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt,
-                 BuildHasherExt, RandomState};
+pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt, Seed,
+                 RandomState};
 
 #[cfg(not(feature = "sse42"))]
 pub use city::{CityHasher64 as CityHasher, CityHasher128 as CityHasherExt};

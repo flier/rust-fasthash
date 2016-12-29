@@ -18,8 +18,10 @@ sse42 = ["fasthash-sys/sse42"]
 [dependencies]
 extprim = "1.1"
 rand = "^0.3"
+xoroshiro128 = "0.2"
 seahash = "3.0"
 fasthash-sys = { version = "0.2.1", path = "../fasthash-sys" }
+clippy = { version = "*", optional = true }
 
 [dev-dependencies]
 fnv = "1.0"

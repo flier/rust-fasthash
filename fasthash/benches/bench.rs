@@ -52,4 +52,20 @@ fn bench_hasher<H: Hasher + Default>(b: &mut Bencher, size: usize) {
     });
 }
 
+#[inline]
+fn bench_buf_hasher<H: BufHasher>(b: &mut Bencher, size: usize) {
+    let key = gen_key(size);
+
+    b.bytes = (size * ITERATERS) as u64;
+    b.iter(|| {
+        let n = test::black_box(ITERATERS);
+
+        (0..n).fold(0, |_, _| {
+            let mut h = H::with_capacity_and_seed(size, None);
+            h.write(key.as_slice());
+            h.finish()
+        })
+    });
+}
+
 include!(concat!(env!("OUT_DIR"), "/benches.rs"));
