@@ -1,10 +1,10 @@
-//! SeaHash: A bizarrely fast hash function.
+//! `SeaHash`: A bizarrely fast hash function.
 //!
 //! by ticki <ticki@users.noreply.github.com>
 //!
-//! SeaHash is a hash function with performance better than
-//! (around 3-20% improvement) xxHash and MetroHash.
-//! Furthermore, SeaHash has mathematically provable statistical guarantees.
+//! `SeaHash` is a hash function with performance better than
+//! (around 3-20% improvement) xxHash and `MetroHash`.
+//! Furthermore, `SeaHash` has mathematically provable statistical guarantees.
 //!
 //!
 //! # Example
@@ -31,7 +31,7 @@ pub use seahash::{SeaHasher as SeaHasher64, hash as hash64, hash_seeded as hash_
 
 use hasher::{FastHash, FastHasher, StreamHasher};
 
-/// SeaHash 64-bit hash functions
+/// `SeaHash` 64-bit hash functions
 pub struct SeaHash {}
 
 impl FastHash for SeaHash {

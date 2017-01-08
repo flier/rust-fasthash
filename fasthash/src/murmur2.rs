@@ -1,4 +1,4 @@
-//! Murmur2, a suite of  non-cryptographic hash functions that was used for hash-based lookups.
+//! `Murmur2`, a suite of  non-cryptographic hash functions that was used for hash-based lookups.
 //!
 //! by Austin Appleby (aappleby (AT) gmail)
 //!
@@ -15,12 +15,12 @@
 //!
 //! Excellent performance - measured on an Intel Core 2 Duo @ 2.4 ghz
 //!
-//!    - OneAtATime - 354.163715 mb/sec
-//!    - FNV - 443.668038 mb/sec
-//!    - SuperFastHash - 985.335173 mb/sec
-//!    - lookup3 - 988.080652 mb/sec
-//!    - MurmurHash 1.0 - 1363.293480 mb/sec
-//!    - MurmurHash 2.0 - 2056.885653 mb/sec
+//!    - `OneAtATime` - 354.163715 mb/sec
+//!    - `FNV` - 443.668038 mb/sec
+//!    - `SuperFastHash` - 985.335173 mb/sec
+//!    - `lookup3` - 988.080652 mb/sec
+//!    - `MurmurHash` 1.0 - 1363.293480 mb/sec
+//!    - `MurmurHash` 2.0 - 2056.885653 mb/sec
 //!
 //! # Variants
 //!
@@ -35,9 +35,10 @@
 //!
 //! # Attacks
 //!
-//! MurmurHash was a recommended hash function for hash table implementations.
+//! `MurmurHash` was a recommended hash function for hash table implementations.
 //! Jean-Philippe Aumasson and Daniel J. Bernstein were able to show
-//! that even randomized implementations of MurmurHash are vulnerable to so-called [HashDoS attacks]
+//! that even randomized implementations of `MurmurHash`
+//! are vulnerable to so-called [`HashDoS` attacks]
 //! (https://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/).
 //! With the use of differential cryptanalysis they were able to generate inputs
 //! that would lead to a hash collision.
@@ -69,7 +70,7 @@ use ffi;
 
 use hasher::{FastHash, FastHasher};
 
-/// MurmurHash2 32-bit hash functions
+/// `MurmurHash2` 32-bit hash functions
 pub struct Murmur2 {}
 
 impl FastHash for Murmur2 {
@@ -88,7 +89,7 @@ impl FastHash for Murmur2 {
 
 impl_hasher!(Murmur2Hasher, Murmur2);
 
-/// MurmurHash2A 32-bit hash functions
+/// `MurmurHash2A` 32-bit hash functions
 pub struct Murmur2A {}
 
 impl FastHash for Murmur2A {
@@ -107,7 +108,7 @@ impl FastHash for Murmur2A {
 
 impl_hasher!(Murmur2AHasher, Murmur2A);
 
-/// MurmurHash2 32-bit neutral hash functions for the (slower) endian-neutral implementation
+/// `MurmurHash2` 32-bit neutral hash functions for the (slower) endian-neutral implementation
 pub struct MurmurNeutral2 {}
 
 impl FastHash for MurmurNeutral2 {
@@ -126,7 +127,8 @@ impl FastHash for MurmurNeutral2 {
 
 impl_hasher!(MurmurNeutral2Hasher, MurmurNeutral2);
 
-/// MurmurHash2 32-bit aligned hash functions for the little-endian aligned-read-only implementation
+/// `MurmurHash2` 32-bit aligned hash functions
+/// for the little-endian aligned-read-only implementation
 pub struct MurmurAligned2 {}
 
 impl FastHash for MurmurAligned2 {
@@ -145,7 +147,7 @@ impl FastHash for MurmurAligned2 {
 
 impl_hasher!(MurmurAligned2Hasher, MurmurAligned2);
 
-/// MurmurHash2 64-bit hash functions for 64-bit processors
+/// `MurmurHash2` 64-bit hash functions for 64-bit processors
 pub struct Murmur2_x64_64 {}
 
 impl FastHash for Murmur2_x64_64 {
@@ -164,7 +166,7 @@ impl FastHash for Murmur2_x64_64 {
 
 impl_hasher!(Murmur2Hasher_x64_64, Murmur2_x64_64);
 
-/// MurmurHash2 64-bit hash functions for 32-bit processors
+/// `MurmurHash2` 64-bit hash functions for 32-bit processors
 pub struct Murmur2_x86_64 {}
 
 impl FastHash for Murmur2_x86_64 {
@@ -183,26 +185,26 @@ impl FastHash for Murmur2_x86_64 {
 
 impl_hasher!(Murmur2Hasher_x86_64, Murmur2_x86_64);
 
-/// MurmurHash2 32-bit hash functions for a byte array.
+/// `MurmurHash2` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     Murmur2A::hash(v)
 }
 
-/// MurmurHash2 32-bit hash function for a byte array.
+/// `MurmurHash2` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
     Murmur2A::hash_with_seed(v, seed)
 }
 
-/// MurmurHash2 64-bit hash functions for a byte array.
+/// `MurmurHash2` 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     Murmur2_x64_64::hash(v)
 }
 
-/// MurmurHash2 64-bit hash function for a byte array.
+/// `MurmurHash2` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {

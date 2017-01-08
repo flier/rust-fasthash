@@ -18,9 +18,9 @@
 //! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
-//! By default, HashMap uses a hashing algorithm selected to
-//! provide resistance against HashDoS attacks.
-//! The hashing algorithm can be replaced on a per-HashMap basis
+//! By default, `HashMap` uses a hashing algorithm selected to
+//! provide resistance against `HashDoS` attacks.
+//! The hashing algorithm can be replaced on a per-`HashMap` basis
 //! using the `HashMap::with_hasher` or
 //! `HashMap::with_capacity_and_hasher` methods.
 //!
@@ -35,7 +35,7 @@
 //! set.insert(2);
 //! ```
 //!
-//! Or use RandomState<CityHash64> with a random seed.
+//! Or use `RandomState<CityHash64>` with a random seed.
 //!
 //! ```rust
 //! use std::hash::{Hash, Hasher};

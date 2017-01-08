@@ -149,8 +149,8 @@ pub trait HasherExt: Hasher {
 ///
 /// > Later in #36481 it was discovered that exposing a deterministic
 /// > iteration order allows a form of DOS attack. To counter that we
-/// > increment one of the seeds on every RandomState creation, giving
-/// > every corresponding HashMap a different iteration order.
+/// > increment one of the seeds on every `RandomState` creation, giving
+/// > every corresponding `HashMap` a different iteration order.
 ///
 /// # Examples
 ///

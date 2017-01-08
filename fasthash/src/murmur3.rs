@@ -1,4 +1,4 @@
-//! Murmur3, a suite of non-cryptographic hash functions that was used for hash-based lookups.
+//! `Murmur3`, a suite of non-cryptographic hash functions that was used for hash-based lookups.
 //!
 //! by Austin Appleby (aappleby (AT) gmail)
 //!
@@ -39,7 +39,7 @@ use ffi;
 
 use hasher::{FastHash, FastHasher};
 
-/// MurmurHash3 32-bit hash functions
+/// `MurmurHash3` 32-bit hash functions
 pub struct Murmur3_x86_32 {}
 
 impl FastHash for Murmur3_x86_32 {
@@ -63,7 +63,7 @@ impl FastHash for Murmur3_x86_32 {
 
 impl_hasher!(Murmur3Hasher_x86_32, Murmur3_x86_32);
 
-/// MurmurHash3 128-bit hash functions for 32-bit processors
+/// `MurmurHash3` 128-bit hash functions for 32-bit processors
 pub struct Murmur3_x86_128 {}
 
 impl FastHash for Murmur3_x86_128 {
@@ -87,7 +87,7 @@ impl FastHash for Murmur3_x86_128 {
 
 impl_hasher_ext!(Murmur3Hasher_x86_128, Murmur3_x86_128);
 
-/// MurmurHash3 128-bit hash functions for 64-bit processors
+/// `MurmurHash3` 128-bit hash functions for 64-bit processors
 pub struct Murmur3_x64_128 {}
 
 impl FastHash for Murmur3_x64_128 {
@@ -111,26 +111,26 @@ impl FastHash for Murmur3_x64_128 {
 
 impl_hasher_ext!(Murmur3Hasher_x64_128, Murmur3_x64_128);
 
-/// MurmurHash3 32-bit hash functions for a byte array.
+/// `MurmurHash3` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     Murmur3_x86_32::hash(v)
 }
 
-/// MurmurHash3 32-bit hash functions for a byte array.
+/// `MurmurHash3` 32-bit hash functions for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
     Murmur3_x86_32::hash_with_seed(v, seed)
 }
 
-/// MurmurHash3 128-bit hash functions for a byte array.
+/// `MurmurHash3` 128-bit hash functions for a byte array.
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     Murmur3_x64_128::hash(v)
 }
 
-/// MurmurHash3 128-bit hash functions for a byte array.
+/// `MurmurHash3` 128-bit hash functions for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {

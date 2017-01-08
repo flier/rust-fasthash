@@ -1,10 +1,10 @@
-//! SpookyHash: a 128-bit noncryptographic hash function
+//! `SpookyHash`: a 128-bit noncryptographic hash function
 //!
 //! by Bob Jenkins
 //!
 //! http://www.burtleburtle.net/bob/hash/spooky.html
 //!
-//!  - Oct 31 2010: alpha, framework + SpookyHash::Mix appears right
+//!  - Oct 31 2010: alpha, framework + `SpookyHash`::Mix appears right
 //!  - Oct 31 2011: alpha again, Mix only good to 2^^69 but rest appears right
 //!  - Dec 31 2011: beta, improved Mix, tested it for 2-bit deltas
 //!  - Feb  2 2012: production, same bits as beta
@@ -19,10 +19,10 @@
 //! This should be an equally good hash on big-endian machines, but it will
 //! compute different results on them than on little-endian machines.
 //!
-//! Google's CityHash has similar specs to SpookyHash, and CityHash is faster
+//! Google's `CityHash` has similar specs to `SpookyHash`, and `CityHash` is faster
 //! on some platforms.  MD4 and MD5 also have similar specs, but they are orders
 //! of magnitude slower.  CRCs are two or more times slower, but unlike
-//! SpookyHash, they have nice math for combining the CRCs of pieces to form
+//! `SpookyHash`, they have nice math for combining the CRCs of pieces to form
 //! the CRCs of wholes.  There are also cryptographic hashes, but those are even
 //! slower than MD5.
 //!
@@ -53,7 +53,7 @@ use ffi;
 
 use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 
-/// SpookyHash 32-bit hash functions
+/// `SpookyHash` 32-bit hash functions
 pub struct SpookyHash32 {}
 
 impl FastHash for SpookyHash32 {
@@ -78,7 +78,7 @@ impl FastHash for SpookyHash32 {
 
 impl_fasthash!(SpookyHasher128, SpookyHash32);
 
-/// SpookyHash 64-bit hash functions
+/// `SpookyHash` 64-bit hash functions
 pub struct SpookyHash64 {}
 
 impl FastHash for SpookyHash64 {
@@ -103,7 +103,7 @@ impl FastHash for SpookyHash64 {
 
 impl_fasthash!(SpookyHasher128, SpookyHash64);
 
-/// SpookyHash 128-bit hash functions
+/// `SpookyHash` 128-bit hash functions
 pub struct SpookyHash128 {}
 
 impl FastHash for SpookyHash128 {
@@ -191,40 +191,40 @@ impl StreamHasher for SpookyHasher128 {}
 
 impl_fasthash!(SpookyHasher128, SpookyHash128);
 
-/// SpookyHash 32-bit hash functions for a byte array.
+/// `SpookyHash` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     SpookyHash32::hash(v)
 }
 
-/// SpookyHash 32-bit hash functions for a byte array.
+/// `SpookyHash` 32-bit hash functions for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
     SpookyHash32::hash_with_seed(v, seed)
 }
 
-/// SpookyHash 64-bit hash functions for a byte array.
+/// `SpookyHash` 64-bit hash functions for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     SpookyHash64::hash(v)
 }
 
-/// SpookyHash 64-bit hash functions for a byte array.
+/// `SpookyHash` 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     SpookyHash64::hash_with_seed(v, seed)
 }
 
-/// SpookyHash 128-bit hash functions for a byte array.
+/// `SpookyHash` 128-bit hash functions for a byte array.
 /// For convenience, a 128-bit seed is also hashed into the result.
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
     SpookyHash128::hash(v)
 }
 
-/// SpookyHash 128-bit hash functions for a byte array.
+/// `SpookyHash` 128-bit hash functions for a byte array.
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
     SpookyHash128::hash_with_seed(v, seed)

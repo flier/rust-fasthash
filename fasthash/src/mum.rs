@@ -1,4 +1,4 @@
-//! MumHash, Hashing functions and PRNGs based on them
+//! `MumHash`, Hashing functions and PRNGs based on them
 //!
 //! by Vladimir Makarov <vmakarov@gcc.gnu.org>
 //!
@@ -13,12 +13,12 @@
 //!     * For example, 64x64-bit multiplication can do the same work as 32
 //!       shifts and additions
 //!   * I'd like to call it Multiply and Reduce.  Unfortunately, MUR
-//!     (MUltiply and Rotate) is already taken for famous hashing
+//!     (Multiply and Rotate) is already taken for famous hashing
 //!     technique designed by Austin Appleby
 //!   * I've chosen the name also as I am releasing it on Mother's day
-//! * MUM hash passes **all** [SMHasher](https://github.com/aappleby/smhasher) tests
+//! * MUM hash passes **all** [`SMHasher`](https://github.com/aappleby/smhasher) tests
 //!   * For comparison, only 4 out of 15 non-cryptographic hash functions
-//!     in SMHasher passes the tests, e.g. well known FNV, Murmur2,
+//!     in `SMHasher` passes the tests, e.g. well known FNV, Murmur2,
 //!     Lookup, and Superfast hashes fail the tests
 //! * MUM algorithm is **simpler** than City64 and Spooky ones
 //! * MUM is specifically **designed for 64-bit CPUs** (Sorry, I did not want to
@@ -59,7 +59,7 @@ use ffi;
 
 use hasher::{FastHash, FastHasher};
 
-/// FarmHash 64-bit hash functions
+/// `MumHash` 64-bit hash functions
 pub struct MumHash {}
 
 impl FastHash for MumHash {
@@ -78,13 +78,13 @@ impl FastHash for MumHash {
 
 impl_hasher!(MumHasher, MumHash);
 
-/// MumHash 64-bit hash functions for a byte array.
+/// `MumHash` 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     MumHash::hash(v)
 }
 
-/// MumHash 64-bit hash function for a byte array.
+/// `MumHash` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {

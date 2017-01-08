@@ -1,4 +1,4 @@
-//! Lookup3, non-cryptographic hash.
+//! `Lookup3`, non-cryptographic hash.
 //!
 //! by Bob Jekins
 //!
@@ -29,7 +29,7 @@ use ffi;
 
 use hasher::{FastHash, FastHasher};
 
-/// Lookup3 32-bit hash functions
+/// `Lookup3` 32-bit hash functions
 pub struct Lookup3 {}
 
 impl FastHash for Lookup3 {
@@ -48,13 +48,13 @@ impl FastHash for Lookup3 {
 
 impl_hasher!(Lookup3Hasher, Lookup3);
 
-/// Lookup3 32-bit hash functions for a byte array.
+/// `Lookup3` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
     Lookup3::hash(v)
 }
 
-/// Lookup3 32-bit hash function for a byte array.
+/// `Lookup3` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {

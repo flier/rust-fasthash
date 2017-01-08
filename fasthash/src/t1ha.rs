@@ -6,7 +6,7 @@
 //!
 //! Briefly, it is a 64-bit Hash Function:
 //!
-//! Created for 64-bit little-endian platforms, in predominantly for x86_64,
+//! Created for 64-bit little-endian platforms, in predominantly for `x86_64`,
 //! but without penalties could runs on any 64-bit CPU.
 //! In most cases up to 15% faster than City64, xxHash, mum-hash,
 //! metro-hash and all others which are not use specific hardware tricks.
@@ -52,7 +52,7 @@ use ffi;
 
 use hasher::{FastHash, FastHasher};
 
-/// T1ha 64-bit hash functions for 64-bit little-endian platforms.
+/// `T1Hash` 64-bit hash functions for 64-bit little-endian platforms.
 pub struct T1ha64Le {}
 
 impl FastHash for T1ha64Le {
@@ -71,7 +71,7 @@ impl FastHash for T1ha64Le {
 
 impl_hasher!(T1ha64LeHasher, T1ha64Le);
 
-/// T1ha 64-bit hash functions for 64-bit big-endian platforms.
+/// `T1Hash` 64-bit hash functions for 64-bit big-endian platforms.
 pub struct T1ha64Be {}
 
 impl FastHash for T1ha64Be {
@@ -90,7 +90,7 @@ impl FastHash for T1ha64Be {
 
 impl_hasher!(T1ha64BeHasher, T1ha64Be);
 
-/// T1ha 32-bit hash functions for 32-bit little-endian platforms.
+/// `T1Hash` 32-bit hash functions for 32-bit little-endian platforms.
 pub struct T1ha32Le {}
 
 impl FastHash for T1ha32Le {
@@ -109,7 +109,7 @@ impl FastHash for T1ha32Le {
 
 impl_hasher!(T1ha32LeHasher, T1ha32Le);
 
-/// T1ha 32-bit hash functions for 32-bit big-endian platforms.
+/// `T1Hash` 32-bit hash functions for 32-bit big-endian platforms.
 pub struct T1ha32Be {}
 
 impl FastHash for T1ha32Be {
@@ -128,7 +128,7 @@ impl FastHash for T1ha32Be {
 
 impl_hasher!(T1ha32BeHasher, T1ha32Be);
 
-/// T1ha 64-bit hash functions using HW CRC instruction for 64-bit little-endian platforms.
+/// `T1Hash` 64-bit hash functions using HW CRC instruction for 64-bit little-endian platforms.
 #[cfg(feature = "sse42")]
 pub struct T1ha64Crc {}
 
@@ -150,27 +150,27 @@ impl FastHash for T1ha64Crc {
 #[cfg(feature = "sse42")]
 impl_hasher!(T1ha64CrcHasher, T1ha64Crc);
 
-/// T1Hash 32-bit hash functions for a byte array.
+/// `T1Hash` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha32Le::hash(v)
 }
 
-/// T1Hash 32-bit hash function for a byte array.
+/// `T1Hash` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha32Le::hash_with_seed(v, seed)
 }
 
-/// T1Hash 64-bit hash functions for a byte array.
+/// `T1Hash` 64-bit hash functions for a byte array.
 #[cfg(not(feature = "sse42"))]
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Le::hash(v)
 }
 
-/// T1Hash 64-bit hash function for a byte array.
+/// `T1Hash` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[cfg(not(feature = "sse42"))]
 #[inline]
@@ -178,7 +178,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
     T1ha64Le::hash_with_seed(v, seed)
 }
 
-/// T1Hash 64-bit hash function for a byte array using HW CRC instruction.
+/// `T1Hash` 64-bit hash function for a byte array using HW CRC instruction.
 /// That require SSE4.2 instructions to be available.
 #[cfg(any(feature = "doc", feature = "sse42"))]
 #[inline]
@@ -186,7 +186,7 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
     T1ha64Crc::hash(v)
 }
 
-/// T1Hash 64-bit hash function for a byte array using HW CRC instruction.
+/// `T1Hash` 64-bit hash function for a byte array using HW CRC instruction.
 /// That require SSE4.2 instructions to be available.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[cfg(any(feature = "doc", feature = "sse42"))]
