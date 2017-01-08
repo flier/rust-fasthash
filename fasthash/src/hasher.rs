@@ -1,3 +1,4 @@
+#[cfg(feature = "i128")]
 use std::mem;
 use std::io;
 use std::cell::RefCell;
@@ -7,6 +8,7 @@ use std::hash::{Hasher, BuildHasher};
 use rand::{Rand, Rng};
 use xoroshiro128::{SeedableRng, Xoroshiro128Rng};
 
+#[cfg(feature = "i128")]
 use extprim::i128::i128;
 use extprim::u128::u128;
 
@@ -124,12 +126,14 @@ pub trait HasherExt: Hasher {
     fn finish_ext(&self) -> u128;
 
     /// Writes a single `u128` into this hasher.
+    #[cfg(feature = "i128")]
     #[inline]
     fn write_u128(&mut self, i: u128) {
         self.write(&unsafe { mem::transmute::<_, [u8; 16]>(i) })
     }
 
     /// Writes a single `i128` into this hasher.
+    #[cfg(feature = "i128")]
     #[inline]
     fn write_i128(&mut self, i: i128) {
         self.write_u128(i.as_u128())

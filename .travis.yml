@@ -1,10 +1,12 @@
 sudo: false
 language: rust
-rust:
-  - stable
-  - beta
-  - nightly
 matrix:
+  fast_finish: true
+  include:
+    - rust: beta
+    - rust: stable
+    - rust: nightly
+      env: FEATURES="--no-default-features"
   allow_failures:
     - rust: nightly
 os:

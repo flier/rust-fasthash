@@ -11,8 +11,9 @@ license = "Apache-2.0"
 build = "build.rs"
 
 [features]
-default = ["sse42"]
+default = ["i128", "sse42"]
 doc = []
+i128 = []
 sse42 = ["fasthash-sys/sse42"]
 
 [dependencies]
