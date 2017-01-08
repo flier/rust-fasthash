@@ -3,15 +3,13 @@ language: rust
 matrix:
   fast_finish: true
   include:
-    - rust: beta
+    - os: osx
     - rust: stable
+    - rust: beta
     - rust: nightly
       env: FEATURES="--no-default-features"
   allow_failures:
     - rust: nightly
-os:
-  - linux
-  - osx
 addons:
   apt:
     sources:
@@ -31,7 +29,9 @@ before_script:
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then . ./.travis/before_install.sh llvm; fi
   - cd fasthash
 script:
-  - cargo test
+  - cargo build --verbose $FEATURES
+  - cargo test --verbose $FEATURES
+  - 'if [ $TRAVIS_RUST_VERSION = nightly ]; then cargo bench --no-run; fi'
 cache:
   cargo: true
   directories:
