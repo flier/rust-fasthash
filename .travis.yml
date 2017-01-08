@@ -4,6 +4,9 @@ rust:
   - stable
   - beta
   - nightly
+os:
+  - osx
+  - linux
 matrix:
   allow_failures:
     - rust: nightly
