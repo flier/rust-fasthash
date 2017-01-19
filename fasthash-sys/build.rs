@@ -42,6 +42,8 @@ fn main() {
         })
         .header("src/fasthash.hpp")
         .no_unstable_rust()
+        .disable_name_namespacing()
+        .hide_type(".*PCCP.*")
         .whitelisted_function("^CityHash.*")
         .whitelisted_function("^farmhash.*")
         .whitelisted_function("^lookup3.*")
