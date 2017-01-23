@@ -1,7 +1,5 @@
-# rust-fasthash [![travis build](https://travis-ci.org/flier/rust-fasthash.svg?branch=master)](https://travis-ci.org/flier/rust-fasthash) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash)
+# rust-fasthash [![travis build](https://travis-ci.org/flier/rust-fasthash.svg?branch=master)](https://travis-ci.org/flier/rust-fasthash) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash) [![docs](https://docs.rs/mio/badge.svg)](https://docs.rs/crate/fasthash/)
 A suite of non-cryptographic hash functions for Rust, base on a forked [smhasher](https://github.com/rurban/smhasher/).
-
-[API Document](https://docs.rs/fasthash)
 
 # Usage
 
@@ -12,13 +10,12 @@ To use `fasthash`, first add this to your `Cargo.toml`:
 fasthash = "0.2"
 ```
 
-When use `fasthash` in Rust 1.16 (nightly) or later, we need disable `i128` in default features
+When use `fasthash` 128bit supports in Rust 1.15 (beta) or early, we need enable `i128` feature
 
 ```toml
 [dependencies.fasthash]
 version = "0.2"
-default-features = false
-features = ["sse42"]
+features = ["i128", "sse42"]
 ```
 
 Then, add this to your crate root:
