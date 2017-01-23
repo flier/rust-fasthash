@@ -207,7 +207,6 @@ impl_from_seed!((u64, u64, u64, u64));
 /// instances are unlikely to produce the same result for the same values.
 ///
 /// ```rust
-/// use std::hash::{Hash, Hasher};
 /// use std::collections::HashMap;
 ///
 /// use fasthash::RandomState;

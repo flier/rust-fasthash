@@ -38,7 +38,6 @@
 //! Or use `RandomState<CityHash64>` with a random seed.
 //!
 //! ```rust
-//! use std::hash::{Hash, Hasher};
 //! use std::collections::HashMap;
 //!
 //! use fasthash::RandomState;
