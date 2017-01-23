@@ -1,8 +1,46 @@
 extern crate gcc;
+#[cfg(feature = "bindgen")]
 extern crate libbindgen;
 
+#[cfg(not(feature = "bindgen"))]
+use std::fs;
 use std::env;
 use std::path::Path;
+
+#[cfg(feature = "bindgen")]
+fn generate_binding(out_file: &Path) {
+    let _ = libbindgen::builder()
+        .clang_arg("-xc++")
+        .clang_arg("--std=c++11")
+        .clang_arg(if cfg!(feature = "sse42") {
+            "-msse4.2"
+        } else {
+            "-march=native"
+        })
+        .header("src/fasthash.hpp")
+        .no_unstable_rust()
+        .disable_name_namespacing()
+        .hide_type(".*PCCP.*")
+        .whitelisted_function("^CityHash.*")
+        .whitelisted_function("^farmhash.*")
+        .whitelisted_function("^lookup3.*")
+        .whitelisted_function("^metrohash.*")
+        .whitelisted_function("^mum_hash.*")
+        .whitelisted_function("^MurmurHash.*")
+        .whitelisted_function("^SpookyHasher.*")
+        .whitelisted_function("^t1ha.*")
+        .whitelisted_function("^XXH.*")
+        .link_static("fasthash")
+        .generate()
+        .unwrap()
+        .write_to_file(out_file)
+        .expect("fail to write bindings");
+}
+
+#[cfg(not(feature = "bindgen"))]
+fn generate_binding(out_file: &Path) {
+    fs::copy("src/fasthash.rs", out_file).expect("fail to copy bindings");
+}
 
 fn main() {
     let mut gcc_config = gcc::Config::new();
@@ -32,32 +70,7 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("src/fasthash.rs");
 
-    let _ = libbindgen::builder()
-        .clang_arg("-xc++")
-        .clang_arg("--std=c++11")
-        .clang_arg(if cfg!(feature = "sse42") {
-            "-msse4.2"
-        } else {
-            "-march=native"
-        })
-        .header("src/fasthash.hpp")
-        .no_unstable_rust()
-        .disable_name_namespacing()
-        .hide_type(".*PCCP.*")
-        .whitelisted_function("^CityHash.*")
-        .whitelisted_function("^farmhash.*")
-        .whitelisted_function("^lookup3.*")
-        .whitelisted_function("^metrohash.*")
-        .whitelisted_function("^mum_hash.*")
-        .whitelisted_function("^MurmurHash.*")
-        .whitelisted_function("^SpookyHasher.*")
-        .whitelisted_function("^t1ha.*")
-        .whitelisted_function("^XXH.*")
-        .link_static("fasthash")
-        .generate()
-        .unwrap()
-        .write_to_file(out_file)
-        .expect("Couldn't write bindings!");
+    generate_binding(&out_file);
 
     if cfg!(target_os = "macos") {
         println!("cargo:rustc-link-lib=dylib=c++");

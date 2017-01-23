@@ -15,6 +15,7 @@ default = ["i128", "sse42"]
 doc = []
 i128 = []
 sse42 = ["fasthash-sys/sse42"]
+bindgen = ["fasthash-sys/bindgen"]
 
 [dependencies]
 extprim = "1.1"
