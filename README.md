@@ -10,7 +10,7 @@ To use `fasthash`, first add this to your `Cargo.toml`:
 fasthash = "0.2"
 ```
 
-When use `fasthash` 128bit supports in Rust 1.15 (beta) or early, we need enable `i128` feature
+When use `fasthash` 128bit supports in Rust 1.15 (beta) or earlier version, we need enable `i128` feature.
 
 ```toml
 [dependencies.fasthash]
@@ -18,7 +18,7 @@ version = "0.2"
 features = ["i128", "sse42"]
 ```
 
-Then, add this to your crate root:
+Then, add this to your crate root
 
 ```rust
 extern crate fasthash;
@@ -32,7 +32,13 @@ And then, use hash function with module or hasher
 let h = city::hash64("hello world");
 ```
 
+Or work with `std::hash::Hash`
+
 ```rust
+use std::hash::Hash;
+
+use fasthash::MetroHasher;
+
 fn hash<T: Hash>(t: &T) -> u64 {
     let mut s = MetroHasher::new();
     t.hash(&mut s);
@@ -42,7 +48,7 @@ fn hash<T: Hash>(t: &T) -> u64 {
 hash(&"hello world");
 ```
 
-It also cowork with `HashMap` or `HashSet`, act as a hash function
+It also works with `HashMap` or `HashSet`, act as the hash function
 
 ```rust
 use std::collections::HashSet;
@@ -56,7 +62,6 @@ set.insert(2);
 Or use RandomState<CityHash64> with a random seed.
 
 ```rust
-use std::hash::{Hash, Hasher};
 use std::collections::HashMap;
 
 use fasthash::RandomState;
@@ -75,8 +80,8 @@ assert_eq!(map[&37], "c");
 
 # Goal
 - High performance
-- Zero cost
-- Compatibility with libstd
+- Zero cost binding
+- Compatibility with libstd/libcollection
 
 # Features
 
