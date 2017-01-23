@@ -39,7 +39,13 @@ fn generate_binding(out_file: &Path) {
 
 #[cfg(not(feature = "bindgen"))]
 fn generate_binding(out_file: &Path) {
-    fs::copy("src/fasthash.rs", out_file).expect("fail to copy bindings");
+    let suffix = if cfg!(target_os = "macos") {
+        "macos"
+    } else {
+        "linux"
+    };
+
+    fs::copy(format!("src/fasthash_{}.rs", suffix), out_file).expect("fail to copy bindings");
 }
 
 fn main() {
