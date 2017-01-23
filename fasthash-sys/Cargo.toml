@@ -1,6 +1,6 @@
 [package]
 name = "fasthash-sys"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
 description = "A suite of non-cryptographic hash functions for Rust."
 homepage = "https://github.com/flier/rust-fasthash"
