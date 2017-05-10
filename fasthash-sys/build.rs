@@ -18,6 +18,7 @@ fn generate_binding(out_file: &Path) {
                    })
         .header("src/fasthash.hpp")
         .no_unstable_rust()
+        .generate_inline_functions(true)
         .disable_name_namespacing()
         .hide_type(".*PCCP.*")
         .whitelisted_function("^CityHash.*")
