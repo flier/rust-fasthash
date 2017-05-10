@@ -65,6 +65,66 @@ extern "C" {
     #[link_name = "_Z14CityHashCrc256PKcmPm"]
     pub fn CityHashCrc256(s: *const ::std::os::raw::c_char, len: usize, result: *mut uint64);
 }
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct uint128_c_t {
+    pub a: u64,
+    pub b: u64,
+}
+#[test]
+fn bindgen_test_layout_uint128_c_t() {
+    assert_eq!(::std::mem::size_of::<uint128_c_t>(),
+               16usize,
+               concat!("Size of: ", stringify!(uint128_c_t)));
+    assert_eq!(::std::mem::align_of::<uint128_c_t>(),
+               8usize,
+               concat!("Alignment of ", stringify!(uint128_c_t)));
+}
+impl Clone for uint128_c_t {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+extern "C" {
+    pub fn farmhash(s: *const ::std::os::raw::c_char, len: usize) -> usize;
+}
+extern "C" {
+    pub fn farmhash32(s: *const ::std::os::raw::c_char, len: usize) -> u32;
+}
+extern "C" {
+    pub fn farmhash32_with_seed(s: *const ::std::os::raw::c_char, len: usize, seed: u32) -> u32;
+}
+extern "C" {
+    pub fn farmhash64(s: *const ::std::os::raw::c_char, len: usize) -> u64;
+}
+extern "C" {
+    pub fn farmhash64_with_seed(s: *const ::std::os::raw::c_char, len: usize, seed: u64) -> u64;
+}
+extern "C" {
+    pub fn farmhash64_with_seeds(s: *const ::std::os::raw::c_char,
+                                 len: usize,
+                                 seed0: u64,
+                                 seed1: u64)
+                                 -> u64;
+}
+extern "C" {
+    pub fn farmhash128(s: *const ::std::os::raw::c_char, len: usize) -> uint128_c_t;
+}
+extern "C" {
+    pub fn farmhash128_with_seed(s: *const ::std::os::raw::c_char,
+                                 len: usize,
+                                 seed: uint128_c_t)
+                                 -> uint128_c_t;
+}
+extern "C" {
+    pub fn farmhash_fingerprint32(s: *const ::std::os::raw::c_char, len: usize) -> u32;
+}
+extern "C" {
+    pub fn farmhash_fingerprint64(s: *const ::std::os::raw::c_char, len: usize) -> u64;
+}
+extern "C" {
+    pub fn farmhash_fingerprint128(s: *const ::std::os::raw::c_char, len: usize) -> uint128_c_t;
+}
 extern "C" {
     #[link_name = "_Z13metrohash64_1PKhmjPh"]
     pub fn metrohash64_1(key: *const u8, len: u64, seed: u32, out: *mut u8);
@@ -174,66 +234,6 @@ extern "C" {
                                seed: u32,
                                out: *mut ::std::os::raw::c_void);
 }
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct uint128_c_t {
-    pub a: u64,
-    pub b: u64,
-}
-#[test]
-fn bindgen_test_layout_uint128_c_t() {
-    assert_eq!(::std::mem::size_of::<uint128_c_t>(),
-               16usize,
-               concat!("Size of: ", stringify!(uint128_c_t)));
-    assert_eq!(::std::mem::align_of::<uint128_c_t>(),
-               8usize,
-               concat!("Alignment of ", stringify!(uint128_c_t)));
-}
-impl Clone for uint128_c_t {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-extern "C" {
-    pub fn farmhash(s: *const ::std::os::raw::c_char, len: usize) -> usize;
-}
-extern "C" {
-    pub fn farmhash32(s: *const ::std::os::raw::c_char, len: usize) -> u32;
-}
-extern "C" {
-    pub fn farmhash32_with_seed(s: *const ::std::os::raw::c_char, len: usize, seed: u32) -> u32;
-}
-extern "C" {
-    pub fn farmhash64(s: *const ::std::os::raw::c_char, len: usize) -> u64;
-}
-extern "C" {
-    pub fn farmhash64_with_seed(s: *const ::std::os::raw::c_char, len: usize, seed: u64) -> u64;
-}
-extern "C" {
-    pub fn farmhash64_with_seeds(s: *const ::std::os::raw::c_char,
-                                 len: usize,
-                                 seed0: u64,
-                                 seed1: u64)
-                                 -> u64;
-}
-extern "C" {
-    pub fn farmhash128(s: *const ::std::os::raw::c_char, len: usize) -> uint128_c_t;
-}
-extern "C" {
-    pub fn farmhash128_with_seed(s: *const ::std::os::raw::c_char,
-                                 len: usize,
-                                 seed: uint128_c_t)
-                                 -> uint128_c_t;
-}
-extern "C" {
-    pub fn farmhash_fingerprint32(s: *const ::std::os::raw::c_char, len: usize) -> u32;
-}
-extern "C" {
-    pub fn farmhash_fingerprint64(s: *const ::std::os::raw::c_char, len: usize) -> u64;
-}
-extern "C" {
-    pub fn farmhash_fingerprint128(s: *const ::std::os::raw::c_char, len: usize) -> uint128_c_t;
-}
 extern "C" {
     pub fn t1ha(data: *const ::std::os::raw::c_void, len: usize, seed: u64) -> u64;
 }
@@ -262,14 +262,12 @@ extern "C" {
     /*****************************
    Simple Hash Functions
 *****************************/
-    #[link_name = "_Z5XXH32"]
     pub fn XXH32(input: *const ::std::os::raw::c_void,
                  length: usize,
                  seed: ::std::os::raw::c_uint)
                  -> ::std::os::raw::c_uint;
 }
 extern "C" {
-    #[link_name = "_Z5XXH64"]
     pub fn XXH64(input: *const ::std::os::raw::c_void,
                  length: usize,
                  seed: ::std::os::raw::c_ulonglong)
@@ -407,7 +405,7 @@ extern "C" {
                              hash2: *mut uint64);
 }
 #[test]
-fn __bindgen_test_layout_pair_instantiation_7217() {
+fn __bindgen_test_layout_pair_instantiation_7216() {
     assert_eq!(::std::mem::size_of::<pair<::std::os::raw::c_ulong, ::std::os::raw::c_ulong>>(),
                16usize,
                concat!("Size of template specialization: ",
