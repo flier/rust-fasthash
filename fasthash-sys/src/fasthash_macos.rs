@@ -6,6 +6,8 @@ pub type __darwin_size_t = ::std::os::raw::c_ulong;
 pub struct pair<_T1, _T2> {
     pub first: _T1,
     pub second: _T2,
+    pub _phantom_0: ::std::marker::PhantomData<::std::cell::UnsafeCell<_T1>>,
+    pub _phantom_1: ::std::marker::PhantomData<::std::cell::UnsafeCell<_T2>>,
 }
 pub type pair_first_type<_T1> = _T1;
 pub type pair_second_type<_T2> = _T2;
@@ -58,73 +60,6 @@ extern "C" {
     pub fn CityHashCrc256(s: *const ::std::os::raw::c_char, len: usize,
                           result: *mut uint64);
 }
-#[repr(C)]
-#[derive(Debug, Copy)]
-pub struct uint128_c_t {
-    pub a: u64,
-    pub b: u64,
-}
-#[test]
-fn bindgen_test_layout_uint128_c_t() {
-    assert_eq!(::std::mem::size_of::<uint128_c_t>() , 16usize);
-    assert_eq!(::std::mem::align_of::<uint128_c_t>() , 8usize);
-}
-impl Clone for uint128_c_t {
-    fn clone(&self) -> Self { *self }
-}
-extern "C" {
-    pub fn farmhash(s: *const ::std::os::raw::c_char, len: usize) -> usize;
-}
-extern "C" {
-    pub fn farmhash32(s: *const ::std::os::raw::c_char, len: usize) -> u32;
-}
-extern "C" {
-    pub fn farmhash32_with_seed(s: *const ::std::os::raw::c_char, len: usize,
-                                seed: u32) -> u32;
-}
-extern "C" {
-    pub fn farmhash64(s: *const ::std::os::raw::c_char, len: usize) -> u64;
-}
-extern "C" {
-    pub fn farmhash64_with_seed(s: *const ::std::os::raw::c_char, len: usize,
-                                seed: u64) -> u64;
-}
-extern "C" {
-    pub fn farmhash64_with_seeds(s: *const ::std::os::raw::c_char, len: usize,
-                                 seed0: u64, seed1: u64) -> u64;
-}
-extern "C" {
-    pub fn farmhash128(s: *const ::std::os::raw::c_char, len: usize)
-     -> uint128_c_t;
-}
-extern "C" {
-    pub fn farmhash128_with_seed(s: *const ::std::os::raw::c_char, len: usize,
-                                 seed: uint128_c_t) -> uint128_c_t;
-}
-extern "C" {
-    #[link_name = "_Z17farmhash128_to_6411uint128_c_t"]
-    pub fn farmhash128_to_64(x: uint128_c_t) -> u64;
-}
-extern "C" {
-    pub fn farmhash_fingerprint32(s: *const ::std::os::raw::c_char,
-                                  len: usize) -> u32;
-}
-extern "C" {
-    pub fn farmhash_fingerprint64(s: *const ::std::os::raw::c_char,
-                                  len: usize) -> u64;
-}
-extern "C" {
-    pub fn farmhash_fingerprint128(s: *const ::std::os::raw::c_char,
-                                   len: usize) -> uint128_c_t;
-}
-extern "C" {
-    #[link_name = "_Z32farmhash_fingerprint_uint128_c_t11uint128_c_t"]
-    pub fn farmhash_fingerprint_uint128_c_t(x: uint128_c_t) -> u64;
-}
-extern "C" {
-    #[link_name = "_Z29farmhash_fingerprint_uint64_ty"]
-    pub fn farmhash_fingerprint_uint64_t(x: u64) -> u64;
-}
 extern "C" {
     #[link_name = "_Z13metrohash64_1PKhyjPh"]
     pub fn metrohash64_1(key: *const u8, len: u64, seed: u32, out: *mut u8);
@@ -160,31 +95,6 @@ extern "C" {
     #[link_name = "_Z17metrohash128crc_2PKhyjPh"]
     pub fn metrohash128crc_2(key: *const u8, len: u64, seed: u32,
                              out: *mut u8);
-}
-extern "C" {
-    #[link_name = "_ZL18mum_hash_randomizey"]
-    pub fn mum_hash_randomize(seed: u64);
-}
-extern "C" {
-    #[link_name = "_ZL13mum_hash_inity"]
-    pub fn mum_hash_init(seed: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "_ZL13mum_hash_stepyy"]
-    pub fn mum_hash_step(h: u64, key: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "_ZL15mum_hash_finishy"]
-    pub fn mum_hash_finish(h: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "_ZL10mum_hash64yy"]
-    pub fn mum_hash64(key: u64, seed: u64) -> usize;
-}
-extern "C" {
-    #[link_name = "_ZL8mum_hashPKvmy"]
-    pub fn mum_hash(key: *const ::std::os::raw::c_void, len: usize, seed: u64)
-     -> u64;
 }
 extern "C" {
     #[link_name = "_Z11MurmurHash1PKvij"]
@@ -244,17 +154,79 @@ extern "C" {
                                len: ::std::os::raw::c_int, seed: u32,
                                out: *mut ::std::os::raw::c_void);
 }
+#[repr(C)]
+#[derive(Debug, Copy)]
+pub struct uint128_c_t {
+    pub a: u64,
+    pub b: u64,
+}
+#[test]
+fn bindgen_test_layout_uint128_c_t() {
+    assert_eq!(::std::mem::size_of::<uint128_c_t>() , 16usize , concat ! (
+               "Size of: " , stringify ! ( uint128_c_t ) ));
+    assert_eq! (::std::mem::align_of::<uint128_c_t>() , 8usize , concat ! (
+                "Alignment of " , stringify ! ( uint128_c_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const uint128_c_t ) ) . a as * const _ as usize
+                } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( uint128_c_t ) , "::" ,
+                stringify ! ( a ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const uint128_c_t ) ) . b as * const _ as usize
+                } , 8usize , concat ! (
+                "Alignment of field: " , stringify ! ( uint128_c_t ) , "::" ,
+                stringify ! ( b ) ));
+}
+impl Clone for uint128_c_t {
+    fn clone(&self) -> Self { *self }
+}
+extern "C" {
+    pub fn farmhash(s: *const ::std::os::raw::c_char, len: usize) -> usize;
+}
+extern "C" {
+    pub fn farmhash32(s: *const ::std::os::raw::c_char, len: usize) -> u32;
+}
+extern "C" {
+    pub fn farmhash32_with_seed(s: *const ::std::os::raw::c_char, len: usize,
+                                seed: u32) -> u32;
+}
+extern "C" {
+    pub fn farmhash64(s: *const ::std::os::raw::c_char, len: usize) -> u64;
+}
+extern "C" {
+    pub fn farmhash64_with_seed(s: *const ::std::os::raw::c_char, len: usize,
+                                seed: u64) -> u64;
+}
+extern "C" {
+    pub fn farmhash64_with_seeds(s: *const ::std::os::raw::c_char, len: usize,
+                                 seed0: u64, seed1: u64) -> u64;
+}
+extern "C" {
+    pub fn farmhash128(s: *const ::std::os::raw::c_char, len: usize)
+     -> uint128_c_t;
+}
+extern "C" {
+    pub fn farmhash128_with_seed(s: *const ::std::os::raw::c_char, len: usize,
+                                 seed: uint128_c_t) -> uint128_c_t;
+}
+extern "C" {
+    pub fn farmhash_fingerprint32(s: *const ::std::os::raw::c_char,
+                                  len: usize) -> u32;
+}
+extern "C" {
+    pub fn farmhash_fingerprint64(s: *const ::std::os::raw::c_char,
+                                  len: usize) -> u64;
+}
+extern "C" {
+    pub fn farmhash_fingerprint128(s: *const ::std::os::raw::c_char,
+                                   len: usize) -> uint128_c_t;
+}
 extern "C" {
     pub fn t1ha(data: *const ::std::os::raw::c_void, len: usize, seed: u64)
      -> u64;
 }
 extern "C" {
     pub fn t1ha_64be(data: *const ::std::os::raw::c_void, len: usize,
-                     seed: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "_Z9t1ha_64lePKvmy"]
-    pub fn t1ha_64le(data: *const ::std::os::raw::c_void, len: usize,
                      seed: u64) -> u64;
 }
 extern "C" {
@@ -269,15 +241,12 @@ extern "C" {
     pub fn t1ha_ia32crc(data: *const ::std::os::raw::c_void, len: usize,
                         seed: u64) -> u64;
 }
-pub const XXH_OK: _bindgen_ty_9 = _bindgen_ty_9::XXH_OK;
-pub const XXH_ERROR: _bindgen_ty_9 = _bindgen_ty_9::XXH_ERROR;
 #[repr(u32)]
 /*****************************
    Type
 *****************************/
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum _bindgen_ty_9 { XXH_OK = 0, XXH_ERROR = 1, }
-pub type XXH_errorcode = _bindgen_ty_9;
+pub enum XXH_errorcode { XXH_OK = 0, XXH_ERROR = 1, }
 extern "C" {
     /*****************************
    Simple Hash Functions
@@ -295,32 +264,44 @@ extern "C" {
 *****************************/
 #[repr(C)]
 #[derive(Debug, Copy)]
-pub struct _bindgen_ty_10 {
+pub struct XXH32_state_t {
     pub ll: [::std::os::raw::c_longlong; 6usize],
 }
 #[test]
-fn bindgen_test_layout__bindgen_ty_10() {
-    assert_eq!(::std::mem::size_of::<_bindgen_ty_10>() , 48usize);
-    assert_eq!(::std::mem::align_of::<_bindgen_ty_10>() , 8usize);
+fn bindgen_test_layout_XXH32_state_t() {
+    assert_eq!(::std::mem::size_of::<XXH32_state_t>() , 48usize , concat ! (
+               "Size of: " , stringify ! ( XXH32_state_t ) ));
+    assert_eq! (::std::mem::align_of::<XXH32_state_t>() , 8usize , concat ! (
+                "Alignment of " , stringify ! ( XXH32_state_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const XXH32_state_t ) ) . ll as * const _ as
+                usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( XXH32_state_t ) , "::"
+                , stringify ! ( ll ) ));
 }
-impl Clone for _bindgen_ty_10 {
+impl Clone for XXH32_state_t {
     fn clone(&self) -> Self { *self }
 }
-pub type XXH32_state_t = _bindgen_ty_10;
 #[repr(C)]
 #[derive(Debug, Copy)]
-pub struct _bindgen_ty_11 {
+pub struct XXH64_state_t {
     pub ll: [::std::os::raw::c_longlong; 11usize],
 }
 #[test]
-fn bindgen_test_layout__bindgen_ty_11() {
-    assert_eq!(::std::mem::size_of::<_bindgen_ty_11>() , 88usize);
-    assert_eq!(::std::mem::align_of::<_bindgen_ty_11>() , 8usize);
+fn bindgen_test_layout_XXH64_state_t() {
+    assert_eq!(::std::mem::size_of::<XXH64_state_t>() , 88usize , concat ! (
+               "Size of: " , stringify ! ( XXH64_state_t ) ));
+    assert_eq! (::std::mem::align_of::<XXH64_state_t>() , 8usize , concat ! (
+                "Alignment of " , stringify ! ( XXH64_state_t ) ));
+    assert_eq! (unsafe {
+                & ( * ( 0 as * const XXH64_state_t ) ) . ll as * const _ as
+                usize } , 0usize , concat ! (
+                "Alignment of field: " , stringify ! ( XXH64_state_t ) , "::"
+                , stringify ! ( ll ) ));
 }
-impl Clone for _bindgen_ty_11 {
+impl Clone for XXH64_state_t {
     fn clone(&self) -> Self { *self }
 }
-pub type XXH64_state_t = _bindgen_ty_11;
 extern "C" {
     pub fn XXH32_createState() -> *mut XXH32_state_t;
 }
@@ -408,11 +389,17 @@ extern "C" {
                              hash1: *mut uint64, hash2: *mut uint64);
 }
 #[test]
-fn __bindgen_test_layout_template_1() {
+fn __bindgen_test_layout_pair_instantiation_9049() {
     assert_eq!(::std::mem::size_of::<pair<::std::os::raw::c_ulonglong,
                            ::std::os::raw::c_ulonglong>>()
-               , 16usize);
+               , 16usize , concat ! (
+               "Size of template specialization: " , stringify ! (
+               pair<::std::os::raw::c_ulonglong, ::std::os::raw::c_ulonglong>
+               ) ));
     assert_eq!(::std::mem::align_of::<pair<::std::os::raw::c_ulonglong,
                             ::std::os::raw::c_ulonglong>>()
-               , 8usize);
+               , 8usize , concat ! (
+               "Alignment of template specialization: " , stringify ! (
+               pair<::std::os::raw::c_ulonglong, ::std::os::raw::c_ulonglong>
+               ) ));
 }
