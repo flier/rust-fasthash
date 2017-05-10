@@ -1,6 +1,6 @@
 extern crate gcc;
 #[cfg(feature = "bindgen")]
-extern crate libbindgen;
+extern crate bindgen;
 
 #[cfg(not(feature = "bindgen"))]
 use std::fs;
@@ -9,16 +9,16 @@ use std::path::Path;
 
 #[cfg(feature = "bindgen")]
 fn generate_binding(out_file: &Path) {
-    let _ = libbindgen::builder()
-        .clang_arg("-xc++")
+    let _ = bindgen::builder()
         .clang_arg("--std=c++11")
         .clang_arg(if cfg!(feature = "sse42") {
-            "-msse4.2"
-        } else {
-            "-march=native"
-        })
+                       "-msse4.2"
+                   } else {
+                       "-march=native"
+                   })
         .header("src/fasthash.hpp")
         .no_unstable_rust()
+        .generate_inline_functions(true)
         .disable_name_namespacing()
         .hide_type(".*PCCP.*")
         .whitelisted_function("^CityHash.*")
@@ -51,7 +51,8 @@ fn generate_binding(out_file: &Path) {
 fn main() {
     let mut gcc_config = gcc::Config::new();
 
-    gcc_config.file("src/fasthash.cpp")
+    gcc_config
+        .file("src/fasthash.cpp")
         .file("src/smhasher/City.cpp")
         .file("src/smhasher/farmhash-c.c")
         .file("src/smhasher/lookup3.cpp")
@@ -66,7 +67,8 @@ fn main() {
         .file("src/smhasher/xxhash.c");
 
     if cfg!(feature = "sse42") {
-        gcc_config.flag("-msse4.2")
+        gcc_config
+            .flag("-msse4.2")
             .file("src/smhasher/metrohash64crc.cpp")
             .file("src/smhasher/metrohash128crc.cpp");
     }
