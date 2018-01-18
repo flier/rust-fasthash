@@ -49,7 +49,7 @@ fn generate_binding(out_file: &Path) {
 }
 
 fn main() {
-    let mut gcc_config = gcc::Config::new();
+    let mut gcc_config = gcc::Build::new();
 
     gcc_config
         .file("src/fasthash.cpp")
