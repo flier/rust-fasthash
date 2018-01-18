@@ -52,6 +52,7 @@ fn main() {
     let mut gcc_config = gcc::Build::new();
 
     gcc_config
+        .flag("-Wno-implicit-fallthrough")
         .file("src/fasthash.cpp")
         .file("src/smhasher/City.cpp")
         .file("src/smhasher/farmhash-c.c")
