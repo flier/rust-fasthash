@@ -53,6 +53,7 @@ fn main() {
 
     gcc_config
         .flag("-Wno-implicit-fallthrough")
+        .flag("-Wno-unknown-attributes")
         .file("src/fasthash.cpp")
         .file("src/smhasher/City.cpp")
         .file("src/smhasher/farmhash-c.c")
