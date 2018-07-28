@@ -7,15 +7,7 @@ To use `fasthash`, first add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-fasthash = "0.2"
-```
-
-When use `fasthash` 128bit supports in Rust 1.15 (beta) or earlier version, we need enable `i128` feature.
-
-```toml
-[dependencies.fasthash]
-version = "0.2"
-features = ["i128", "sse42"]
+fasthash = "0.3"
 ```
 
 Then, add this to your crate root
@@ -104,7 +96,7 @@ assert_eq!(map[&37], "c");
 To bench the hash function, we need nighly rust
 
 ```bash
-$ rustup run nightly cargo bench
+$ cargo +nightly bench
 ```
 
 Please check [smhasher](https://github.com/rurban/smhasher/tree/master/doc) reports for more details.
