@@ -11,12 +11,15 @@ build = "build.rs"
 links = "fasthash"
 
 [features]
-default = ["sse42"]
+default = ["sse42", "aes", "avx", "avx2"]
 sse42 = []
+aes = []
+avx = ["aes"]
+avx2 = ["aes"]
 gen = ["bindgen"]
 
 [dependencies]
 
 [build-dependencies]
 gcc = "0.3"
-bindgen = { version="0.25", optional=true }
+bindgen = { version="0.37", optional=true }

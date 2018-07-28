@@ -53,16 +53,17 @@
 //! assert_eq!(map.insert(37, "c"), Some("b"));
 //! assert_eq!(map[&37], "c");
 //! ```
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
-
+#![cfg_attr(feature = "clippy", feature(plugin))]
+#![cfg_attr(feature = "clippy", plugin(clippy))]
 #![warn(missing_docs)]
 
 extern crate extprim;
-extern crate rand;
-extern crate xoroshiro128;
-extern crate seahash;
+#[macro_use]
+extern crate extprim_literals;
 extern crate fasthash_sys as ffi;
+extern crate rand;
+extern crate seahash;
+extern crate xoroshiro128;
 
 #[macro_use]
 mod hasher;
@@ -79,34 +80,37 @@ pub mod spooky;
 pub mod t1ha;
 pub mod xx;
 
-pub use hasher::{Fingerprint, FastHash, FastHasher, BufHasher, StreamHasher, HasherExt, Seed,
-                 RandomState};
+pub use hasher::{
+    BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
+};
 
 #[cfg(not(feature = "sse42"))]
-pub use city::{CityHasher64 as CityHasher, CityHasher128 as CityHasherExt};
+pub use city::{CityHasher128 as CityHasherExt, CityHasher64 as CityHasher};
 #[cfg(feature = "sse42")]
 pub use city::{CityHasher64 as CityHasher, CityHasherCrc128 as CityHasherExt};
 
-pub use farm::{FarmHasher64 as FarmHasher, FarmHasher128 as FarmHasherExt};
+pub use farm::{FarmHasher128 as FarmHasherExt, FarmHasher64 as FarmHasher};
 pub use lookup3::Lookup3Hasher;
 
-#[cfg(not(feature = "sse42"))]
-pub use metro::{MetroHasher64_1 as MetroHasher, MetroHasher128_1 as MetroHasherExt};
 #[cfg(feature = "sse42")]
-pub use metro::{MetroHasher64Crc_1 as MetroHasher, MetroHasher128Crc_1 as MetroHasherExt};
+pub use metro::{MetroHasher128Crc_1 as MetroHasherExt, MetroHasher64Crc_1 as MetroHasher};
+#[cfg(not(feature = "sse42"))]
+pub use metro::{MetroHasher128_1 as MetroHasherExt, MetroHasher64_1 as MetroHasher};
 
 pub use mum::MumHasher;
 pub use murmur::MurmurHasher;
 pub use murmur2::Murmur2Hasher_x64_64 as Murmur2Hasher;
-pub use murmur3::{Murmur3Hasher_x64_128 as Murmur3Hasher,
-                  Murmur3Hasher_x64_128 as Murmur3HasherExt};
+pub use murmur3::{
+    Murmur3Hasher_x64_128 as Murmur3Hasher, Murmur3Hasher_x64_128 as Murmur3HasherExt,
+};
 #[doc(no_inline)]
 pub use sea::SeaHasher64 as SeaHasher;
 pub use spooky::{SpookyHasher128 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
 
-#[cfg(not(feature = "sse42"))]
-pub use t1ha::T1ha64LeHasher as T1haHasher;
-#[cfg(feature = "sse42")]
-pub use t1ha::T1ha64CrcHasher as T1haHasher;
+pub use t1ha::{
+    T1ha0Hasher32Be as T1ha32BeHasher, T1ha0Hasher32Le as T1ha32LeHasher,
+    T1ha1Hasher64Be as T1ha64BeHasher, T1ha1Hasher64Le as T1ha64LeHasher,
+    T1ha2Hasher128 as T1haHasherExt, T1ha2Hasher64 as T1haHasher,
+};
 
 pub use xx::XXHasher64 as XXHasher;

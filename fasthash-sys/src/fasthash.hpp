@@ -1,4 +1,5 @@
 #include "smhasher/City.h"
+#include "smhasher/CityCrc.h"
 #include "smhasher/farmhash-c.h"
 #include "smhasher/metrohash.h"
 #include "smhasher/mum.h"
@@ -6,7 +7,11 @@
 #include "smhasher/MurmurHash2.h"
 #include "smhasher/MurmurHash3.h"
 #include "smhasher/Spooky.h"
+
+#define T1HA0_RUNTIME_SELECT 1
+#define T1HA0_AESNI_AVAILABLE 1
 #include "smhasher/t1ha.h"
+
 #include "smhasher/xxhash.h"
 
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x);
@@ -41,3 +46,5 @@ void SpookyHasherFinal(
     void *h,
     uint64 *hash1,  // out only: first 64 bits of hash value.
     uint64 *hash2); // out only: second 64 bits of hash value.
+
+uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed);
