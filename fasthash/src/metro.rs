@@ -40,7 +40,6 @@
 //! ```
 //!
 #![allow(non_camel_case_types)]
-use std::mem;
 
 use ffi;
 
@@ -62,7 +61,7 @@ impl FastHash for MetroHash64_1 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u64 as *mut u8,
             );
         }
 
@@ -88,7 +87,7 @@ impl FastHash for MetroHash64_2 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u64 as *mut u8,
             );
         }
 
@@ -114,7 +113,7 @@ impl FastHash for MetroHash128_1 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u128 as *mut u8,
             );
         }
 
@@ -140,7 +139,7 @@ impl FastHash for MetroHash128_2 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u128 as *mut u8,
             );
         }
 
@@ -168,7 +167,7 @@ impl FastHash for MetroHash64Crc_1 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u64 as *mut u8,
             );
         }
 
@@ -197,7 +196,7 @@ impl FastHash for MetroHash64Crc_2 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u64 as *mut u8,
             );
         }
 
@@ -226,7 +225,7 @@ impl FastHash for MetroHash128Crc_1 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u128 as *mut u8,
             );
         }
 
@@ -255,7 +254,7 @@ impl FastHash for MetroHash128Crc_2 {
                 bytes.as_ref().as_ptr() as *const u8,
                 bytes.as_ref().len() as u64,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u128 as *mut u8,
             );
         }
 

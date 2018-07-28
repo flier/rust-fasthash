@@ -30,7 +30,6 @@
 //! ```
 //!
 #![allow(non_camel_case_types)]
-use std::mem;
 use std::os::raw::c_void;
 
 use ffi;
@@ -53,7 +52,7 @@ impl FastHash for Murmur3_x86_32 {
                 bytes.as_ref().as_ptr() as *const c_void,
                 bytes.as_ref().len() as i32,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u32 as *mut c_void,
             );
 
             hash
@@ -79,7 +78,7 @@ impl FastHash for Murmur3_x86_128 {
                 bytes.as_ref().as_ptr() as *const c_void,
                 bytes.as_ref().len() as i32,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u128 as *mut c_void,
             );
 
             hash
@@ -105,7 +104,7 @@ impl FastHash for Murmur3_x64_128 {
                 bytes.as_ref().as_ptr() as *const c_void,
                 bytes.as_ref().len() as i32,
                 seed,
-                mem::transmute(&mut hash),
+                &mut hash as *mut u128 as *mut c_void,
             );
 
             hash

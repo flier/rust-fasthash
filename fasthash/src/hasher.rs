@@ -72,6 +72,12 @@ pub trait BufHasher: FastHasher + AsRef<[u8]> {
         self.as_ref().len()
     }
 
+    /// Returns `true` if the slice has a length of 0.
+    #[inline]
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     /// Extracts a slice containing the entire buffer.
     #[inline]
     fn as_slice(&self) -> &[u8] {

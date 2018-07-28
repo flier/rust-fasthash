@@ -45,9 +45,11 @@ impl FastHash for XXHash32 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
         unsafe {
-            ffi::XXH32(bytes.as_ref().as_ptr() as *const c_void,
-                       bytes.as_ref().len(),
-                       seed)
+            ffi::XXH32(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len(),
+                seed,
+            )
         }
     }
 }
@@ -62,9 +64,11 @@ impl FastHash for XXHash64 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
         unsafe {
-            ffi::XXH64(bytes.as_ref().as_ptr() as *const c_void,
-                       bytes.as_ref().len(),
-                       seed)
+            ffi::XXH64(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len(),
+                seed,
+            )
         }
     }
 }
@@ -116,15 +120,13 @@ impl Drop for XXHasher32 {
 impl Hasher for XXHasher32 {
     #[inline]
     fn finish(&self) -> u64 {
-        unsafe { ffi::XXH32_digest(self.0) as u64 }
+        unsafe { u64::from(ffi::XXH32_digest(self.0)) }
     }
 
     #[inline]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::XXH32_update(self.0,
-                              bytes.as_ref().as_ptr() as *const c_void,
-                              bytes.as_ref().len());
+            ffi::XXH32_update(self.0, bytes.as_ptr() as *const c_void, bytes.len());
         }
     }
 }
@@ -174,9 +176,7 @@ impl Hasher for XXHasher64 {
     #[inline]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::XXH64_update(self.0,
-                              bytes.as_ref().as_ptr() as *const c_void,
-                              bytes.as_ref().len());
+            ffi::XXH64_update(self.0, bytes.as_ptr() as *const c_void, bytes.len());
         }
     }
 }
@@ -202,11 +202,11 @@ impl_fasthash!(XXHasher64, XXHash64);
 
 #[cfg(test)]
 mod tests {
-    use std::io::Cursor;
     use std::hash::Hasher;
+    use std::io::Cursor;
 
-    use hasher::{FastHash, FastHasher, StreamHasher};
     use super::*;
+    use hasher::{FastHash, FastHasher, StreamHasher};
 
     #[test]
     fn test_xxh32() {

@@ -60,8 +60,8 @@ impl FastHash for SpookyHash32 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
-        let mut hash1 = seed as u64;
-        let mut hash2 = seed as u64;
+        let mut hash1 = u64::from(seed);
+        let mut hash2 = u64::from(seed);
 
         unsafe {
             ffi::SpookyHasherHash(
@@ -154,13 +154,7 @@ impl Hasher for SpookyHasher128 {
 
     #[inline]
     fn write(&mut self, bytes: &[u8]) {
-        unsafe {
-            ffi::SpookyHasherUpdate(
-                self.0,
-                bytes.as_ref().as_ptr() as *const c_void,
-                bytes.as_ref().len(),
-            )
-        }
+        unsafe { ffi::SpookyHasherUpdate(self.0, bytes.as_ptr() as *const c_void, bytes.len()) }
     }
 }
 
