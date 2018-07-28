@@ -20,7 +20,6 @@ gen = ["fasthash-sys/gen"]
 [dependencies]
 extprim = "1.6"
 extprim_literals = "2.0"
-rand = "0.4"
 xoroshiro128 = "0.3"
 seahash = "3.0"
 fasthash-sys = { version = "0.2.8", path = "../fasthash-sys" }

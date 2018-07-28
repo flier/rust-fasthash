@@ -5,8 +5,7 @@ use std::marker::PhantomData;
 #[cfg(feature = "i128")]
 use std::mem;
 
-use rand::{Rand, Rng};
-use xoroshiro128::{SeedableRng, Xoroshiro128Rng};
+use xoroshiro128::{Rng, SeedableRng, Xoroshiro128Rng};
 
 #[cfg(feature = "i128")]
 use extprim::i128::i128;
@@ -28,7 +27,7 @@ pub trait FastHash: BuildHasherExt {
     /// The output hash generated value.
     type Value;
     /// The seed to generate hash value.
-    type Seed: Default + Copy + Rand;
+    type Seed: Default + Copy;
 
     /// Hash functions for a byte array.
     /// For convenience, a seed is also hashed into the result.
@@ -179,9 +178,9 @@ impl Seed {
         thread_local!(static SEEDS: RefCell<Seed> = RefCell::new(Seed::new()));
 
         SEEDS.with(|seeds| {
-            Seed(Xoroshiro128Rng::from_seed(
-                seeds.borrow_mut().0.gen::<[u64; 2]>(),
-            ))
+            Seed(Xoroshiro128Rng::from_seed({
+                seeds.borrow_mut().0.gen::<[u64; 2]>()
+            }))
         })
     }
 }

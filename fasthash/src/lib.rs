@@ -61,7 +61,6 @@ extern crate extprim;
 #[macro_use]
 extern crate extprim_literals;
 extern crate fasthash_sys as ffi;
-extern crate rand;
 extern crate seahash;
 extern crate xoroshiro128;
 
