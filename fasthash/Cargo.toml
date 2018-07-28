@@ -11,18 +11,18 @@ license = "Apache-2.0"
 build = "build.rs"
 
 [features]
-default = ["sse42", "doc"]
+default = ["sse42", "aes", "avx", "avx2", "doc"]
 doc = []
-i128 = []
 sse42 = ["fasthash-sys/sse42"]
+aes = ["fasthash-sys/aes"]
+avx = ["fasthash-sys/avx"]
+avx2 = ["fasthash-sys/avx2"]
 gen = ["fasthash-sys/gen"]
 
 [dependencies]
-extprim = "1.6"
-extprim_literals = "2.0"
 xoroshiro128 = "0.3"
 seahash = "3.0"
-fasthash-sys = { version = "0.2.8", path = "../fasthash-sys" }
+fasthash-sys = { path = "../fasthash-sys" }
 clippy = { version = "0.*", optional = true }
 
 [dev-dependencies]

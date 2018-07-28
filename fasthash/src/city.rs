@@ -122,8 +122,6 @@
 //!
 use std::mem;
 
-use extprim::u128::u128;
-
 use ffi;
 
 use hasher::{FastHash, FastHasher};
@@ -138,9 +136,11 @@ impl FastHash for CityHash32 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
         unsafe {
-            ffi::CityHash32WithSeed(bytes.as_ref().as_ptr() as *const i8,
-                                    bytes.as_ref().len(),
-                                    seed)
+            ffi::CityHash32WithSeed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                seed,
+            )
         }
     }
 }
@@ -156,10 +156,12 @@ impl CityHash64 {
     #[inline]
     pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
-            ffi::CityHash64WithSeeds(bytes.as_ref().as_ptr() as *const i8,
-                                     bytes.as_ref().len(),
-                                     seed0,
-                                     seed1)
+            ffi::CityHash64WithSeeds(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                seed0,
+                seed1,
+            )
         }
     }
 }
@@ -178,9 +180,11 @@ impl FastHash for CityHash64 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
         unsafe {
-            ffi::CityHash64WithSeed(bytes.as_ref().as_ptr() as *const i8,
-                                    bytes.as_ref().len(),
-                                    seed)
+            ffi::CityHash64WithSeed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                seed,
+            )
         }
     }
 }
@@ -197,17 +201,21 @@ impl FastHash for CityHash128 {
     #[inline]
     fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
         unsafe {
-            mem::transmute(ffi::CityHash128(bytes.as_ref().as_ptr() as *const i8,
-                                            bytes.as_ref().len()))
+            mem::transmute(ffi::CityHash128(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+            ))
         }
     }
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
         unsafe {
-            mem::transmute(ffi::CityHash128WithSeed(bytes.as_ref().as_ptr() as *const i8,
-                                                    bytes.as_ref().len(),
-                                                    mem::transmute(seed)))
+            mem::transmute(ffi::CityHash128WithSeed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                mem::transmute(seed),
+            ))
         }
     }
 }
@@ -226,17 +234,21 @@ impl FastHash for CityHashCrc128 {
     #[inline]
     fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
         unsafe {
-            mem::transmute(ffi::CityHashCrc128(bytes.as_ref().as_ptr() as *const i8,
-                                               bytes.as_ref().len()))
+            mem::transmute(ffi::CityHashCrc128(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+            ))
         }
     }
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
         unsafe {
-            mem::transmute(ffi::CityHashCrc128WithSeed(bytes.as_ref().as_ptr() as *const i8,
-                                                       bytes.as_ref().len(),
-                                                       mem::transmute(seed)))
+            mem::transmute(ffi::CityHashCrc128WithSeed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                mem::transmute(seed),
+            ))
         }
     }
 }
@@ -313,10 +325,8 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
 mod tests {
     use std::hash::Hasher;
 
-    use extprim::u128::u128;
-
-    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
+    use hasher::{FastHash, FastHasher, HasherExt};
 
     #[test]
     fn test_cityhash32() {
@@ -336,10 +346,14 @@ mod tests {
     #[test]
     fn test_cityhash64() {
         assert_eq!(CityHash64::hash(b"hello"), 2578220239953316063);
-        assert_eq!(CityHash64::hash_with_seed(b"hello", 123),
-                   11802079543206271427);
-        assert_eq!(CityHash64::hash_with_seeds(b"hello", 123, 456),
-                   13699505624668345539);
+        assert_eq!(
+            CityHash64::hash_with_seed(b"hello", 123),
+            11802079543206271427
+        );
+        assert_eq!(
+            CityHash64::hash_with_seeds(b"hello", 123, 456),
+            13699505624668345539
+        );
         assert_eq!(CityHash64::hash(b"helloworld"), 16622738483577116029);
 
         let mut h = CityHasher64::new();
@@ -353,42 +367,50 @@ mod tests {
 
     #[test]
     fn test_cityhash128() {
-        assert_eq!(CityHash128::hash(b"hello"),
-                   u128::from_parts(17404193039403234796, 13523890104784088047));
-        assert_eq!(CityHash128::hash_with_seed(b"hello", u128::new(123)),
-                   u128::from_parts(10365139276371188890, 13112352013023211873));
-        assert_eq!(CityHash128::hash(b"helloworld"),
-                   u128::from_parts(7450567370945444069, 787832070172609324));
+        assert_eq!(
+            CityHash128::hash(b"hello"),
+            321050694807308650239948771137913318383,
+        );
+        assert_eq!(
+            CityHash128::hash_with_seed(b"hello", 123),
+            191203071519574338941297548675763958113
+        );
+        assert_eq!(
+            CityHash128::hash(b"helloworld"),
+            137438709495761624905137796394169174828
+        );
 
         let mut h = CityHasher128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(17404193039403234796, 13523890104784088047));
+        assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(7450567370945444069, 787832070172609324));
+        assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
     }
 
     #[cfg(feature = "sse42")]
     #[test]
     fn test_cityhash128crc() {
-        assert_eq!(CityHashCrc128::hash(b"hello"),
-                   u128::from_parts(17404193039403234796, 13523890104784088047));
-        assert_eq!(CityHashCrc128::hash_with_seed(b"hello", u128::new(123)),
-                   u128::from_parts(10365139276371188890, 13112352013023211873));
-        assert_eq!(CityHashCrc128::hash(b"helloworld"),
-                   u128::from_parts(7450567370945444069, 787832070172609324));
+        assert_eq!(
+            CityHashCrc128::hash(b"hello"),
+            321050694807308650239948771137913318383
+        );
+        assert_eq!(
+            CityHashCrc128::hash_with_seed(b"hello", 123),
+            191203071519574338941297548675763958113
+        );
+        assert_eq!(
+            CityHashCrc128::hash(b"helloworld"),
+            137438709495761624905137796394169174828
+        );
 
         let mut h = CityHasherCrc128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(17404193039403234796, 13523890104784088047));
+        assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(7450567370945444069, 787832070172609324));
+        assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
     }
 }

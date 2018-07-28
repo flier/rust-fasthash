@@ -24,16 +24,14 @@
 //!     s.finish()
 //! }
 //!
-//! let h = murmur3::hash128(b"hello world\xff").low64();
+//! let h = murmur3::hash128(b"hello world\xff");
 //!
-//! assert_eq!(h, hash(&"hello world"));
+//! assert_eq!(h as u64, hash(&"hello world"));
 //! ```
 //!
 #![allow(non_camel_case_types)]
 use std::mem;
 use std::os::raw::c_void;
-
-use extprim::u128::u128;
 
 use ffi;
 
@@ -51,10 +49,12 @@ impl FastHash for Murmur3_x86_32 {
         unsafe {
             let mut hash = 0_u32;
 
-            ffi::MurmurHash3_x86_32(bytes.as_ref().as_ptr() as *const c_void,
-                                    bytes.as_ref().len() as i32,
-                                    seed,
-                                    mem::transmute(&mut hash));
+            ffi::MurmurHash3_x86_32(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+                mem::transmute(&mut hash),
+            );
 
             hash
         }
@@ -73,12 +73,14 @@ impl FastHash for Murmur3_x86_128 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u128 {
         unsafe {
-            let mut hash = u128::zero();
+            let mut hash = 0;
 
-            ffi::MurmurHash3_x86_128(bytes.as_ref().as_ptr() as *const c_void,
-                                     bytes.as_ref().len() as i32,
-                                     seed,
-                                     mem::transmute(&mut hash));
+            ffi::MurmurHash3_x86_128(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+                mem::transmute(&mut hash),
+            );
 
             hash
         }
@@ -97,12 +99,14 @@ impl FastHash for Murmur3_x64_128 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u128 {
         unsafe {
-            let mut hash = u128::zero();
+            let mut hash = 0;
 
-            ffi::MurmurHash3_x64_128(bytes.as_ref().as_ptr() as *const c_void,
-                                     bytes.as_ref().len() as i32,
-                                     seed,
-                                     mem::transmute(&mut hash));
+            ffi::MurmurHash3_x64_128(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+                mem::transmute(&mut hash),
+            );
 
             hash
         }
@@ -137,15 +141,12 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
     Murmur3_x64_128::hash_with_seed(v, seed)
 }
 
-
 #[cfg(test)]
 mod tests {
     use std::hash::Hasher;
 
-    use extprim::u128::u128;
-
-    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
+    use hasher::{FastHash, FastHasher, HasherExt};
 
     #[test]
     fn test_murmur3_x86_32() {
@@ -164,41 +165,49 @@ mod tests {
 
     #[test]
     fn test_murmur3_x86_128() {
-        assert_eq!(Murmur3_x86_128::hash(b"hello"),
-                   u128::from_parts(11158567162092401078, 15821672119091348640));
-        assert_eq!(Murmur3_x86_128::hash_with_seed(b"hello", 123),
-                   u128::from_parts(2149221405153268091, 10130600740778964073));
-        assert_eq!(Murmur3_x86_128::hash(b"helloworld"),
-                   u128::from_parts(4510970894511742178, 13166749202678098166));
+        assert_eq!(
+            Murmur3_x86_128::hash(b"hello"),
+            205839232668418009241864179939306390688
+        );
+        assert_eq!(
+            Murmur3_x86_128::hash_with_seed(b"hello", 123),
+            39646137218600763345533167485429249129
+        );
+        assert_eq!(
+            Murmur3_x86_128::hash(b"helloworld"),
+            83212725615010754952022132390053357814
+        );
 
         let mut h = Murmur3Hasher_x86_128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(11158567162092401078, 15821672119091348640));
+        assert_eq!(h.finish_ext(), 205839232668418009241864179939306390688);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(4510970894511742178, 13166749202678098166));
+        assert_eq!(h.finish_ext(), 83212725615010754952022132390053357814);
     }
 
     #[test]
     fn test_murmur3_x64_128() {
-        assert_eq!(Murmur3_x64_128::hash(b"hello"),
-                   u128::from_parts(6565844092913065241, 14688674573012802306));
-        assert_eq!(Murmur3_x64_128::hash_with_seed(b"hello", 123),
-                   u128::from_parts(1043184066639555970, 3016954156110693643));
-        assert_eq!(Murmur3_x64_128::hash(b"helloworld"),
-                   u128::from_parts(11724578221562109303, 10256632503372987514));
+        assert_eq!(
+            Murmur3_x64_128::hash(b"hello"),
+            121118445609844952839898260755277781762
+        );
+        assert_eq!(
+            Murmur3_x64_128::hash_with_seed(b"hello", 123),
+            19243349499071459060235768594146641163
+        );
+        assert_eq!(
+            Murmur3_x64_128::hash(b"helloworld"),
+            216280293825344914020777844322685271162
+        );
 
         let mut h = Murmur3Hasher_x64_128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(6565844092913065241, 14688674573012802306));
+        assert_eq!(h.finish_ext(), 121118445609844952839898260755277781762);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(11724578221562109303, 10256632503372987514));
+        assert_eq!(h.finish_ext(), 216280293825344914020777844322685271162);
     }
 }

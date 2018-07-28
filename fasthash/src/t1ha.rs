@@ -48,8 +48,6 @@
 //!
 use std::os::raw::c_void;
 
-use extprim::u128::u128;
-
 use ffi;
 
 use hasher::{FastHash, FastHasher};
@@ -84,7 +82,7 @@ impl FastHash for T1ha2_128 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u128 {
-        let mut hi = 0u64;
+        let mut hi = 0;
 
         let lo = unsafe {
             ffi::t1ha2_atonce128(
@@ -95,7 +93,7 @@ impl FastHash for T1ha2_128 {
             )
         };
 
-        u128::from_parts(hi, lo)
+        u128::from(hi).wrapping_shl(64) + u128::from(lo)
     }
 }
 
@@ -351,29 +349,23 @@ mod tests {
     fn test_t1ha2_128() {
         assert_eq!(
             T1ha2_128::hash(b"hello"),
-            u128!(181522150951767732353014146495581994137)
+            181522150951767732353014146495581994137
         );
         assert_eq!(
             T1ha2_128::hash_with_seed(b"hello", 123),
-            u128!(116090820602478335969970261629923046941)
+            116090820602478335969970261629923046941
         );
         assert_eq!(
             T1ha2_128::hash(b"helloworld"),
-            u128!(315212713565720527393405448145758944961)
+            315212713565720527393405448145758944961
         );
 
         let mut h = T1ha2Hasher128::new();
 
         h.write(b"hello");
-        assert_eq!(
-            h.finish_ext(),
-            u128!(181522150951767732353014146495581994137)
-        );
+        assert_eq!(h.finish_ext(), 181522150951767732353014146495581994137);
 
         h.write(b"world");
-        assert_eq!(
-            h.finish_ext(),
-            u128!(315212713565720527393405448145758944961)
-        );
+        assert_eq!(h.finish_ext(), 315212713565720527393405448145758944961);
     }
 }

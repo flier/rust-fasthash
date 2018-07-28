@@ -9,7 +9,6 @@ use xoroshiro128::{Rng, SeedableRng, Xoroshiro128Rng};
 
 #[cfg(feature = "i128")]
 use extprim::i128::i128;
-use extprim::u128::u128;
 
 /// Generate a good, portable, forever-fixed hash value
 pub trait Fingerprint<T> {
@@ -200,9 +199,19 @@ macro_rules! impl_from_seed {
 
 impl_from_seed!(u32);
 impl_from_seed!(u64);
-impl_from_seed!(u128);
 impl_from_seed!((u64, u64));
 impl_from_seed!((u64, u64, u64, u64));
+
+impl From<Seed> for u128 {
+    #[inline]
+    fn from(seed: Seed) -> u128 {
+        let mut rng = seed.0;
+        let hi = rng.gen::<u64>();
+        let lo = rng.gen::<u64>();
+
+        u128::from(hi).wrapping_shl(64) + u128::from(lo)
+    }
+}
 
 /// `RandomState` provides the default state for `HashMap` or `HashSet` types.
 ///
@@ -374,7 +383,7 @@ macro_rules! impl_hasher_ext {
         impl ::std::hash::Hasher for $hasher {
             #[inline]
             fn finish(&self) -> u64 {
-                self.finalize().low64()
+                self.finalize() as u64
             }
             #[inline]
             fn write(&mut self, bytes: &[u8]) {
@@ -429,8 +438,6 @@ mod tests {
     use std::collections::HashMap;
     use std::convert::Into;
 
-    use extprim::u128::u128;
-
     #[cfg(feature = "sse42")]
     use city::CityHashCrc128;
     use city::{CityHash128, CityHash32, CityHash64};
@@ -465,9 +472,9 @@ mod tests {
 
         assert!(u0 != 0);
         assert!(u1 != 0);
-        assert!(u2 != u128::zero());
+        assert!(u2 != 0);
         assert_eq!(u0, u1 as u32);
-        assert_eq!(u1, u2.high64());
+        assert_eq!(u1, (u2 >> 64) as u64);
 
         s = Seed::gen();
 
@@ -479,10 +486,10 @@ mod tests {
 
         assert!(u0 != 0);
         assert!(u1 != 0);
-        assert!(u2 != u128::zero());
+        assert!(u2 != 0);
         assert!(u0 as u64 != u1);
-        assert!(u1 != u2.low64());
-        assert!(u1 != u2.high64());
+        assert!(u1 != u2 as u64);
+        assert!(u1 != (u2 >> 64) as u64);
 
         u0 = Seed::gen().into();
         u1 = Seed::gen().into();
@@ -490,10 +497,10 @@ mod tests {
 
         assert!(u0 != 0);
         assert!(u1 != 0);
-        assert!(u2 != u128::zero());
+        assert!(u2 != 0);
         assert!(u0 as u64 != u1);
-        assert!(u1 != u2.low64());
-        assert!(u1 != u2.high64());
+        assert!(u1 != u2 as u64);
+        assert!(u1 != (u2 >> 64) as u64);
     }
 
     macro_rules! test_hashmap_with_fixed_state {

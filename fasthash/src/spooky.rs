@@ -41,13 +41,11 @@
 //!
 //! let h = spooky::hash128(b"hello world\xff");
 //!
-//! assert_eq!(h.low64(), hash(&"hello world"));
+//! assert_eq!(h as u64, hash(&"hello world"));
 //! ```
 //!
 use std::hash::Hasher;
 use std::os::raw::c_void;
-
-use extprim::u128::u128;
 
 use ffi;
 
@@ -66,10 +64,12 @@ impl FastHash for SpookyHash32 {
         let mut hash2 = seed as u64;
 
         unsafe {
-            ffi::SpookyHasherHash(bytes.as_ref().as_ptr() as *const c_void,
-                                  bytes.as_ref().len(),
-                                  &mut hash1,
-                                  &mut hash2);
+            ffi::SpookyHasherHash(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len(),
+                &mut hash1,
+                &mut hash2,
+            );
         }
 
         hash1 as u32
@@ -91,10 +91,12 @@ impl FastHash for SpookyHash64 {
         let mut hash2 = seed;
 
         unsafe {
-            ffi::SpookyHasherHash(bytes.as_ref().as_ptr() as *const c_void,
-                                  bytes.as_ref().len(),
-                                  &mut hash1,
-                                  &mut hash2);
+            ffi::SpookyHasherHash(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len(),
+                &mut hash1,
+                &mut hash2,
+            );
         }
 
         hash1
@@ -112,17 +114,19 @@ impl FastHash for SpookyHash128 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
-        let mut hash1 = seed.high64();
-        let mut hash2 = seed.low64();
+        let mut hi = (seed >> 64) as u64;
+        let mut lo = seed as u64;
 
         unsafe {
-            ffi::SpookyHasherHash(bytes.as_ref().as_ptr() as *const c_void,
-                                  bytes.as_ref().len(),
-                                  &mut hash1,
-                                  &mut hash2);
+            ffi::SpookyHasherHash(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len(),
+                &mut hi,
+                &mut lo,
+            );
         }
 
-        u128::from_parts(hash1, hash2)
+        u128::from(hi).wrapping_shl(64) + u128::from(lo)
     }
 }
 
@@ -145,15 +149,17 @@ impl Drop for SpookyHasher128 {
 impl Hasher for SpookyHasher128 {
     #[inline]
     fn finish(&self) -> u64 {
-        self.finish_ext().low64()
+        self.finish_ext() as u64
     }
 
     #[inline]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::SpookyHasherUpdate(self.0,
-                                    bytes.as_ref().as_ptr() as *const c_void,
-                                    bytes.as_ref().len())
+            ffi::SpookyHasherUpdate(
+                self.0,
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len(),
+            )
         }
     }
 }
@@ -161,14 +167,14 @@ impl Hasher for SpookyHasher128 {
 impl HasherExt for SpookyHasher128 {
     #[inline]
     fn finish_ext(&self) -> u128 {
-        let mut hash1 = 0_u64;
-        let mut hash2 = 0_u64;
+        let mut hi = 0_u64;
+        let mut lo = 0_u64;
 
         unsafe {
-            ffi::SpookyHasherFinal(self.0, &mut hash1, &mut hash2);
+            ffi::SpookyHasherFinal(self.0, &mut hi, &mut lo);
         }
 
-        u128::from_parts(hash1, hash2)
+        u128::from(hi).wrapping_shl(64) + u128::from(lo)
     }
 }
 
@@ -232,13 +238,11 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
 
 #[cfg(test)]
 mod tests {
-    use std::io::Cursor;
     use std::hash::Hasher;
+    use std::io::Cursor;
 
-    use extprim::u128::u128;
-
-    use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
     use super::*;
+    use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 
     #[test]
     fn test_spooky32() {
@@ -250,29 +254,35 @@ mod tests {
     #[test]
     fn test_spooky64() {
         assert_eq!(SpookyHash64::hash(b"hello"), 6105954949053820864);
-        assert_eq!(SpookyHash64::hash_with_seed(b"hello", 123),
-                   8819086853393477700);
+        assert_eq!(
+            SpookyHash64::hash_with_seed(b"hello", 123),
+            8819086853393477700
+        );
         assert_eq!(SpookyHash64::hash(b"helloworld"), 18412934266828208920);
     }
 
     #[test]
     fn test_spooky128() {
-        assert_eq!(SpookyHash128::hash(b"hello"),
-                   u128::from_parts(6105954949053820864, 16417113279381893933));
-        assert_eq!(SpookyHash128::hash_with_seed(b"hello", u128::new(123)),
-                   u128::from_parts(7262466432451564128, 15030932129358977799));
-        assert_eq!(SpookyHash128::hash(b"helloworld"),
-                   u128::from_parts(18412934266828208920, 13883738476858207693));
+        assert_eq!(
+            SpookyHash128::hash(b"hello"),
+            112634988270796077198737188616407610157
+        );
+        assert_eq!(
+            SpookyHash128::hash_with_seed(b"hello", 123),
+            133968859623340440246086107642109008647
+        );
+        assert_eq!(
+            SpookyHash128::hash(b"helloworld"),
+            339658686066216790682429200470429822413
+        );
 
         let mut h = SpookyHasher128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(6105954949053820864, 16417113279381893933));
+        assert_eq!(h.finish_ext(), 112634988270796077198737188616407610157);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(18412934266828208920, 13883738476858207693));
+        assert_eq!(h.finish_ext(), 339658686066216790682429200470429822413);
 
         h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
         assert_eq!(h.finish(), 2977683714085165920);

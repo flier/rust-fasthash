@@ -120,11 +120,9 @@
 //!
 use std::mem;
 
-use extprim::u128::u128;
-
 use ffi;
 
-use hasher::{Fingerprint, FastHash, FastHasher};
+use hasher::{FastHash, FastHasher, Fingerprint};
 
 /// `FarmHash` 32-bit hash functions
 pub struct FarmHash32 {}
@@ -141,9 +139,11 @@ impl FastHash for FarmHash32 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
         unsafe {
-            ffi::farmhash32_with_seed(bytes.as_ref().as_ptr() as *const i8,
-                                      bytes.as_ref().len(),
-                                      seed)
+            ffi::farmhash32_with_seed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                seed,
+            )
         }
     }
 }
@@ -159,10 +159,12 @@ impl FarmHash64 {
     #[inline]
     pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
-            ffi::farmhash64_with_seeds(bytes.as_ref().as_ptr() as *const i8,
-                                       bytes.as_ref().len(),
-                                       seed0,
-                                       seed1)
+            ffi::farmhash64_with_seeds(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                seed0,
+                seed1,
+            )
         }
     }
 }
@@ -179,9 +181,11 @@ impl FastHash for FarmHash64 {
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
         unsafe {
-            ffi::farmhash64_with_seed(bytes.as_ref().as_ptr() as *const i8,
-                                      bytes.as_ref().len(),
-                                      seed)
+            ffi::farmhash64_with_seed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                seed,
+            )
         }
     }
 }
@@ -198,17 +202,21 @@ impl FastHash for FarmHash128 {
     #[inline]
     fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
         unsafe {
-            mem::transmute(ffi::farmhash128(bytes.as_ref().as_ptr() as *const i8,
-                                            bytes.as_ref().len()))
+            mem::transmute(ffi::farmhash128(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+            ))
         }
     }
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
         unsafe {
-            mem::transmute(ffi::farmhash128_with_seed(bytes.as_ref().as_ptr() as *const i8,
-                                                      bytes.as_ref().len(),
-                                                      mem::transmute(seed)))
+            mem::transmute(ffi::farmhash128_with_seed(
+                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().len(),
+                mem::transmute(seed),
+            ))
         }
     }
 }
@@ -296,8 +304,10 @@ pub fn fingerprint64<T: AsRef<[u8]>>(v: &T) -> u64 {
 #[inline]
 pub fn fingerprint128<T: AsRef<[u8]>>(v: &T) -> u128 {
     unsafe {
-        mem::transmute(ffi::farmhash_fingerprint128(v.as_ref().as_ptr() as *const i8,
-                                                    v.as_ref().len()))
+        mem::transmute(ffi::farmhash_fingerprint128(
+            v.as_ref().as_ptr() as *const i8,
+            v.as_ref().len(),
+        ))
     }
 }
 
@@ -319,10 +329,8 @@ impl Fingerprint<u64> for u128 {
 mod tests {
     use std::hash::Hasher;
 
-    use extprim::u128::u128;
-
-    use hasher::{Fingerprint, FastHash, FastHasher, HasherExt};
     use super::*;
+    use hasher::{FastHash, FastHasher, Fingerprint, HasherExt};
 
     #[test]
     fn test_farmhash32() {
@@ -346,10 +354,14 @@ mod tests {
     #[test]
     fn test_farmhash64() {
         assert_eq!(FarmHash64::hash(b"hello"), 14403600180753024522);
-        assert_eq!(FarmHash64::hash_with_seed(b"hello", 123),
-                   6856739100025169098);
-        assert_eq!(FarmHash64::hash_with_seeds(b"hello", 123, 456),
-                   15077713332534145879);
+        assert_eq!(
+            FarmHash64::hash_with_seed(b"hello", 123),
+            6856739100025169098
+        );
+        assert_eq!(
+            FarmHash64::hash_with_seeds(b"hello", 123, 456),
+            15077713332534145879
+        );
         assert_eq!(FarmHash64::hash(b"helloworld"), 1077737941828767314);
 
         let mut h = FarmHasher64::new();
@@ -363,31 +375,37 @@ mod tests {
 
     #[test]
     fn test_farmhash128() {
-        assert_eq!(FarmHash128::hash(b"hello"),
-                   u128::from_parts(14545675544334878584, 15888401098353921598));
-        assert_eq!(FarmHash128::hash_with_seed(b"hello", u128::new(123)),
-                   u128::from_parts(15212901187400903054, 13320390559359511083));
-        assert_eq!(FarmHash128::hash(b"helloworld"),
-                   u128::from_parts(16066658700231169910, 1119455499735156801));
+        assert_eq!(
+            FarmHash128::hash(b"hello"),
+            268320354145561377850759526474794913342
+        );
+        assert_eq!(
+            FarmHash128::hash_with_seed(b"hello", 123),
+            280628494822616609321111119103184546347
+        );
+        assert_eq!(
+            FarmHash128::hash(b"helloworld"),
+            296377541162803340912737385112946231361
+        );
 
         let mut h = FarmHasher128::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(14545675544334878584, 15888401098353921598));
+        assert_eq!(h.finish_ext(), 268320354145561377850759526474794913342);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(16066658700231169910, 1119455499735156801));
+        assert_eq!(h.finish_ext(), 296377541162803340912737385112946231361);
     }
 
     #[test]
     fn test_fingerprint() {
         assert_eq!(fingerprint32(b"hello word"), 4146030890);
         assert_eq!(fingerprint64(b"hello word"), 2862784602449412590_u64);
-        assert_eq!(fingerprint128(b"hello word"),
-                   u128::from_parts(3993975538242800734, 12454188156902618296));
-        assert_eq!(123_u64.fingerprint(), 4781265650859502840);
-        assert_eq!(u128::new(123).fingerprint(), 4011577241381678309);
+        assert_eq!(
+            fingerprint128(b"hello word"),
+            73675844590621301084713386800078304440
+        );
+        assert_eq!(123u64.fingerprint(), 4781265650859502840);
+        assert_eq!(123u128.fingerprint(), 4011577241381678309);
     }
 }

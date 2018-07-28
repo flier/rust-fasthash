@@ -42,8 +42,6 @@
 #![allow(non_camel_case_types)]
 use std::mem;
 
-use extprim::u128::u128;
-
 use ffi;
 
 use hasher::{FastHash, FastHasher};
@@ -60,10 +58,12 @@ impl FastHash for MetroHash64_1 {
         let mut hash = 0_u64;
 
         unsafe {
-            ffi::metrohash64_1(bytes.as_ref().as_ptr() as *const u8,
-                               bytes.as_ref().len() as u64,
-                               seed,
-                               mem::transmute(&mut hash));
+            ffi::metrohash64_1(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -84,10 +84,12 @@ impl FastHash for MetroHash64_2 {
         let mut hash = 0_u64;
 
         unsafe {
-            ffi::metrohash64_2(bytes.as_ref().as_ptr() as *const u8,
-                               bytes.as_ref().len() as u64,
-                               seed,
-                               mem::transmute(&mut hash));
+            ffi::metrohash64_2(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -105,13 +107,15 @@ impl FastHash for MetroHash128_1 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u128 {
-        let mut hash = u128::zero();
+        let mut hash = 0;
 
         unsafe {
-            ffi::metrohash128_1(bytes.as_ref().as_ptr() as *const u8,
-                                bytes.as_ref().len() as u64,
-                                seed,
-                                mem::transmute(&mut hash));
+            ffi::metrohash128_1(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -129,13 +133,15 @@ impl FastHash for MetroHash128_2 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u128 {
-        let mut hash = u128::zero();
+        let mut hash = 0;
 
         unsafe {
-            ffi::metrohash128_2(bytes.as_ref().as_ptr() as *const u8,
-                                bytes.as_ref().len() as u64,
-                                seed,
-                                mem::transmute(&mut hash));
+            ffi::metrohash128_2(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -158,10 +164,12 @@ impl FastHash for MetroHash64Crc_1 {
         let mut hash = 0_u64;
 
         unsafe {
-            ffi::metrohash64crc_1(bytes.as_ref().as_ptr() as *const u8,
-                                  bytes.as_ref().len() as u64,
-                                  seed,
-                                  mem::transmute(&mut hash));
+            ffi::metrohash64crc_1(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -185,10 +193,12 @@ impl FastHash for MetroHash64Crc_2 {
         let mut hash = 0_u64;
 
         unsafe {
-            ffi::metrohash64crc_2(bytes.as_ref().as_ptr() as *const u8,
-                                  bytes.as_ref().len() as u64,
-                                  seed,
-                                  mem::transmute(&mut hash));
+            ffi::metrohash64crc_2(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -209,13 +219,15 @@ impl FastHash for MetroHash128Crc_1 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u128 {
-        let mut hash = u128::zero();
+        let mut hash = 0;
 
         unsafe {
-            ffi::metrohash128crc_1(bytes.as_ref().as_ptr() as *const u8,
-                                   bytes.as_ref().len() as u64,
-                                   seed,
-                                   mem::transmute(&mut hash));
+            ffi::metrohash128crc_1(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -236,13 +248,15 @@ impl FastHash for MetroHash128Crc_2 {
 
     #[inline]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u128 {
-        let mut hash = u128::zero();
+        let mut hash = 0;
 
         unsafe {
-            ffi::metrohash128crc_2(bytes.as_ref().as_ptr() as *const u8,
-                                   bytes.as_ref().len() as u64,
-                                   seed,
-                                   mem::transmute(&mut hash));
+            ffi::metrohash128crc_2(
+                bytes.as_ref().as_ptr() as *const u8,
+                bytes.as_ref().len() as u64,
+                seed,
+                mem::transmute(&mut hash),
+            );
         }
 
         hash
@@ -316,16 +330,16 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
 mod tests {
     use std::hash::Hasher;
 
-    use extprim::u128::u128;
-
-    use hasher::{FastHash, FastHasher, HasherExt};
     use super::*;
+    use hasher::{FastHash, FastHasher, HasherExt};
 
     #[test]
     fn test_metrohash64_1() {
         assert_eq!(MetroHash64_1::hash(b"hello"), 15663805623366682943);
-        assert_eq!(MetroHash64_1::hash_with_seed(b"hello", 123),
-                   1128464039211059189);
+        assert_eq!(
+            MetroHash64_1::hash_with_seed(b"hello", 123),
+            1128464039211059189
+        );
         assert_eq!(MetroHash64_1::hash(b"helloworld"), 4615394705531318333);
 
         let mut h = MetroHasher64_1::new();
@@ -340,8 +354,10 @@ mod tests {
     #[test]
     fn test_metrohash64_2() {
         assert_eq!(MetroHash64_2::hash(b"hello"), 12352443828090181231);
-        assert_eq!(MetroHash64_2::hash_with_seed(b"hello", 123),
-                   5558499743061241201);
+        assert_eq!(
+            MetroHash64_2::hash_with_seed(b"hello", 123),
+            5558499743061241201
+        );
         assert_eq!(MetroHash64_2::hash(b"helloworld"), 13816693401637061492);
 
         let mut h = MetroHasher64_2::new();
@@ -357,8 +373,10 @@ mod tests {
     #[test]
     fn test_metrohash64crc_1() {
         assert_eq!(MetroHash64Crc_1::hash(b"hello"), 6455825309044375053);
-        assert_eq!(MetroHash64Crc_1::hash_with_seed(b"hello", 123),
-                   18102990158604115936);
+        assert_eq!(
+            MetroHash64Crc_1::hash_with_seed(b"hello", 123),
+            18102990158604115936
+        );
         assert_eq!(MetroHash64Crc_1::hash(b"helloworld"), 15512397028293617890);
 
         let mut h = MetroHasher64Crc_1::new();
@@ -374,8 +392,10 @@ mod tests {
     #[test]
     fn test_metrohash64crc_2() {
         assert_eq!(MetroHash64Crc_2::hash(b"hello"), 6093890398749886132);
-        assert_eq!(MetroHash64Crc_2::hash_with_seed(b"hello", 123),
-                   14600198876970659356);
+        assert_eq!(
+            MetroHash64Crc_2::hash_with_seed(b"hello", 123),
+            14600198876970659356
+        );
         assert_eq!(MetroHash64Crc_2::hash(b"helloworld"), 11309399771810154329);
 
         let mut h = MetroHasher64Crc_2::new();
@@ -389,83 +409,99 @@ mod tests {
 
     #[test]
     fn test_metrohash128_1() {
-        assert_eq!(MetroHash128_1::hash(b"hello"),
-                   u128::from_parts(3402816320040206173, 8267579177094204812));
-        assert_eq!(MetroHash128_1::hash_with_seed(b"hello", 123),
-                   u128::from_parts(12815203692632715937, 16954909965332884860));
-        assert_eq!(MetroHash128_1::hash(b"helloworld"),
-                   u128::from_parts(9114061290236148431, 9070923966242366617));
+        assert_eq!(
+            MetroHash128_1::hash(b"hello"),
+            62770881785623818170589043281119530380
+        );
+        assert_eq!(
+            MetroHash128_1::hash_with_seed(b"hello", 123),
+            236398782770453314983179012253900189052
+        );
+        assert_eq!(
+            MetroHash128_1::hash(b"helloworld"),
+            168124756093089300765778527570074281113
+        );
 
         let mut h = MetroHasher128_1::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(3402816320040206173, 8267579177094204812));
+        assert_eq!(h.finish_ext(), 62770881785623818170589043281119530380);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(9114061290236148431, 9070923966242366617));
+        assert_eq!(h.finish_ext(), 168124756093089300765778527570074281113);
     }
 
     #[test]
     fn test_metrohash128_2() {
-        assert_eq!(MetroHash128_2::hash(b"hello"),
-                   u128::from_parts(8645868589955642073, 18321434607751955537));
-        assert_eq!(MetroHash128_2::hash_with_seed(b"hello", 123),
-                   u128::from_parts(18306880534314458917, 13865612537680895339));
-        assert_eq!(MetroHash128_2::hash(b"helloworld"),
-                   u128::from_parts(16062202743590172306, 17411406382482299971));
+        assert_eq!(
+            MetroHash128_2::hash(b"hello"),
+            159488125173835797791070285137966695505
+        );
+        assert_eq!(
+            MetroHash128_2::hash_with_seed(b"hello", 123),
+            337702340004473994826279129255403855211
+        );
+        assert_eq!(
+            MetroHash128_2::hash(b"helloworld"),
+            296295343271043311657399689121923046467
+        );
 
         let mut h = MetroHasher128_2::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(8645868589955642073, 18321434607751955537));
+        assert_eq!(h.finish_ext(), 159488125173835797791070285137966695505);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(16062202743590172306, 17411406382482299971));
+        assert_eq!(h.finish_ext(), 296295343271043311657399689121923046467);
     }
 
     #[cfg(feature = "sse42")]
     #[test]
     fn test_metrohash128crc_1() {
-        assert_eq!(MetroHash128Crc_1::hash(b"hello"),
-                   u128::from_parts(16571975282436791800, 17425155230852563966));
-        assert_eq!(MetroHash128Crc_1::hash_with_seed(b"hello", 123),
-                   u128::from_parts(2220453880884370284, 14239476408421791779));
-        assert_eq!(MetroHash128Crc_1::hash(b"helloworld"),
-                   u128::from_parts(17933136491111761230, 16547792430792712607));
+        assert_eq!(
+            MetroHash128Crc_1::hash(b"hello"),
+            305698986830952061993175238670398112766
+        );
+        assert_eq!(
+            MetroHash128Crc_1::hash_with_seed(b"hello", 123),
+            40960144468149132188388779584576370723
+        );
+        assert_eq!(
+            MetroHash128Crc_1::hash(b"helloworld"),
+            330807979290440384643858402038145360287
+        );
 
         let mut h = MetroHasher128Crc_1::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(16571975282436791800, 17425155230852563966));
+        assert_eq!(h.finish_ext(), 305698986830952061993175238670398112766);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(17933136491111761230, 16547792430792712607));
+        assert_eq!(h.finish_ext(), 330807979290440384643858402038145360287);
     }
 
     #[cfg(feature = "sse42")]
     #[test]
     fn test_metrohash128crc_2() {
-        assert_eq!(MetroHash128Crc_2::hash(b"hello"),
-                   u128::from_parts(3913189466847962340, 14660650764275632263));
-        assert_eq!(MetroHash128Crc_2::hash_with_seed(b"hello", 123),
-                   u128::from_parts(16592714704904777620, 13014106652212044248));
-        assert_eq!(MetroHash128Crc_2::hash(b"helloworld"),
-                   u128::from_parts(18016644482327815926, 8337696161216335052));
+        assert_eq!(
+            MetroHash128Crc_2::hash(b"hello"),
+            72185604606880289212099011688929773703
+        );
+        assert_eq!(
+            MetroHash128Crc_2::hash_with_seed(b"hello", 123),
+            306081561649455538136824300998603678168
+        );
+        assert_eq!(
+            MetroHash128Crc_2::hash(b"helloworld"),
+            332348429832512530891646387991260171468
+        );
 
         let mut h = MetroHasher128Crc_2::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(3913189466847962340, 14660650764275632263));
+        assert_eq!(h.finish_ext(), 72185604606880289212099011688929773703);
 
         h.write(b"world");
-        assert_eq!(h.finish_ext(),
-                   u128::from_parts(18016644482327815926, 8337696161216335052));
+        assert_eq!(h.finish_ext(), 332348429832512530891646387991260171468);
     }
 }

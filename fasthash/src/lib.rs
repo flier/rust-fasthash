@@ -57,9 +57,6 @@
 #![cfg_attr(feature = "clippy", plugin(clippy))]
 #![warn(missing_docs)]
 
-extern crate extprim;
-#[macro_use]
-extern crate extprim_literals;
 extern crate fasthash_sys as ffi;
 extern crate seahash;
 extern crate xoroshiro128;
