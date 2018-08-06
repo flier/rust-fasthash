@@ -1,6 +1,6 @@
 [package]
 name = "fasthash"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
 description = "A suite of non-cryptographic hash functions for Rust."
 homepage = "https://github.com/flier/rust-fasthash"
@@ -22,7 +22,7 @@ gen = ["fasthash-sys/gen"]
 [dependencies]
 xoroshiro128 = "0.3"
 seahash = "3.0"
-fasthash-sys = { version = "0.3.1", path = "../fasthash-sys" }
+fasthash-sys = { version = "0.3.2", path = "../fasthash-sys" }
 clippy = { version = "0.*", optional = true }
 
 [dev-dependencies]
