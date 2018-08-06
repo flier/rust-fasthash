@@ -104,9 +104,9 @@ pub use sea::SeaHasher64 as SeaHasher;
 pub use spooky::{SpookyHasher128 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
 
 pub use t1ha::{
-    T1ha0Hasher32Be as T1ha32BeHasher, T1ha0Hasher32Le as T1ha32LeHasher,
-    T1ha1Hasher64Be as T1ha64BeHasher, T1ha1Hasher64Le as T1ha64LeHasher,
-    T1ha2Hasher128 as T1haHasherExt, T1ha2Hasher64 as T1haHasher,
+    T1ha0Hasher64 as T1ha0Hasher, T1ha1Hasher64Be as T1ha64BeHasher,
+    T1ha1Hasher64Le as T1ha64LeHasher, T1ha2Hasher128 as T1haHasherExt,
+    T1ha2Hasher64 as T1haHasher,
 };
 
 pub use xx::XXHasher64 as XXHasher;

@@ -85,7 +85,7 @@ assert_eq!(map[&37], "c");
   - [x] [Murmur Hash](https://sites.google.com/site/murmurhash/)
   - [x] [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
   - [x] [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
-  - [x] [T1 Hash](https://github.com/leo-yuriev/t1ha)
+  - [x] [T1ha Hash](https://github.com/leo-yuriev/t1ha)
   - [x] [xx Hash](https://github.com/Cyan4973/xxHash)
 - Compatibility
   - [x] [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)

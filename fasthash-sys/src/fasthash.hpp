@@ -10,7 +10,7 @@
 
 #define T1HA0_RUNTIME_SELECT 1
 #define T1HA0_AESNI_AVAILABLE 1
-#include "smhasher/t1ha.h"
+#include "t1ha/t1ha.h"
 
 #include "smhasher/xxhash.h"
 

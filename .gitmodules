@@ -1,3 +1,6 @@
 [submodule "fasthash-sys/src/smhasher"]
 	path = fasthash-sys/src/smhasher
 	url = https://github.com/rurban/smhasher
+[submodule "fasthash-sys/src/t1ha"]
+	path = fasthash-sys/src/t1ha
+	url = https://github.com/leo-yuriev/t1ha.git

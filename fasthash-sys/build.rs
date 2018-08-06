@@ -66,10 +66,10 @@ fn main() {
         .file("src/smhasher/MurmurHash2.cpp")
         .file("src/smhasher/MurmurHash3.cpp")
         .file("src/smhasher/Spooky.cpp")
-        .file("src/smhasher/t1ha/t1ha0.c")
-        .file("src/smhasher/t1ha/t1ha1.c")
-        .file("src/smhasher/t1ha/t1ha2.c")
-        .file("src/smhasher/xxhash.c");
+        .file("src/smhasher/xxhash.c")
+        .file("src/t1ha/src/t1ha0.c")
+        .file("src/t1ha/src/t1ha1.c")
+        .file("src/t1ha/src/t1ha2.c");
 
     if cfg!(feature = "sse42") {
         gcc_config
@@ -82,18 +82,18 @@ fn main() {
         gcc_config
             .define("T1HA0_AESNI_AVAILABLE", Some("1"))
             .flag("-maes")
-            .file("src/smhasher/t1ha/t1ha0_ia32aes_noavx.c");
+            .file("src/t1ha/src/t1ha0_ia32aes_noavx.c");
 
         if cfg!(feature = "avx") {
             gcc_config
                 .flag("-mavx")
-                .file("src/smhasher/t1ha/t1ha0_ia32aes_avx.c");
+                .file("src/t1ha/src/t1ha0_ia32aes_avx.c");
         }
 
         if cfg!(feature = "avx2") {
             gcc_config
                 .flag("-mavx2")
-                .file("src/smhasher/t1ha/t1ha0_ia32aes_avx2.c");
+                .file("src/t1ha/src/t1ha0_ia32aes_avx2.c");
         }
     }
 

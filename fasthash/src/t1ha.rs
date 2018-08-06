@@ -141,48 +141,6 @@ impl FastHash for T1ha1_64Be {
 
 impl_hasher!(T1ha1Hasher64Be, T1ha1_64Be);
 
-/// `T1Hash` 32-bit hash functions for 32-bit little-endian platforms.
-pub struct T1ha0_32Le {}
-
-impl FastHash for T1ha0_32Le {
-    type Value = u64;
-    type Seed = u64;
-
-    #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
-        unsafe {
-            ffi::t1ha0_32le(
-                bytes.as_ref().as_ptr() as *const c_void,
-                bytes.as_ref().len(),
-                seed,
-            )
-        }
-    }
-}
-
-impl_hasher!(T1ha0Hasher32Le, T1ha0_32Le);
-
-/// `T1Hash` 32-bit hash functions for 32-bit big-endian platforms.
-pub struct T1ha0_32Be {}
-
-impl FastHash for T1ha0_32Be {
-    type Value = u64;
-    type Seed = u64;
-
-    #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
-        unsafe {
-            ffi::t1ha0_32be(
-                bytes.as_ref().as_ptr() as *const c_void,
-                bytes.as_ref().len(),
-                seed,
-            )
-        }
-    }
-}
-
-impl_hasher!(T1ha0Hasher32Be, T1ha0_32Be);
-
 /// `T1Hash` 64-bit hash functions.
 pub struct T1ha0_64 {}
 
@@ -204,19 +162,6 @@ impl FastHash for T1ha0_64 {
 
 impl_hasher!(T1ha0Hasher64, T1ha0_64);
 
-/// `T1Hash` 32-bit hash functions for a byte array.
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u64 {
-    T1ha0_32Le::hash(v)
-}
-
-/// `T1Hash` 32-bit hash function for a byte array.
-/// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
-    T1ha0_32Le::hash_with_seed(v, seed)
-}
-
 /// `T1Hash` 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
@@ -236,42 +181,6 @@ mod tests {
 
     use super::*;
     use hasher::{FastHash, FastHasher, HasherExt};
-
-    #[test]
-    fn test_t1ha0_32_le() {
-        assert_eq!(T1ha0_32Le::hash(b"hello"), 11895187617783960984);
-        assert_eq!(
-            T1ha0_32Le::hash_with_seed(b"hello", 123),
-            13558580374828082753
-        );
-        assert_eq!(T1ha0_32Le::hash(b"helloworld"), 8503803101881974809);
-
-        let mut h = T1ha0Hasher32Le::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 11895187617783960984);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 8503803101881974809);
-    }
-
-    #[test]
-    fn test_t1ha0_32_be() {
-        assert_eq!(T1ha0_32Be::hash(b"hello"), 14067757663807345410);
-        assert_eq!(
-            T1ha0_32Be::hash_with_seed(b"hello", 123),
-            8517748423110957049
-        );
-        assert_eq!(T1ha0_32Be::hash(b"helloworld"), 3041108372210049528);
-
-        let mut h = T1ha0Hasher32Be::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 14067757663807345410);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 3041108372210049528);
-    }
 
     #[test]
     fn test_t1ha0_64() {

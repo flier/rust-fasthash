@@ -464,7 +464,7 @@ mod tests {
     use sea::SeaHash;
     use spooky::{SpookyHash128, SpookyHash32, SpookyHash64};
 
-    use t1ha::{T1ha0_32Be, T1ha0_32Le, T1ha1_64Be, T1ha1_64Le};
+    use t1ha::{T1ha0_64, T1ha1_64Be, T1ha1_64Le, T1ha2_128, T1ha2_64};
 
     use super::*;
     use xx::{XXHash32, XXHash64};
@@ -576,7 +576,7 @@ mod tests {
         test_hashmap_with_hashers![Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128];
         test_hashmap_with_hashers![SeaHash];
         test_hashmap_with_hashers![SpookyHash32, SpookyHash64, SpookyHash128];
-        test_hashmap_with_hashers![T1ha1_64Le, T1ha1_64Be, T1ha0_32Le, T1ha0_32Be];
+        test_hashmap_with_hashers![T1ha0_64, T1ha1_64Le, T1ha1_64Be, T1ha2_64, T1ha2_128];
         test_hashmap_with_hashers![XXHash32, XXHash64];
     }
 }
