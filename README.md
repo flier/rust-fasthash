@@ -11,8 +11,6 @@ fasthash = "0.4"
 ### `hash` and `hash_with_seed` function
 
 ```rust
-extern crate fasthash;
-
 use fasthash::*;
 
 let h = city::hash64("hello world");
@@ -43,7 +41,8 @@ use std::collections::HashSet;
 
 use fasthash::spooky::SpookyHash128;
 
-let mut set = HashSet::with_hasher(SpookyHash128 {});
+let mut set = HashSet::with_hasher(SpookyHash128);
+
 set.insert(2);
 ```
 
