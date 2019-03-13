@@ -1,30 +1,26 @@
-# rust-fasthash [![travis build](https://travis-ci.org/flier/rust-fasthash.svg?branch=master)](https://travis-ci.org/flier/rust-fasthash) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash) [![docs](https://docs.rs/fasthash/badge.svg)](https://docs.rs/crate/fasthash/)
-A suite of non-cryptographic hash functions for Rust, base on a forked [smhasher](https://github.com/rurban/smhasher/).
+## rust-fasthash [![travis build](https://travis-ci.org/flier/rust-fasthash.svg?branch=master)](https://travis-ci.org/flier/rust-fasthash) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash) [![docs](https://docs.rs/fasthash/badge.svg)](https://docs.rs/crate/fasthash/)
+A suite of non-cryptographic hash functions for Rust, binding the [smhasher](https://github.com/rurban/smhasher/).
 
-# Usage
-
-To use `fasthash`, first add this to your `Cargo.toml`:
+## Usage
 
 ```toml
 [dependencies]
-fasthash = "0.3"
+fasthash = "0.4"
 ```
 
-Then, add this to your crate root
+### `hash` and `hash_with_seed` function
 
 ```rust
 extern crate fasthash;
 
 use fasthash::*;
-```
 
-And then, use hash function with module or hasher
-
-```rust
 let h = city::hash64("hello world");
+
+let h = metro::hash64_with_seed("hello world", 123);
 ```
 
-Or work with `std::hash::Hash`
+### `std::hash::Hash`
 
 ```rust
 use std::hash::Hash;
@@ -40,7 +36,7 @@ fn hash<T: Hash>(t: &T) -> u64 {
 hash(&"hello world");
 ```
 
-It also works with `HashMap` or `HashSet`, act as the hash function
+### `HashMap` and `HashSet`
 
 ```rust
 use std::collections::HashSet;
@@ -51,7 +47,7 @@ let mut set = HashSet::with_hasher(SpookyHash128 {});
 set.insert(2);
 ```
 
-Or use RandomState<CityHash64> with a random seed.
+### `RandomState`
 
 ```rust
 use std::collections::HashMap;
@@ -70,12 +66,7 @@ assert_eq!(map.insert(37, "c"), Some("b"));
 assert_eq!(map[&37], "c");
 ```
 
-# Goal
-- High performance
-- Zero cost binding
-- Compatibility with libstd/libcollection
-
-# Features
+## Hash Functions
 
 - Modern Hash Functions
   - [x] [City Hash](https://github.com/google/cityhash)
@@ -91,12 +82,8 @@ assert_eq!(map[&37], "c");
   - [x] [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
   - [x] std::collections::{[HashMap](https://doc.rust-lang.org/std/collections/struct.HashMap.html), [HashSet](https://doc.rust-lang.org/std/collections/struct.HashSet.html)} with `RandomState`
 
-# Performance
-
-To bench the hash function, we need nighly rust
+## Benchmark
 
 ```bash
-$ cargo +nightly bench
+$ cargo bench
 ```
-
-Please check [smhasher](https://github.com/rurban/smhasher/tree/master/doc) reports for more details.
