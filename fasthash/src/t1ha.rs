@@ -88,7 +88,7 @@ pub mod t1ha2 {
         type Hash = u64;
         type Seed = u64;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
             unsafe {
                 ffi::t1ha2_atonce(
@@ -148,7 +148,7 @@ assert_eq!(h.finish(), 15302361616348747620);
         type Hash = u128;
         type Seed = u64;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u128 {
             let mut hi = 0;
 
@@ -207,9 +207,9 @@ pub mod t1ha1 {
 
     cfg_if! {
         if #[cfg(target_endian = "little")] {
-            pub use self::Hasher64Le as Hasher64;
+            pub use self::{Hasher64Le as Hasher64, Hash64Le as Hash64};
         } else {
-            pub use self::Hasher64Be as Hasher64;
+            pub use self::{Hasher64Be as Hasher64, Hash64Be as Hash64};
         }
     }
 
@@ -233,7 +233,7 @@ pub mod t1ha1 {
         type Hash = u64;
         type Seed = u64;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
             unsafe {
                 ffi::t1ha1_le(
@@ -287,7 +287,7 @@ assert_eq!(h.finish(), 16997942636322422782);
         type Hash = u64;
         type Seed = u64;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
             unsafe {
                 ffi::t1ha1_be(
@@ -366,7 +366,7 @@ pub mod t1ha0 {
         type Hash = u64;
         type Seed = u64;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
             unsafe {
                 ffi::t1ha0_64(
@@ -425,7 +425,7 @@ assert_eq!(h.finish(), 15302361616348747620);
             type Hash = u64;
             type Seed = u64;
 
-            #[inline]
+            #[inline(always)]
             fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
                 unsafe {
                     ffi::t1ha0_ia32aes_noavx(
@@ -465,7 +465,7 @@ assert_eq!(h.finish(), 15302361616348747620);
             type Hash = u64;
             type Seed = u64;
 
-            #[inline]
+            #[inline(always)]
             fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
                 unsafe {
                     ffi::t1ha0_ia32aes_avx(
@@ -505,10 +505,10 @@ assert_eq!(h.finish(), 15302361616348747620);
             type Hash = u64;
             type Seed = u64;
 
-            #[inline]
+            #[inline(always)]
             fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
                 unsafe {
-                    ffi::t1ha0_ia32aes_avx(
+                    ffi::t1ha0_ia32aes_avx2(
                         bytes.as_ref().as_ptr() as *const _,
                         bytes.as_ref().len(),
                         seed,
@@ -522,14 +522,14 @@ assert_eq!(h.finish(), 15302361616348747620);
 }
 
 /// `T1Hash` 64-bit hash functions for a byte array.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     t1ha2::Hash64AtOnce::hash(v)
 }
 
 /// `T1Hash` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     t1ha2::Hash64AtOnce::hash_with_seed(v, seed)
 }

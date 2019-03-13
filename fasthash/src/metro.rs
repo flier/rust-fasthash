@@ -62,7 +62,7 @@ impl FastHash for Hash64_1 {
     type Hash = u64;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u64 {
         let mut hash = 0_u64;
 
@@ -118,7 +118,7 @@ impl FastHash for Hash64_2 {
     type Hash = u64;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u64 {
         let mut hash = 0_u64;
 
@@ -183,7 +183,7 @@ impl FastHash for Hash128_1 {
     type Hash = u128;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u128 {
         let mut hash = 0;
 
@@ -248,7 +248,7 @@ impl FastHash for Hash128_2 {
     type Hash = u128;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u128 {
         let mut hash = 0;
 
@@ -312,7 +312,7 @@ pub mod crc {
         type Hash = u64;
         type Seed = u32;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u64 {
             let mut hash = 0_u64;
 
@@ -371,7 +371,7 @@ assert_eq!(h.finish(), 15512397028293617890);
         type Hash = u64;
         type Seed = u32;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u64 {
             let mut hash = 0_u64;
 
@@ -436,7 +436,7 @@ assert_eq!(h.finish(), 11309399771810154329);
         type Hash = u128;
         type Seed = u32;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u128 {
             let mut hash = 0;
 
@@ -501,7 +501,7 @@ assert_eq!(h.finish_ext(), 330807979290440384643858402038145360287);
         type Hash = u128;
         type Seed = u32;
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u128 {
             let mut hash = 0;
 
@@ -544,54 +544,54 @@ assert_eq!(h.finish_ext(), 332348429832512530891646387991260171468);
 cfg_if! {
     if #[cfg(any(feature = "sse42", target_feature = "sse4.2"))] {
         /// `MetroHash` 64-bit hash function for a byte array using HW CRC instruction.
-        #[inline]
-        pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+        #[inline(always)]
+        pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
             crc::Hash64_1::hash(v)
         }
 
         /// `MetroHash` 64-bit hash function for a byte array using HW CRC instruction.
         /// For convenience, a 64-bit seed is also hashed into the result.
-        #[inline]
-        pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
+        #[inline(always)]
+        pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u64 {
             crc::Hash64_1::hash_with_seed(v, seed)
         }
 
         /// `MetroHash` 128-bit hash function for a byte array using HW CRC instruction.
-        #[inline]
-        pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+        #[inline(always)]
+        pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
             crc::Hash128_1::hash(v)
         }
 
         /// `MetroHash` 128-bit hash function for a byte array. using HW CRC instruction.
         /// For convenience, a 128-bit seed is also hashed into the result.
-        #[inline]
-        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
+        #[inline(always)]
+        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u128 {
             crc::Hash128_1::hash_with_seed(v, seed)
         }
     } else {
         /// `MetroHash` 64-bit hash function for a byte array.
-        #[inline]
-        pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+        #[inline(always)]
+        pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
             Hash64_1::hash(v)
         }
 
         /// `MetroHash` 64-bit hash function for a byte array.
         /// For convenience, a 64-bit seed is also hashed into the result.
-        #[inline]
-        pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u64 {
+        #[inline(always)]
+        pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u64 {
             Hash64_1::hash_with_seed(v, seed)
         }
 
         /// `MetroHash` 128-bit hash function for a byte array.
-        #[inline]
-        pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+        #[inline(always)]
+        pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
             Hash128_1::hash(v)
         }
 
         /// `MetroHash` 128-bit hash function for a byte array.
         /// For convenience, a 128-bit seed is also hashed into the result.
-        #[inline]
-        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
+        #[inline(always)]
+        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u128 {
             Hash128_1::hash_with_seed(v, seed)
         }
     }

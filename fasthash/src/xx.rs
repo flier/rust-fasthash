@@ -52,7 +52,7 @@ impl FastHash for Hash32 {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::XXH32(
@@ -81,7 +81,7 @@ impl FastHash for Hash64 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::XXH64(
@@ -94,28 +94,28 @@ impl FastHash for Hash64 {
 }
 
 /// xxHash 32-bit hash functions for a byte array.
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn hash32<T: AsRef<[u8]>>(v: T) -> u32 {
     Hash32::hash(v)
 }
 
 /// xxHash 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+#[inline(always)]
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u32 {
     Hash32::hash_with_seed(v, seed)
 }
 
 /// xxHash 64-bit hash functions for a byte array.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     Hash64::hash(v)
 }
 
 /// xxHash 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     Hash64::hash_with_seed(v, seed)
 }
 
@@ -149,7 +149,7 @@ impl Default for Hasher32 {
 }
 
 impl Drop for Hasher32 {
-    #[inline]
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe {
             ffi::XXH32_freeState(self.0);
@@ -158,12 +158,12 @@ impl Drop for Hasher32 {
 }
 
 impl Hasher for Hasher32 {
-    #[inline]
+    #[inline(always)]
     fn finish(&self) -> u64 {
         unsafe { u64::from(ffi::XXH32_digest(self.0)) }
     }
 
-    #[inline]
+    #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
             ffi::XXH32_update(self.0, bytes.as_ptr() as *const c_void, bytes.len());
@@ -174,7 +174,7 @@ impl Hasher for Hasher32 {
 impl FastHasher for Hasher32 {
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn with_seed(seed: u32) -> Self {
         let h = unsafe { ffi::XXH32_createState() };
 
@@ -228,12 +228,12 @@ impl Drop for Hasher64 {
 }
 
 impl Hasher for Hasher64 {
-    #[inline]
+    #[inline(always)]
     fn finish(&self) -> u64 {
         unsafe { ffi::XXH64_digest(self.0) }
     }
 
-    #[inline]
+    #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
             ffi::XXH64_update(self.0, bytes.as_ptr() as *const c_void, bytes.len());
@@ -244,7 +244,7 @@ impl Hasher for Hasher64 {
 impl FastHasher for Hasher64 {
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn with_seed(seed: u64) -> Self {
         let h = unsafe { ffi::XXH64_createState() };
 

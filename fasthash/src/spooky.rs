@@ -68,7 +68,7 @@ impl FastHash for Hash32 {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         let mut hash1 = u64::from(seed);
         let mut hash2 = u64::from(seed);
@@ -125,7 +125,7 @@ impl FastHash for Hash64 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         let mut hash1 = seed;
         let mut hash2 = seed;
@@ -191,7 +191,7 @@ impl FastHash for Hash128 {
     type Hash = u128;
     type Seed = u128;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
         let mut hi = (seed >> 64) as u64;
         let mut lo = seed as u64;
@@ -235,26 +235,26 @@ impl Default for Hasher128 {
 }
 
 impl Drop for Hasher128 {
-    #[inline]
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe { ffi::SpookyHasherFree(self.0) }
     }
 }
 
 impl Hasher for Hasher128 {
-    #[inline]
+    #[inline(always)]
     fn finish(&self) -> u64 {
         self.finish_ext() as u64
     }
 
-    #[inline]
+    #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe { ffi::SpookyHasherUpdate(self.0, bytes.as_ptr() as *const c_void, bytes.len()) }
     }
 }
 
 impl HasherExt for Hasher128 {
-    #[inline]
+    #[inline(always)]
     fn finish_ext(&self) -> u128 {
         let mut hi = 0_u64;
         let mut lo = 0_u64;
@@ -270,7 +270,7 @@ impl HasherExt for Hasher128 {
 impl FastHasher for Hasher128 {
     type Seed = (u64, u64);
 
-    #[inline]
+    #[inline(always)]
     fn with_seed(seed: Self::Seed) -> Hasher128 {
         let h = unsafe { ffi::SpookyHasherNew() };
 
@@ -287,40 +287,40 @@ impl StreamHasher for Hasher128 {}
 impl_fasthash!(Hasher128, Hash128);
 
 /// `SpookyHash` 32-bit hash functions for a byte array.
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn hash32<T: AsRef<[u8]>>(v: T) -> u32 {
     Hash32::hash(v)
 }
 
 /// `SpookyHash` 32-bit hash functions for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+#[inline(always)]
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u32 {
     Hash32::hash_with_seed(v, seed)
 }
 
 /// `SpookyHash` 64-bit hash functions for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     Hash64::hash(v)
 }
 
 /// `SpookyHash` 64-bit hash functions for a byte array.
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     Hash64::hash_with_seed(v, seed)
 }
 
 /// `SpookyHash` 128-bit hash functions for a byte array.
 /// For convenience, a 128-bit seed is also hashed into the result.
-#[inline]
-pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+#[inline(always)]
+pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
     Hash128::hash(v)
 }
 
 /// `SpookyHash` 128-bit hash functions for a byte array.
-#[inline]
-pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+#[inline(always)]
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u128) -> u128 {
     Hash128::hash_with_seed(v, seed)
 }

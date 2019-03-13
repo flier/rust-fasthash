@@ -143,7 +143,7 @@ impl FastHash for Hash32 {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::CityHash32WithSeed(
@@ -200,7 +200,7 @@ pub struct Hash64;
 impl Hash64 {
     /// Hash functions for a byte array.
     /// For convenience, seeds are also hashed into the result.
-    #[inline]
+    #[inline(always)]
     pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
             ffi::CityHash64WithSeeds(
@@ -217,14 +217,14 @@ impl FastHash for Hash64 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
         unsafe { ffi::CityHash64(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
     /// Hash functions for a byte array.
     /// For convenience, a seed is also hashed into the result.
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::CityHash64WithSeed(
@@ -284,7 +284,7 @@ impl FastHash for Hash128 {
     type Hash = u128;
     type Seed = u128;
 
-    #[inline]
+    #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
         unsafe {
             mem::transmute(ffi::CityHash128(
@@ -294,7 +294,7 @@ impl FastHash for Hash128 {
         }
     }
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
         unsafe {
             mem::transmute(ffi::CityHash128WithSeed(
@@ -362,7 +362,7 @@ pub mod crc {
         type Hash = u128;
         type Seed = u128;
 
-        #[inline]
+        #[inline(always)]
         fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
             unsafe {
                 mem::transmute(ffi::CityHashCrc128(
@@ -372,7 +372,7 @@ pub mod crc {
             }
         }
 
-        #[inline]
+        #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
             unsafe {
                 mem::transmute(ffi::CityHashCrc128WithSeed(
@@ -408,38 +408,38 @@ assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
 }
 
 /// `CityHash` 32-bit hash functions for a byte array.
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn hash32<T: AsRef<[u8]>>(v: T) -> u32 {
     Hash32::hash(v)
 }
 
 /// `CityHash` 32-bit hash function for a byte array.
 ///
 /// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+#[inline(always)]
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u32 {
     Hash32::hash_with_seed(v, seed)
 }
 
 /// `CityHash` 64-bit hash functions for a byte array.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     Hash64::hash(v)
 }
 
 /// `CityHash` 64-bit hash function for a byte array.
 ///
 /// For convenience, a 64-bit seed is also hashed into the result.
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     Hash64::hash_with_seed(v, seed)
 }
 
 /// `CityHash` 64-bit hash function for a byte array.
 ///
 /// For convenience, two seeds are also hashed into the result.
-#[inline]
-pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: T, seed0: u64, seed1: u64) -> u64 {
     Hash64::hash_with_seeds(v, seed0, seed1)
 }
 
@@ -448,8 +448,8 @@ cfg_if! {
         /// `CityHash` 128-bit hash function for a byte array using HW CRC instruction.
         ///
         /// That require SSE4.2 instructions to be available.
-        #[inline]
-        pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+        #[inline(always)]
+        pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
             crc::Hash128::hash(v)
         }
 
@@ -457,22 +457,22 @@ cfg_if! {
         ///
         /// For convenience, a 128-bit seed is also hashed into the result.
         /// That require SSE4.2 instructions to be available.
-        #[inline]
-        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+        #[inline(always)]
+        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u128) -> u128 {
             crc::Hash128::hash_with_seed(v, seed)
         }
     } else {
         /// `CityHash` 128-bit hash function for a byte array.
-        #[inline]
-        pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+        #[inline(always)]
+        pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
             Hash128::hash(v)
         }
 
         /// `CityHash` 128-bit hash function for a byte array.
         ///
         /// For convenience, a 128-bit seed is also hashed into the result.
-        #[inline]
-        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+        #[inline(always)]
+        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u128) -> u128 {
             Hash128::hash_with_seed(v, seed)
         }
     }

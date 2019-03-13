@@ -141,12 +141,12 @@ impl FastHash for Hash32 {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u32 {
         unsafe { ffi::farmhash32(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::farmhash32_with_seed(
@@ -203,8 +203,8 @@ pub struct Hash64;
 impl Hash64 {
     /// Hash functions for a byte array.
     /// For convenience, seeds are also hashed into the result.
-    #[inline]
-    pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
+    #[inline(always)]
+    pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
             ffi::farmhash64_with_seeds(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -220,12 +220,12 @@ impl FastHash for Hash64 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
         unsafe { ffi::farmhash64(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::farmhash64_with_seed(
@@ -285,7 +285,7 @@ impl FastHash for Hash128 {
     type Hash = u128;
     type Seed = u128;
 
-    #[inline]
+    #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
         unsafe {
             mem::transmute(ffi::farmhash128(
@@ -295,7 +295,7 @@ impl FastHash for Hash128 {
         }
     }
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
         unsafe {
             mem::transmute(ffi::farmhash128_with_seed(
@@ -333,8 +333,8 @@ assert_eq!(h.finish_ext(), 296377541162803340912737385112946231361);
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn hash32<T: AsRef<[u8]>>(v: T) -> u32 {
     Hash32::hash(v)
 }
 
@@ -343,16 +343,16 @@ pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+#[inline(always)]
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u32 {
     Hash32::hash_with_seed(v, seed)
 }
 
 /// `FarmHash` 64-bit hash function for a byte array.
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     Hash64::hash(v)
 }
 
@@ -361,8 +361,8 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     Hash64::hash_with_seed(v, seed)
 }
 
@@ -371,7 +371,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
-pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
+pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: T, seed0: u64, seed1: u64) -> u64 {
     Hash64::hash_with_seeds(v, seed0, seed1)
 }
 
@@ -379,8 +379,8 @@ pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
-#[inline]
-pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+#[inline(always)]
+pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
     Hash128::hash(v)
 }
 
@@ -389,8 +389,8 @@ pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
 ///
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
-#[inline]
-pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+#[inline(always)]
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u128) -> u128 {
     Hash128::hash_with_seed(v, seed)
 }
 
@@ -403,8 +403,8 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
 ///
 /// assert_eq!(fingerprint32(b"hello word"), 4146030890);
 /// ```
-#[inline]
-pub fn fingerprint32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn fingerprint32<T: AsRef<[u8]>>(v: T) -> u32 {
     unsafe { ffi::farmhash_fingerprint32(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
 }
 
@@ -417,8 +417,8 @@ pub fn fingerprint32<T: AsRef<[u8]>>(v: &T) -> u32 {
 ///
 /// assert_eq!(fingerprint64(b"hello word"), 2862784602449412590_u64);
 /// ```
-#[inline]
-pub fn fingerprint64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn fingerprint64<T: AsRef<[u8]>>(v: T) -> u64 {
     unsafe { ffi::farmhash_fingerprint64(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
 }
 
@@ -431,8 +431,8 @@ pub fn fingerprint64<T: AsRef<[u8]>>(v: &T) -> u64 {
 ///
 /// assert_eq!(fingerprint128(b"hello word"), 73675844590621301084713386800078304440);
 /// ```
-#[inline]
-pub fn fingerprint128<T: AsRef<[u8]>>(v: &T) -> u128 {
+#[inline(always)]
+pub fn fingerprint128<T: AsRef<[u8]>>(v: T) -> u128 {
     unsafe {
         mem::transmute(ffi::farmhash_fingerprint128(
             v.as_ref().as_ptr() as *const i8,
@@ -442,14 +442,14 @@ pub fn fingerprint128<T: AsRef<[u8]>>(v: &T) -> u128 {
 }
 
 impl Fingerprint<u64> for u64 {
-    #[inline]
+    #[inline(always)]
     fn fingerprint(&self) -> u64 {
         unsafe { ffi::farmhash_fingerprint_uint64(*self) }
     }
 }
 
 impl Fingerprint<u64> for u128 {
-    #[inline]
+    #[inline(always)]
     fn fingerprint(&self) -> u64 {
         unsafe { ffi::farmhash_fingerprint_uint128(mem::transmute(*self)) }
     }

@@ -87,7 +87,7 @@ impl FastHash for Hash32 {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHash2(
@@ -138,7 +138,7 @@ impl FastHash for Hash32A {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHash2A(
@@ -189,7 +189,7 @@ impl FastHash for Hash32Neutral {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHashNeutral2(
@@ -240,7 +240,7 @@ impl FastHash for Hash32Aligned {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHashAligned2(
@@ -294,7 +294,7 @@ impl FastHash for Hash64_x64 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::MurmurHash64A(
@@ -348,7 +348,7 @@ impl FastHash for Hash64_x86 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::MurmurHash64B(
@@ -383,21 +383,21 @@ assert_eq!(h.finish(), 14017254558097603378);
 );
 
 /// `MurmurHash2` 32-bit hash functions for a byte array.
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn hash32<T: AsRef<[u8]>>(v: T) -> u32 {
     Hash32A::hash(v)
 }
 
 /// `MurmurHash2` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+#[inline(always)]
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u32 {
     Hash32A::hash_with_seed(v, seed)
 }
 
 /// `MurmurHash2` 64-bit hash functions for a byte array.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     if cfg!(target_pointer_width = "64") {
         Hash64_x64::hash(v)
     } else {
@@ -407,8 +407,8 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
 
 /// `MurmurHash2` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     if cfg!(target_pointer_width = "64") {
         Hash64_x64::hash_with_seed(v, seed)
     } else {

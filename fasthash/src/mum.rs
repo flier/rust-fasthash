@@ -76,7 +76,7 @@ impl FastHash for Hash64 {
     type Hash = u64;
     type Seed = u64;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::mum_hash_(
@@ -111,14 +111,14 @@ assert_eq!(h.finish(), 9122204010978352975);
 );
 
 /// `MumHash` 64-bit hash functions for a byte array.
-#[inline]
-pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
+#[inline(always)]
+pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
     Hash64::hash(v)
 }
 
 /// `MumHash` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
-#[inline]
-pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
+#[inline(always)]
+pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
     Hash64::hash_with_seed(v, seed)
 }

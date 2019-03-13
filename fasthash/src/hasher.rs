@@ -43,7 +43,7 @@ where
     type Seed: Default + Copy + From<Seed>;
 
     /// Constructs a new `FastHasher`.
-    #[inline]
+    #[inline(always)]
     fn new() -> Self {
         Self::with_seed(Default::default())
     }
@@ -63,19 +63,19 @@ pub trait BufHasher: FastHasher + AsRef<[u8]> {
     fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self;
 
     /// Returns the number of bytes in the buffer.
-    #[inline]
+    #[inline(always)]
     fn len(&self) -> usize {
         self.as_ref().len()
     }
 
     /// Returns `true` if the slice has a length of 0.
-    #[inline]
+    #[inline(always)]
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
     /// Extracts a slice containing the entire buffer.
-    #[inline]
+    #[inline(always)]
     fn as_slice(&self) -> &[u8] {
         self.as_ref()
     }
@@ -154,13 +154,13 @@ pub trait HasherExt: Hasher {
 pub struct Seed(Xoroshiro128Rng);
 
 impl Seed {
-    #[inline]
+    #[inline(always)]
     fn new() -> Seed {
         Seed(Xoroshiro128Rng::new().expect("failed to create an OS RNG"))
     }
 
     /// Generate a new seed
-    #[inline]
+    #[inline(always)]
     pub fn gen() -> Seed {
         thread_local!(static SEEDS: RefCell<Seed> = RefCell::new(Seed::new()));
 
@@ -175,7 +175,7 @@ impl Seed {
 macro_rules! impl_from_seed {
     ($target:ty) => {
         impl From<Seed> for $target {
-            #[inline]
+            #[inline(always)]
             fn from(seed: Seed) -> $target {
                 let mut rng = seed.0;
 
@@ -191,7 +191,7 @@ impl_from_seed!((u64, u64));
 impl_from_seed!((u64, u64, u64, u64));
 
 impl From<Seed> for u128 {
-    #[inline]
+    #[inline(always)]
     fn from(seed: Seed) -> u128 {
         let mut rng = seed.0;
         let hi = rng.gen::<u64>();
@@ -230,7 +230,7 @@ pub struct RandomState<T: FastHash> {
 
 impl<T: FastHash> RandomState<T> {
     /// Constructs a new `RandomState` that is initialized with random keys.
-    #[inline]
+    #[inline(always)]
     pub fn new() -> Self {
         RandomState {
             seed: Seed::gen(),
@@ -242,14 +242,14 @@ impl<T: FastHash> RandomState<T> {
 impl<T: FastHash> BuildHasher for RandomState<T> {
     type Hasher = T::FastHasher;
 
-    #[inline]
+    #[inline(always)]
     fn build_hasher(&self) -> Self::Hasher {
         T::FastHasher::with_seed(self.seed.into())
     }
 }
 
 impl<T: FastHash> Default for RandomState<T> {
-    #[inline]
+    #[inline(always)]
     fn default() -> Self {
         RandomState::new()
     }
@@ -261,7 +261,7 @@ macro_rules! impl_fasthash {
         impl ::std::hash::BuildHasher for $hash {
             type Hasher = $hasher;
 
-            #[inline]
+            #[inline(always)]
             fn build_hasher(&self) -> Self::Hasher {
                 <$hasher as $crate::hasher::FastHasher>::new()
             }
@@ -292,7 +292,7 @@ macro_rules! impl_hasher {
         }
 
         impl ::std::hash::Hasher for $hasher {
-            #[inline]
+            #[inline(always)]
             fn finish(&self) -> u64 {
                 self.seed
                     .map_or_else(
@@ -301,7 +301,7 @@ macro_rules! impl_hasher {
                     )
                     .into()
             }
-            #[inline]
+            #[inline(always)]
             fn write(&mut self, bytes: &[u8]) {
                 self.bytes.extend_from_slice(bytes)
             }
@@ -310,26 +310,26 @@ macro_rules! impl_hasher {
         impl $crate::hasher::FastHasher for $hasher {
             type Seed = <$hash as $crate::hasher::FastHash>::Seed;
 
-            #[inline]
+            #[inline(always)]
             fn new() -> Self {
                 <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, None)
             }
 
-            #[inline]
+            #[inline(always)]
             fn with_seed(seed: Self::Seed) -> Self {
                 <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, Some(seed))
             }
         }
 
         impl ::std::convert::AsRef<[u8]> for $hasher {
-            #[inline]
+            #[inline(always)]
             fn as_ref(&self) -> &[u8] {
                 &self.bytes
             }
         }
 
         impl $crate::hasher::BufHasher for $hasher {
-            #[inline]
+            #[inline(always)]
             fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self {
                 $hasher {
                     seed: seed,
@@ -355,7 +355,7 @@ macro_rules! impl_hasher_ext {
         }
 
         impl $hasher {
-            #[inline]
+            #[inline(always)]
             fn finalize(&self) -> u128 {
                 self.seed.map_or_else(
                     || $hash::hash(&self.bytes),
@@ -371,18 +371,18 @@ macro_rules! impl_hasher_ext {
         }
 
         impl ::std::hash::Hasher for $hasher {
-            #[inline]
+            #[inline(always)]
             fn finish(&self) -> u64 {
                 self.finalize() as u64
             }
-            #[inline]
+            #[inline(always)]
             fn write(&mut self, bytes: &[u8]) {
                 self.bytes.extend_from_slice(bytes)
             }
         }
 
         impl $crate::hasher::HasherExt for $hasher {
-            #[inline]
+            #[inline(always)]
             fn finish_ext(&self) -> u128 {
                 self.finalize()
             }
@@ -391,26 +391,26 @@ macro_rules! impl_hasher_ext {
         impl $crate::hasher::FastHasher for $hasher {
             type Seed = <$hash as $crate::hasher::FastHash>::Seed;
 
-            #[inline]
+            #[inline(always)]
             fn new() -> Self {
                 <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, None)
             }
 
-            #[inline]
+            #[inline(always)]
             fn with_seed(seed: Self::Seed) -> Self {
                 <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, Some(seed))
             }
         }
 
         impl ::std::convert::AsRef<[u8]> for $hasher {
-            #[inline]
+            #[inline(always)]
             fn as_ref(&self) -> &[u8] {
                 &self.bytes
             }
         }
 
         impl $crate::hasher::BufHasher for $hasher {
-            #[inline]
+            #[inline(always)]
             fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self {
                 $hasher {
                     seed,

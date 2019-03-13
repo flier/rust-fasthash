@@ -27,7 +27,7 @@
 //!
 use seahash;
 
-pub use seahash::{hash as hash64, hash_seeded as hash_with_seeds, SeaHasher as Hasher64};
+pub use seahash::{hash as hash64, hash_seeded as hash64_with_seeds, SeaHasher as Hasher64};
 
 use hasher::{FastHash, FastHasher, StreamHasher};
 
@@ -51,12 +51,12 @@ impl FastHash for Hash64 {
     type Hash = u64;
     type Seed = (u64, u64, u64, u64);
 
-    #[inline]
+    #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
         seahash::hash(bytes.as_ref())
     }
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: (u64, u64, u64, u64)) -> u64 {
         seahash::hash_seeded(bytes.as_ref(), seed.0, seed.1, seed.2, seed.3)
     }
@@ -67,12 +67,12 @@ impl_fasthash!(Hasher64, Hash64);
 impl FastHasher for Hasher64 {
     type Seed = (u64, u64, u64, u64);
 
-    #[inline]
+    #[inline(always)]
     fn new() -> Self {
         Hasher64::new()
     }
 
-    #[inline]
+    #[inline(always)]
     fn with_seed(seed: Self::Seed) -> Self {
         Hasher64::with_seeds(seed.0, seed.1, seed.2, seed.3)
     }

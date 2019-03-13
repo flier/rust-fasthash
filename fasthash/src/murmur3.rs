@@ -53,7 +53,7 @@ impl FastHash for Hash32 {
     type Hash = u32;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             let mut hash = 0_u32;
@@ -118,7 +118,7 @@ impl FastHash for Hash128_x86 {
     type Hash = u128;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u128 {
         unsafe {
             let mut hash = 0;
@@ -183,7 +183,7 @@ impl FastHash for Hash128_x64 {
     type Hash = u128;
     type Seed = u32;
 
-    #[inline]
+    #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u128 {
         unsafe {
             let mut hash = 0;
@@ -223,21 +223,21 @@ assert_eq!(h.finish_ext(), 216280293825344914020777844322685271162);
 );
 
 /// `MurmurHash3` 32-bit hash functions for a byte array.
-#[inline]
-pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
+#[inline(always)]
+pub fn hash32<T: AsRef<[u8]>>(v: T) -> u32 {
     Hash32::hash(v)
 }
 
 /// `MurmurHash3` 32-bit hash functions for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
+#[inline(always)]
+pub fn hash32_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u32 {
     Hash32::hash_with_seed(v, seed)
 }
 
 /// `MurmurHash3` 128-bit hash functions for a byte array.
-#[inline]
-pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+#[inline(always)]
+pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
     if cfg!(target_pointer_width = "64") {
         Hash128_x64::hash(v)
     } else {
@@ -247,8 +247,8 @@ pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
 
 /// `MurmurHash3` 128-bit hash functions for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
-#[inline]
-pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u128 {
+#[inline(always)]
+pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u32) -> u128 {
     if cfg!(target_pointer_width = "64") {
         Hash128_x64::hash_with_seed(v, seed)
     } else {
