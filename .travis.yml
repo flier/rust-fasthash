@@ -22,17 +22,16 @@ compiler:
   - clang
 env:
   global:
-    - RUST_BACKTRACE=1
     - LLVM_VERSION=3.9
+    - RUST_BACKTRACE=full
+    - RUSTFLAGS="-C target-cpu=native"
 before_script:
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install llvm; fi
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then . ./.travis/before_install.sh llvm; fi
   - cd fasthash
 script:
-  - if [ "$TRAVIS_RUST_VERSION" = "nightly" ]; then FEATURES="--no-default-features --features sse42"; fi
   - cargo build --verbose $FEATURES
   - cargo test --verbose $FEATURES
-  - if [ "$TRAVIS_RUST_VERSION" = nightly ]; then cargo bench --no-run --verbose $FEATURES; fi
 cache:
   cargo: true
   directories:
