@@ -542,14 +542,18 @@ mod tests {
         test_hashmap_with_hashers![spooky::Hash32, spooky::Hash64, spooky::Hash128];
         test_hashmap_with_hashers![
             t1ha0::Hash64,
-            t1ha0::aes::Hash64,
-            t1ha0::avx::Hash64,
-            t1ha0::avx2::Hash64,
             t1ha1::Hash64Le,
             t1ha1::Hash64Be,
             t1ha2::Hash64AtOnce,
             t1ha2::Hash128AtOnce
         ];
+        #[cfg(any(feature = "aes", target_feature = "aes"))]
+        test_hashmap_with_hashers![t1ha0::aes::Hash64];
+        #[cfg(any(feature = "avx", target_feature = "avx"))]
+        test_hashmap_with_hashers![t1ha0::avx::Hash64];
+        #[cfg(any(feature = "avx2", target_feature = "avx2"))]
+        test_hashmap_with_hashers![t1ha0::avx2::Hash64];
+
         test_hashmap_with_hashers![xx::Hash32, xx::Hash64];
     }
 }
