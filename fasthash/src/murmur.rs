@@ -27,10 +27,10 @@
 //! ```
 //! use std::hash::{Hash, Hasher};
 //!
-//! use fasthash::{murmur, MurmurHasher};
+//! use fasthash::{murmur, MurmurHasher, FastHasher};
 //!
 //! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s: MurmurHasher = Default::default();
+//!     let mut s: MurmurHasher = MurmurHasher::new();
 //!     t.hash(&mut s);
 //!     s.finish()
 //! }
@@ -44,106 +44,132 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::{FastHash, FastHasher};
+use hasher::FastHash;
 
 /// `MurmurHash` 32-bit hash functions
-pub struct Murmur {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur::Hash32, FastHash};
+///
+/// assert_eq!(Hash32::hash(b"hello"), 1773990585);
+/// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2155802495);
+/// assert_eq!(Hash32::hash(b"helloworld"), 567127608);
+/// ```
+pub struct Hash32;
 
-impl FastHash for Murmur {
-    type Value = u32;
+impl FastHash for Hash32 {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::MurmurHash1(bytes.as_ref().as_ptr() as *const c_void,
-                             bytes.as_ref().len() as i32,
-                             seed)
+            ffi::MurmurHash1(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(MurmurHasher, Murmur);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur::Hasher32, FastHasher};
+
+let mut h = Hasher32::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 1773990585);
+
+h.write(b"world");
+assert_eq!(h.finish(), 567127608);
+```
+"#]
+    Hasher32,
+    Hash32
+);
 
 /// `MurmurHash` 32-bit aligned hash functions
-pub struct MurmurAligned {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur::Hash32Aligned, FastHash};
+///
+/// assert_eq!(Hash32Aligned::hash(b"hello"), 1773990585);
+/// assert_eq!(Hash32Aligned::hash_with_seed(b"hello", 123), 2155802495);
+/// assert_eq!(Hash32Aligned::hash(b"helloworld"), 567127608);
+/// ```
+pub struct Hash32Aligned;
 
-impl FastHash for MurmurAligned {
-    type Value = u32;
+impl FastHash for Hash32Aligned {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::MurmurHash1Aligned(bytes.as_ref().as_ptr() as *const c_void,
-                                    bytes.as_ref().len() as i32,
-                                    seed)
+            ffi::MurmurHash1Aligned(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(MurmurAlignedHasher, MurmurAligned);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur::Hasher32Aligned, FastHasher};
+
+let mut h = Hasher32Aligned::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 1773990585);
+
+h.write(b"world");
+assert_eq!(h.finish(), 567127608);
+```
+"#]
+    Hasher32Aligned,
+    Hash32Aligned
+);
 
 /// `MurmurHash` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    Murmur::hash(v)
+    Hash32::hash(v)
 }
 
 /// `MurmurHash` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    Murmur::hash_with_seed(v, seed)
+    Hash32::hash_with_seed(v, seed)
 }
 
 /// `MurmurHash` 32-bit aligned hash functions for a byte array.
 #[inline]
 pub fn hash32_aligned<T: AsRef<[u8]>>(v: &T) -> u32 {
-    MurmurAligned::hash(v)
+    Hash32Aligned::hash(v)
 }
 
 /// `MurmurHash` 32-bit aligned hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_aligned_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    MurmurAligned::hash_with_seed(v, seed)
-}
-
-#[cfg(test)]
-mod tests {
-    use std::hash::Hasher;
-
-    use hasher::{FastHash, FastHasher};
-    use super::*;
-
-    #[test]
-    fn test_murmur() {
-        assert_eq!(Murmur::hash(b"hello"), 1773990585);
-        assert_eq!(Murmur::hash_with_seed(b"hello", 123), 2155802495);
-        assert_eq!(Murmur::hash(b"helloworld"), 567127608);
-
-        let mut h = MurmurHasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 1773990585);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 567127608);
-    }
-
-    #[test]
-    fn test_murmur_aligned() {
-        assert_eq!(MurmurAligned::hash(b"hello"), 1773990585);
-        assert_eq!(MurmurAligned::hash_with_seed(b"hello", 123), 2155802495);
-        assert_eq!(MurmurAligned::hash(b"helloworld"), 567127608);
-
-        let mut h = MurmurAlignedHasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 1773990585);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 567127608);
-    }
+    Hash32Aligned::hash_with_seed(v, seed)
 }

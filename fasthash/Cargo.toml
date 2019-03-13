@@ -20,11 +20,12 @@ avx2 = ["fasthash-sys/avx2"]
 gen = ["fasthash-sys/gen"]
 
 [dependencies]
+cfg-if = "0.1"
+num-traits = "0.2"
 xoroshiro128 = "0.3"
 seahash = "3.0"
 fasthash-sys = { version = "0.3.2", path = "../fasthash-sys" }
-clippy = { version = "0.*", optional = true }
 
 [dev-dependencies]
 fnv = "1.0"
-rand = "0.5"
+rand = "0.6"

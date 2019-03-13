@@ -27,59 +27,68 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::{FastHash, FastHasher};
+use hasher::FastHash;
 
 /// `Lookup3` 32-bit hash functions
-pub struct Lookup3 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{lookup3::Hash32, FastHash};
+///
+/// assert_eq!(Hash32::hash(b"hello"), 885767278);
+/// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 632258402);
+/// assert_eq!(Hash32::hash(b"helloworld"), 1392336737);
+/// ```
+pub struct Hash32;
 
-impl FastHash for Lookup3 {
-    type Value = u32;
+impl FastHash for Hash32 {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::lookup3(bytes.as_ref().as_ptr() as *const c_void,
-                         bytes.as_ref().len() as i32,
-                         seed)
+            ffi::lookup3(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(Lookup3Hasher, Lookup3);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{lookup3::Hasher32, FastHasher};
+
+let mut h = Hasher32::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 885767278);
+
+h.write(b"world");
+assert_eq!(h.finish(), 1392336737);
+```
+"#]
+    Hasher32,
+    Hash32
+);
 
 /// `Lookup3` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    Lookup3::hash(v)
+    Hash32::hash(v)
 }
 
 /// `Lookup3` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    Lookup3::hash_with_seed(v, seed)
-}
-
-#[cfg(test)]
-mod tests {
-    use std::hash::Hasher;
-
-    use hasher::{FastHash, FastHasher};
-    use super::*;
-
-    #[test]
-    fn test_lookup3() {
-        assert_eq!(Lookup3::hash(b"hello"), 885767278);
-        assert_eq!(Lookup3::hash_with_seed(b"hello", 123), 632258402);
-        assert_eq!(Lookup3::hash(b"helloworld"), 1392336737);
-
-        let mut h = Lookup3Hasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 885767278);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 1392336737);
-    }
+    Hash32::hash_with_seed(v, seed)
 }

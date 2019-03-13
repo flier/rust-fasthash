@@ -124,17 +124,27 @@ use std::mem;
 
 use ffi;
 
-use hasher::{FastHash, FastHasher};
+use hasher::FastHash;
 
 /// `CityHash` 32-bit hash functions
-pub struct CityHash32 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{city::Hash32, FastHash};
+///
+/// assert_eq!(Hash32::hash(b"hello"), 2039911270);
+/// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 3366460263);
+/// assert_eq!(Hash32::hash(b"helloworld"), 4037657980);
+/// ```
+pub struct Hash32;
 
-impl FastHash for CityHash32 {
-    type Value = u32;
+impl FastHash for Hash32 {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::CityHash32WithSeed(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -145,16 +155,53 @@ impl FastHash for CityHash32 {
     }
 }
 
-impl_hasher!(CityHasher32, CityHash32);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{city::Hasher32, FastHasher};
+
+let mut h = Hasher32::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 2039911270);
+
+h.write(b"world");
+assert_eq!(h.finish(), 4037657980);
+```
+"#]
+    Hasher32,
+    Hash32
+);
 
 /// `CityHash` 64-bit hash functions
-pub struct CityHash64 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{city::Hash64, FastHash};
+///
+/// assert_eq!(Hash64::hash(b"hello"), 2578220239953316063);
+/// assert_eq!(
+///     Hash64::hash_with_seed(b"hello", 123),
+///     11802079543206271427
+/// );
+/// assert_eq!(
+///     Hash64::hash_with_seeds(b"hello", 123, 456),
+///     13699505624668345539
+/// );
+/// assert_eq!(Hash64::hash(b"helloworld"), 16622738483577116029);
+/// ```
+pub struct Hash64;
 
-impl CityHash64 {
+impl Hash64 {
     /// Hash functions for a byte array.
     /// For convenience, seeds are also hashed into the result.
     #[inline]
-    pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: &T, seed0: u64, seed1: u64) -> u64 {
+    pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
             ffi::CityHash64WithSeeds(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -166,19 +213,19 @@ impl CityHash64 {
     }
 }
 
-impl FastHash for CityHash64 {
-    type Value = u64;
+impl FastHash for Hash64 {
+    type Hash = u64;
     type Seed = u64;
 
     #[inline]
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u64 {
+    fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
         unsafe { ffi::CityHash64(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
     /// Hash functions for a byte array.
     /// For convenience, a seed is also hashed into the result.
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::CityHash64WithSeed(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -189,17 +236,56 @@ impl FastHash for CityHash64 {
     }
 }
 
-impl_hasher!(CityHasher64, CityHash64);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{city::Hasher64, FastHasher};
+
+let mut h = Hasher64::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 2578220239953316063);
+
+h.write(b"world");
+assert_eq!(h.finish(), 16622738483577116029);
+```
+"#]
+    Hasher64,
+    Hash64
+);
 
 /// `CityHash` 128-bit hash functions
-pub struct CityHash128 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{city::Hash128, FastHash};
+///
+/// assert_eq!(
+///     Hash128::hash(b"hello"),
+///     321050694807308650239948771137913318383,
+/// );
+/// assert_eq!(
+///     Hash128::hash_with_seed(b"hello", 123),
+///     191203071519574338941297548675763958113
+/// );
+/// assert_eq!(
+///     Hash128::hash(b"helloworld"),
+///     137438709495761624905137796394169174828
+/// );
+/// ```
+pub struct Hash128;
 
-impl FastHash for CityHash128 {
-    type Value = u128;
+impl FastHash for Hash128 {
+    type Hash = u128;
     type Seed = u128;
 
     #[inline]
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
+    fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
         unsafe {
             mem::transmute(ffi::CityHash128(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -209,7 +295,7 @@ impl FastHash for CityHash128 {
     }
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
         unsafe {
             mem::transmute(ffi::CityHash128WithSeed(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -220,197 +306,174 @@ impl FastHash for CityHash128 {
     }
 }
 
-impl_hasher_ext!(CityHasher128, CityHash128);
+impl_hasher_ext!(
+    #[doc = r#"
+# Example
 
-/// `CityHash` 128-bit hash functions using HW CRC instruction.
-#[cfg(feature = "sse42")]
-pub struct CityHashCrc128 {}
+```
+use std::hash::Hasher;
 
-#[cfg(feature = "sse42")]
-impl FastHash for CityHashCrc128 {
-    type Value = u128;
-    type Seed = u128;
+use fasthash::{city::Hasher128, FastHasher, HasherExt};
 
-    #[inline]
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
-        unsafe {
-            mem::transmute(ffi::CityHashCrc128(
-                bytes.as_ref().as_ptr() as *const i8,
-                bytes.as_ref().len(),
-            ))
+let mut h = Hasher128::new();
+
+h.write(b"hello");
+assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
+
+h.write(b"world");
+assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
+```
+"#]
+    Hasher128,
+    Hash128
+);
+
+/// `CityHash` hash functions using HW CRC instruction.
+#[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
+pub mod crc {
+    use std::mem;
+
+    use crate::FastHash;
+
+    /// `CityHash` 128-bit hash functions using HW CRC instruction.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fasthash::{city::crc::Hash128, FastHash};
+    ///
+    /// assert_eq!(
+    ///     Hash128::hash(b"hello"),
+    ///     321050694807308650239948771137913318383
+    /// );
+    /// assert_eq!(
+    ///     Hash128::hash_with_seed(b"hello", 123),
+    ///     191203071519574338941297548675763958113
+    /// );
+    /// assert_eq!(
+    ///     Hash128::hash(b"helloworld"),
+    ///     137438709495761624905137796394169174828
+    /// );
+    /// ```
+
+    pub struct Hash128;
+
+    impl FastHash for Hash128 {
+        type Hash = u128;
+        type Seed = u128;
+
+        #[inline]
+        fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
+            unsafe {
+                mem::transmute(ffi::CityHashCrc128(
+                    bytes.as_ref().as_ptr() as *const i8,
+                    bytes.as_ref().len(),
+                ))
+            }
+        }
+
+        #[inline]
+        fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
+            unsafe {
+                mem::transmute(ffi::CityHashCrc128WithSeed(
+                    bytes.as_ref().as_ptr() as *const i8,
+                    bytes.as_ref().len(),
+                    mem::transmute(seed),
+                ))
+            }
         }
     }
 
-    #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
-        unsafe {
-            mem::transmute(ffi::CityHashCrc128WithSeed(
-                bytes.as_ref().as_ptr() as *const i8,
-                bytes.as_ref().len(),
-                mem::transmute(seed),
-            ))
-        }
-    }
+    impl_hasher_ext!(
+        #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{city::crc::Hasher128, FastHasher, HasherExt};
+
+let mut h = Hasher128::new();
+
+h.write(b"hello");
+assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
+
+h.write(b"world");
+assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
+```
+"#]
+        Hasher128,
+        Hash128
+    );
 }
-
-#[cfg(feature = "sse42")]
-impl_hasher_ext!(CityHasherCrc128, CityHashCrc128);
 
 /// `CityHash` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    CityHash32::hash(v)
+    Hash32::hash(v)
 }
 
 /// `CityHash` 32-bit hash function for a byte array.
+///
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    CityHash32::hash_with_seed(v, seed)
+    Hash32::hash_with_seed(v, seed)
 }
 
 /// `CityHash` 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
-    CityHash64::hash(v)
+    Hash64::hash(v)
 }
 
 /// `CityHash` 64-bit hash function for a byte array.
+///
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
-    CityHash64::hash_with_seed(v, seed)
+    Hash64::hash_with_seed(v, seed)
 }
 
 /// `CityHash` 64-bit hash function for a byte array.
+///
 /// For convenience, two seeds are also hashed into the result.
 #[inline]
 pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
-    CityHash64::hash_with_seeds(v, seed0, seed1)
+    Hash64::hash_with_seeds(v, seed0, seed1)
 }
 
-/// `CityHash` 128-bit hash function for a byte array.
-#[cfg(not(feature = "sse42"))]
-#[inline]
-pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
-    CityHash128::hash(v)
-}
+cfg_if! {
+    if #[cfg(any(feature = "sse42", target_feature = "sse4.2"))] {
+        /// `CityHash` 128-bit hash function for a byte array using HW CRC instruction.
+        ///
+        /// That require SSE4.2 instructions to be available.
+        #[inline]
+        pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+            crc::Hash128::hash(v)
+        }
 
-/// `CityHash` 128-bit hash function for a byte array.
-/// For convenience, a 128-bit seed is also hashed into the result.
-#[cfg(not(feature = "sse42"))]
-#[inline]
-pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
-    CityHash128::hash_with_seed(v, seed)
-}
+        /// `CityHash` 128-bit hash function for a byte array using HW CRC instruction.
+        ///
+        /// For convenience, a 128-bit seed is also hashed into the result.
+        /// That require SSE4.2 instructions to be available.
+        #[inline]
+        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+            crc::Hash128::hash_with_seed(v, seed)
+        }
+    } else {
+        /// `CityHash` 128-bit hash function for a byte array.
+        #[inline]
+        pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
+            Hash128::hash(v)
+        }
 
-/// `CityHash` 128-bit hash function for a byte array using HW CRC instruction.
-/// That require SSE4.2 instructions to be available.
-#[cfg(any(feature = "doc", feature = "sse42"))]
-#[inline]
-pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
-    CityHashCrc128::hash(v)
-}
-
-/// `CityHash` 128-bit hash function for a byte array using HW CRC instruction.
-/// For convenience, a 128-bit seed is also hashed into the result.
-/// That require SSE4.2 instructions to be available.
-#[cfg(any(feature = "doc", feature = "sse42"))]
-#[inline]
-pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
-    CityHashCrc128::hash_with_seed(v, seed)
-}
-
-#[cfg(test)]
-mod tests {
-    use std::hash::Hasher;
-
-    use super::*;
-    use hasher::{FastHash, FastHasher, HasherExt};
-
-    #[test]
-    fn test_cityhash32() {
-        assert_eq!(CityHash32::hash(b"hello"), 2039911270);
-        assert_eq!(CityHash32::hash_with_seed(b"hello", 123), 3366460263);
-        assert_eq!(CityHash32::hash(b"helloworld"), 4037657980);
-
-        let mut h = CityHasher32::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 2039911270);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 4037657980);
-    }
-
-    #[test]
-    fn test_cityhash64() {
-        assert_eq!(CityHash64::hash(b"hello"), 2578220239953316063);
-        assert_eq!(
-            CityHash64::hash_with_seed(b"hello", 123),
-            11802079543206271427
-        );
-        assert_eq!(
-            CityHash64::hash_with_seeds(b"hello", 123, 456),
-            13699505624668345539
-        );
-        assert_eq!(CityHash64::hash(b"helloworld"), 16622738483577116029);
-
-        let mut h = CityHasher64::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 2578220239953316063);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 16622738483577116029);
-    }
-
-    #[test]
-    fn test_cityhash128() {
-        assert_eq!(
-            CityHash128::hash(b"hello"),
-            321050694807308650239948771137913318383,
-        );
-        assert_eq!(
-            CityHash128::hash_with_seed(b"hello", 123),
-            191203071519574338941297548675763958113
-        );
-        assert_eq!(
-            CityHash128::hash(b"helloworld"),
-            137438709495761624905137796394169174828
-        );
-
-        let mut h = CityHasher128::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
-
-        h.write(b"world");
-        assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
-    }
-
-    #[cfg(feature = "sse42")]
-    #[test]
-    fn test_cityhash128crc() {
-        assert_eq!(
-            CityHashCrc128::hash(b"hello"),
-            321050694807308650239948771137913318383
-        );
-        assert_eq!(
-            CityHashCrc128::hash_with_seed(b"hello", 123),
-            191203071519574338941297548675763958113
-        );
-        assert_eq!(
-            CityHashCrc128::hash(b"helloworld"),
-            137438709495761624905137796394169174828
-        );
-
-        let mut h = CityHasherCrc128::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
-
-        h.write(b"world");
-        assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
+        /// `CityHash` 128-bit hash function for a byte array.
+        ///
+        /// For convenience, a 128-bit seed is also hashed into the result.
+        #[inline]
+        pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
+            Hash128::hash_with_seed(v, seed)
+        }
     }
 }

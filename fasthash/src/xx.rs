@@ -36,14 +36,24 @@ use ffi;
 use hasher::{FastHash, FastHasher, StreamHasher};
 
 /// xxHash 32-bit hash functions
-pub struct XXHash32 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{xx::Hash32, FastHash};
+///
+/// assert_eq!(Hash32::hash(b"hello"), 4211111929);
+/// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2147069998);
+/// assert_eq!(Hash32::hash(b"helloworld"), 593682946);
+/// ```
+pub struct Hash32;
 
-impl FastHash for XXHash32 {
-    type Value = u32;
+impl FastHash for Hash32 {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::XXH32(
                 bytes.as_ref().as_ptr() as *const c_void,
@@ -55,14 +65,24 @@ impl FastHash for XXHash32 {
 }
 
 /// xxHash 64-bit hash functions
-pub struct XXHash64 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{xx::Hash64, FastHash};
+///
+/// assert_eq!(Hash64::hash(b"hello"), 2794345569481354659);
+/// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 2900467397628653179);
+/// assert_eq!(Hash64::hash(b"helloworld"), 9228181307863624271);
+/// ```
+pub struct Hash64;
 
-impl FastHash for XXHash64 {
-    type Value = u64;
+impl FastHash for Hash64 {
+    type Hash = u64;
     type Seed = u64;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::XXH64(
                 bytes.as_ref().as_ptr() as *const c_void,
@@ -76,39 +96,59 @@ impl FastHash for XXHash64 {
 /// xxHash 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    XXHash32::hash(v)
+    Hash32::hash(v)
 }
 
 /// xxHash 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    XXHash32::hash_with_seed(v, seed)
+    Hash32::hash_with_seed(v, seed)
 }
 
 /// xxHash 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
-    XXHash64::hash(v)
+    Hash64::hash(v)
 }
 
 /// xxHash 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
-    XXHash64::hash_with_seed(v, seed)
+    Hash64::hash_with_seed(v, seed)
 }
 
 /// An implementation of `std::hash::Hasher`.
-pub struct XXHasher32(*mut ffi::XXH32_state_t);
+///
+/// # Example
+///
+/// ```
+/// use std::hash::Hasher;
+/// use std::io::Cursor;
+///
+/// use fasthash::{xx::Hasher32, FastHasher, StreamHasher};
+///
+/// let mut h = Hasher32::new();
+///
+/// h.write(b"hello");
+/// assert_eq!(h.finish(), 4211111929);
+///
+/// h.write(b"world");
+/// assert_eq!(h.finish(), 593682946);
+///
+/// h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
+/// assert_eq!(h.finish(), 2113960620);
+/// ```
+pub struct Hasher32(*mut ffi::XXH32_state_t);
 
-impl Default for XXHasher32 {
+impl Default for Hasher32 {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Drop for XXHasher32 {
+impl Drop for Hasher32 {
     #[inline]
     fn drop(&mut self) {
         unsafe {
@@ -117,7 +157,7 @@ impl Drop for XXHasher32 {
     }
 }
 
-impl Hasher for XXHasher32 {
+impl Hasher for Hasher32 {
     #[inline]
     fn finish(&self) -> u64 {
         unsafe { u64::from(ffi::XXH32_digest(self.0)) }
@@ -131,7 +171,7 @@ impl Hasher for XXHasher32 {
     }
 }
 
-impl FastHasher for XXHasher32 {
+impl FastHasher for Hasher32 {
     type Seed = u32;
 
     #[inline]
@@ -142,24 +182,44 @@ impl FastHasher for XXHasher32 {
             ffi::XXH32_reset(h, seed);
         }
 
-        XXHasher32(h)
+        Hasher32(h)
     }
 }
 
-impl StreamHasher for XXHasher32 {}
+impl StreamHasher for Hasher32 {}
 
-impl_fasthash!(XXHasher32, XXHash32);
+impl_fasthash!(Hasher32, Hash32);
 
 /// An implementation of `std::hash::Hasher`.
-pub struct XXHasher64(*mut ffi::XXH64_state_t);
+///
+/// # Example
+///
+/// ```
+/// use std::hash::Hasher;
+/// use std::io::Cursor;
+///
+/// use fasthash::{xx::Hasher64, FastHasher, StreamHasher};
+///
+/// let mut h = Hasher64::new();
+///
+/// h.write(b"hello");
+/// assert_eq!(h.finish(), 2794345569481354659);
+///
+/// h.write(b"world");
+/// assert_eq!(h.finish(), 9228181307863624271);
+///
+/// h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
+/// assert_eq!(h.finish(), 6304142433100597454);
+/// ```
+pub struct Hasher64(*mut ffi::XXH64_state_t);
 
-impl Default for XXHasher64 {
+impl Default for Hasher64 {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Drop for XXHasher64 {
+impl Drop for Hasher64 {
     fn drop(&mut self) {
         unsafe {
             ffi::XXH64_freeState(self.0);
@@ -167,7 +227,7 @@ impl Drop for XXHasher64 {
     }
 }
 
-impl Hasher for XXHasher64 {
+impl Hasher for Hasher64 {
     #[inline]
     fn finish(&self) -> u64 {
         unsafe { ffi::XXH64_digest(self.0) }
@@ -181,7 +241,7 @@ impl Hasher for XXHasher64 {
     }
 }
 
-impl FastHasher for XXHasher64 {
+impl FastHasher for Hasher64 {
     type Seed = u64;
 
     #[inline]
@@ -192,55 +252,10 @@ impl FastHasher for XXHasher64 {
             ffi::XXH64_reset(h, seed);
         }
 
-        XXHasher64(h)
+        Hasher64(h)
     }
 }
 
-impl StreamHasher for XXHasher64 {}
+impl StreamHasher for Hasher64 {}
 
-impl_fasthash!(XXHasher64, XXHash64);
-
-#[cfg(test)]
-mod tests {
-    use std::hash::Hasher;
-    use std::io::Cursor;
-
-    use super::*;
-    use hasher::{FastHash, FastHasher, StreamHasher};
-
-    #[test]
-    fn test_xxh32() {
-        assert_eq!(XXHash32::hash(b"hello"), 4211111929);
-        assert_eq!(XXHash32::hash_with_seed(b"hello", 123), 2147069998);
-        assert_eq!(XXHash32::hash(b"helloworld"), 593682946);
-
-        let mut h = XXHasher32::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 4211111929);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 593682946);
-
-        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
-        assert_eq!(h.finish(), 2113960620);
-    }
-
-    #[test]
-    fn test_xxh64() {
-        assert_eq!(XXHash64::hash(b"hello"), 2794345569481354659);
-        assert_eq!(XXHash64::hash_with_seed(b"hello", 123), 2900467397628653179);
-        assert_eq!(XXHash64::hash(b"helloworld"), 9228181307863624271);
-
-        let mut h = XXHasher64::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 2794345569481354659);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 9228181307863624271);
-
-        h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
-        assert_eq!(h.finish(), 6304142433100597454);
-    }
-}
+impl_fasthash!(Hasher64, Hash64);

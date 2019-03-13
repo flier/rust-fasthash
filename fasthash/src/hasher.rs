@@ -2,16 +2,12 @@ use std::cell::RefCell;
 use std::hash::{BuildHasher, Hasher};
 use std::io;
 use std::marker::PhantomData;
-#[cfg(feature = "i128")]
-use std::mem;
 
+use num_traits::PrimInt;
 use xoroshiro128::{Rng, SeedableRng, Xoroshiro128Rng};
 
-#[cfg(feature = "i128")]
-use extprim::i128::i128;
-
 /// Generate a good, portable, forever-fixed hash value
-pub trait Fingerprint<T> {
+pub trait Fingerprint<T: PrimInt> {
     /// This is intended to be a good fingerprinting primitive.
     fn fingerprint(&self) -> T;
 }
@@ -24,16 +20,16 @@ pub trait BuildHasherExt: BuildHasher {
 /// Fast non-cryptographic hash functions
 pub trait FastHash: BuildHasherExt {
     /// The output hash generated value.
-    type Value;
+    type Hash: PrimInt;
     /// The seed to generate hash value.
     type Seed: Default + Copy;
 
     /// Hash functions for a byte array.
     /// For convenience, a seed is also hashed into the result.
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: Self::Seed) -> Self::Value;
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: Self::Seed) -> Self::Hash;
 
     /// Hash functions for a byte array.
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> Self::Value {
+    fn hash<T: AsRef<[u8]>>(bytes: T) -> Self::Hash {
         Self::hash_with_seed(bytes, Default::default())
     }
 }
@@ -129,20 +125,6 @@ pub trait StreamHasher: FastHasher + Sized {
 pub trait HasherExt: Hasher {
     /// Completes a round of hashing, producing the output hash generated.
     fn finish_ext(&self) -> u128;
-
-    /// Writes a single `u128` into this hasher.
-    #[cfg(feature = "i128")]
-    #[inline]
-    fn write_u128(&mut self, i: u128) {
-        self.write(&unsafe { mem::transmute::<_, [u8; 16]>(i) })
-    }
-
-    /// Writes a single `i128` into this hasher.
-    #[cfg(feature = "i128")]
-    #[inline]
-    fn write_i128(&mut self, i: i128) {
-        self.write_u128(i.as_u128())
-    }
 }
 
 /// Generate hash seeds
@@ -229,9 +211,9 @@ impl From<Seed> for u128 {
 /// use std::collections::HashMap;
 ///
 /// use fasthash::RandomState;
-/// use fasthash::city::CityHash64;
+/// use fasthash::city::Hash64;
 ///
-/// let s = RandomState::<CityHash64>::new();
+/// let s = RandomState::<Hash64>::new();
 /// let mut map = HashMap::with_hasher(s);
 ///
 /// assert_eq!(map.insert(37, "a"), None);
@@ -281,7 +263,7 @@ macro_rules! impl_fasthash {
 
             #[inline]
             fn build_hasher(&self) -> Self::Hasher {
-                $hasher::new()
+                <$hasher as $crate::hasher::FastHasher>::new()
             }
         }
 
@@ -294,9 +276,10 @@ macro_rules! impl_fasthash {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! impl_hasher {
-    ($hasher:ident, $hash:ident) => {
+    ($(#[$meta:meta])* $hasher:ident, $hash:ident) => {
         /// An implementation of `std::hash::Hasher`.
-        #[derive(Clone)]
+        #[derive(Clone, Debug)]
+        $(#[$meta])*
         pub struct $hasher {
             seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
             bytes: Vec<u8>,
@@ -304,7 +287,7 @@ macro_rules! impl_hasher {
 
         impl Default for $hasher {
             fn default() -> Self {
-                $hasher::new()
+                <$hasher as $crate::hasher::FastHasher>::new()
             }
         }
 
@@ -362,9 +345,10 @@ macro_rules! impl_hasher {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! impl_hasher_ext {
-    ($hasher:ident, $hash:ident) => {
+    ($(#[$meta:meta])* $hasher:ident, $hash:ident) => {
         /// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
-        #[derive(Clone)]
+        #[derive(Clone, Debug)]
+        $(#[$meta])*
         pub struct $hasher {
             seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
             bytes: Vec<u8>,
@@ -382,7 +366,7 @@ macro_rules! impl_hasher_ext {
 
         impl Default for $hasher {
             fn default() -> Self {
-                $hasher::new()
+                <$hasher as $crate::hasher::FastHasher>::new()
             }
         }
 
@@ -429,7 +413,7 @@ macro_rules! impl_hasher_ext {
             #[inline]
             fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self {
                 $hasher {
-                    seed: seed,
+                    seed,
                     bytes: Vec::with_capacity(capacity),
                 }
             }
@@ -444,30 +428,7 @@ mod tests {
     use std::collections::HashMap;
     use std::convert::Into;
 
-    #[cfg(feature = "sse42")]
-    use city::CityHashCrc128;
-    use city::{CityHash128, CityHash32, CityHash64};
-
-    use farm::{FarmHash128, FarmHash32, FarmHash64};
-    use lookup3::Lookup3;
-
-    #[cfg(feature = "sse42")]
-    use metro::{MetroHash128Crc_1, MetroHash128Crc_2, MetroHash64Crc_1, MetroHash64Crc_2};
-    use metro::{MetroHash128_1, MetroHash128_2, MetroHash64_1, MetroHash64_2};
-
-    use mum::MumHash;
-    use murmur::{Murmur, MurmurAligned};
-    use murmur2::{
-        Murmur2, Murmur2A, Murmur2_x64_64, Murmur2_x86_64, MurmurAligned2, MurmurNeutral2,
-    };
-    use murmur3::{Murmur3_x64_128, Murmur3_x86_128, Murmur3_x86_32};
-    use sea::SeaHash;
-    use spooky::{SpookyHash128, SpookyHash32, SpookyHash64};
-
-    use t1ha::{T1ha0_64, T1ha1_64Be, T1ha1_64Le, T1ha2_128, T1ha2_64};
-
-    use super::*;
-    use xx::{XXHash32, XXHash64};
+    use crate::*;
 
     #[test]
     fn test_seed() {
@@ -510,8 +471,8 @@ mod tests {
     }
 
     macro_rules! test_hashmap_with_fixed_state {
-        ($hash:ident) => {
-            let mut map = HashMap::with_hasher($hash {});
+        ($hash:path) => {
+            let mut map = HashMap::with_hasher($hash);
 
             assert_eq!(map.insert(37, "a"), None);
             assert_eq!(map.is_empty(), false);
@@ -523,7 +484,7 @@ mod tests {
     }
 
     macro_rules! test_hashmap_with_random_state {
-        ($hash:ident) => {
+        ($hash:path) => {
             let s = RandomState::<$hash>::new();
             let mut map = HashMap::with_hasher(s);
 
@@ -537,7 +498,7 @@ mod tests {
     }
 
     macro_rules! test_hashmap_with_hashers {
-        [ $( $hash:ident ),* ] => {
+        [ $( $hash:path ),* ] => {
             $( {
                 test_hashmap_with_fixed_state!( $hash );
                 test_hashmap_with_random_state!( $hash );
@@ -547,36 +508,48 @@ mod tests {
 
     #[test]
     fn test_hashmap_with_hashers() {
-        test_hashmap_with_hashers![CityHash32, CityHash64, CityHash128];
-        #[cfg(feature = "sse42")]
-        test_hashmap_with_hashers![CityHashCrc128];
-
-        test_hashmap_with_hashers![FarmHash32, FarmHash64, FarmHash128];
-        test_hashmap_with_hashers![Lookup3];
-
-        test_hashmap_with_hashers![MetroHash64_1, MetroHash64_2, MetroHash128_1, MetroHash128_2];
-        #[cfg(feature = "sse42")]
+        test_hashmap_with_hashers![city::Hash32, city::Hash64, city::Hash128];
+        #[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
+        test_hashmap_with_hashers![city::crc::Hash128];
+        test_hashmap_with_hashers![farm::Hash32, farm::Hash64, farm::Hash128];
+        test_hashmap_with_hashers![lookup3::Hash32];
         test_hashmap_with_hashers![
-            MetroHash64Crc_1,
-            MetroHash64Crc_2,
-            MetroHash128Crc_1,
-            MetroHash128Crc_2
+            metro::Hash64_1,
+            metro::Hash64_2,
+            metro::Hash128_1,
+            metro::Hash128_2
+        ];
+        #[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
+        test_hashmap_with_hashers![
+            metro::crc::Hash64_1,
+            metro::crc::Hash64_2,
+            metro::crc::Hash128_1,
+            metro::crc::Hash128_2
         ];
 
-        test_hashmap_with_hashers![MumHash];
-        test_hashmap_with_hashers![Murmur, MurmurAligned];
+        test_hashmap_with_hashers![mum::Hash64];
+        test_hashmap_with_hashers![murmur::Hash32, murmur::Hash32Aligned];
         test_hashmap_with_hashers![
-            Murmur2,
-            Murmur2A,
-            MurmurNeutral2,
-            MurmurAligned2,
-            Murmur2_x64_64,
-            Murmur2_x86_64
+            murmur2::Hash32,
+            murmur2::Hash32A,
+            murmur2::Hash32Neutral,
+            murmur2::Hash32Aligned,
+            murmur2::Hash64_x64,
+            murmur2::Hash64_x86
         ];
-        test_hashmap_with_hashers![Murmur3_x86_32, Murmur3_x86_128, Murmur3_x64_128];
-        test_hashmap_with_hashers![SeaHash];
-        test_hashmap_with_hashers![SpookyHash32, SpookyHash64, SpookyHash128];
-        test_hashmap_with_hashers![T1ha0_64, T1ha1_64Le, T1ha1_64Be, T1ha2_64, T1ha2_128];
-        test_hashmap_with_hashers![XXHash32, XXHash64];
+        test_hashmap_with_hashers![murmur3::Hash32, murmur3::Hash128_x86, murmur3::Hash128_x64];
+        test_hashmap_with_hashers![sea::Hash64];
+        test_hashmap_with_hashers![spooky::Hash32, spooky::Hash64, spooky::Hash128];
+        test_hashmap_with_hashers![
+            t1ha0::Hash64,
+            t1ha0::aes::Hash64,
+            t1ha0::avx::Hash64,
+            t1ha0::avx2::Hash64,
+            t1ha1::Hash64Le,
+            t1ha1::Hash64Be,
+            t1ha2::Hash64AtOnce,
+            t1ha2::Hash128AtOnce
+        ];
+        test_hashmap_with_hashers![xx::Hash32, xx::Hash64];
     }
 }

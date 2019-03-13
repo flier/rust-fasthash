@@ -29,9 +29,9 @@
 //! ```rust
 //! use std::collections::HashSet;
 //!
-//! use fasthash::spooky::SpookyHash128;
+//! use fasthash::spooky::Hash128;
 //!
-//! let mut set = HashSet::with_hasher(SpookyHash128 {});
+//! let mut set = HashSet::with_hasher(Hash128);
 //! set.insert(2);
 //! ```
 //!
@@ -40,10 +40,9 @@
 //! ```rust
 //! use std::collections::HashMap;
 //!
-//! use fasthash::RandomState;
-//! use fasthash::city::CityHash64;
+//! use fasthash::{city, RandomState};
 //!
-//! let s = RandomState::<CityHash64>::new();
+//! let s = RandomState::<city::Hash64>::new();
 //! let mut map = HashMap::with_hasher(s);
 //!
 //! assert_eq!(map.insert(37, "a"), None);
@@ -53,11 +52,12 @@
 //! assert_eq!(map.insert(37, "c"), Some("b"));
 //! assert_eq!(map[&37], "c");
 //! ```
-#![cfg_attr(feature = "clippy", feature(plugin))]
-#![cfg_attr(feature = "clippy", plugin(clippy))]
 #![warn(missing_docs)]
 
+#[macro_use]
+extern crate cfg_if;
 extern crate fasthash_sys as ffi;
+extern crate num_traits;
 extern crate seahash;
 extern crate xoroshiro128;
 
@@ -80,33 +80,32 @@ pub use hasher::{
     BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
 };
 
-#[cfg(not(feature = "sse42"))]
-pub use city::{CityHasher128 as CityHasherExt, CityHasher64 as CityHasher};
-#[cfg(feature = "sse42")]
-pub use city::{CityHasher64 as CityHasher, CityHasherCrc128 as CityHasherExt};
-
-pub use farm::{FarmHasher128 as FarmHasherExt, FarmHasher64 as FarmHasher};
-pub use lookup3::Lookup3Hasher;
-
-#[cfg(feature = "sse42")]
-pub use metro::{MetroHasher128Crc_1 as MetroHasherExt, MetroHasher64Crc_1 as MetroHasher};
-#[cfg(not(feature = "sse42"))]
-pub use metro::{MetroHasher128_1 as MetroHasherExt, MetroHasher64_1 as MetroHasher};
-
-pub use mum::MumHasher;
-pub use murmur::MurmurHasher;
-pub use murmur2::Murmur2Hasher_x64_64 as Murmur2Hasher;
-pub use murmur3::{
-    Murmur3Hasher_x64_128 as Murmur3Hasher, Murmur3Hasher_x64_128 as Murmur3HasherExt,
-};
+pub use farm::{Hasher128 as FarmHasherExt, Hasher64 as FarmHasher};
+pub use lookup3::Hasher32 as Lookup3Hasher;
+pub use mum::Hasher64 as MumHasher;
+pub use murmur::Hasher32 as MurmurHasher;
+pub use murmur3::Hasher32 as Murmur3Hasher;
 #[doc(no_inline)]
-pub use sea::SeaHasher64 as SeaHasher;
-pub use spooky::{SpookyHasher128 as SpookyHasher, SpookyHasher128 as SpookyHasherExt};
-
-pub use t1ha::{
-    T1ha0Hasher64 as T1ha0Hasher, T1ha1Hasher64Be as T1ha64BeHasher,
-    T1ha1Hasher64Le as T1ha64LeHasher, T1ha2Hasher128 as T1haHasherExt,
-    T1ha2Hasher64 as T1haHasher,
-};
-
-pub use xx::XXHasher64 as XXHasher;
+pub use sea::Hasher64 as SeaHasher;
+pub use spooky::{Hasher128 as SpookyHasherExt, Hasher64 as SpookyHasher};
+pub use t1ha::{t1ha0, t1ha1, t1ha2};
+pub use t1ha2::{Hasher128 as T1haHasherExt, Hasher64 as T1haHasher};
+pub use xx::Hasher64 as XXHasher;
+cfg_if! {
+    if #[cfg(target_pointer_width = "64")] {
+        pub use murmur2::Hasher64_x64 as Murmur2Hasher;
+        pub use murmur3::Hasher128_x64 as Murmur3HasherExt;
+    } else {
+        pub use murmur2::Hasher64_x86 as Murmur2Hasher;
+        pub use murmur3::Hasher128_x86 as Murmur3HasherExt;
+    }
+}
+cfg_if! {
+    if #[cfg(any(feature = "sse42", target_feature = "sse4.2"))] {
+        pub use city::{Hasher64 as CityHasher, crc::Hasher128 as CityHasherExt};
+        pub use metro::{crc::Hasher128_1 as MetroHasherExt, crc::Hasher64_1 as MetroHasher};
+    } else {
+        pub use city::{Hasher128 as CityHasherExt, Hasher64 as CityHasher};
+        pub use metro::{Hasher128_1 as MetroHasherExt, Hasher64_1 as MetroHasher};
+    }
+}

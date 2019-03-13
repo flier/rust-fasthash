@@ -1,24 +1,26 @@
 #![allow(deprecated)]
-
 #![feature(test)]
-extern crate test;
-extern crate rand;
 extern crate fnv;
+extern crate rand;
+extern crate test;
 
 extern crate fasthash;
 
 use std::hash::*;
 
-use test::Bencher;
-use rand::{thread_rng, Rng};
 use fnv::*;
+use rand::{thread_rng, Rng};
+use test::Bencher;
 
 use fasthash::*;
 
 const ITERATERS: usize = 1000;
 
 fn gen_key(size: usize) -> Vec<u8> {
-    thread_rng().gen_iter::<u8>().take(size).collect::<Vec<u8>>()
+    thread_rng()
+        .gen_iter::<u8>()
+        .take(size)
+        .collect::<Vec<u8>>()
 }
 
 #[inline]

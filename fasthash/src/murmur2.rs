@@ -68,245 +68,350 @@ use std::os::raw::c_void;
 
 use ffi;
 
-use hasher::{FastHash, FastHasher};
+use hasher::FastHash;
 
 /// `MurmurHash2` 32-bit hash functions
-pub struct Murmur2 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur2::Hash32, FastHash};
+///
+/// assert_eq!(Hash32::hash(b"hello"), 3848350155);
+/// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2385981934);
+/// assert_eq!(Hash32::hash(b"helloworld"), 2155944146);
+/// ```
+pub struct Hash32;
 
-impl FastHash for Murmur2 {
-    type Value = u32;
+impl FastHash for Hash32 {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::MurmurHash2(bytes.as_ref().as_ptr() as *const c_void,
-                             bytes.as_ref().len() as i32,
-                             seed)
+            ffi::MurmurHash2(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(Murmur2Hasher, Murmur2);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur2::Hasher32, FastHasher};
+
+let mut h = Hasher32::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 3848350155);
+
+h.write(b"world");
+assert_eq!(h.finish(), 2155944146);
+```
+"#]
+    Hasher32,
+    Hash32
+);
 
 /// `MurmurHash2A` 32-bit hash functions
-pub struct Murmur2A {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur2::Hash32A, FastHash};
+///
+/// assert_eq!(Hash32A::hash(b"hello"), 259931098);
+/// assert_eq!(Hash32A::hash_with_seed(b"hello", 123), 509510832);
+/// assert_eq!(Hash32A::hash(b"helloworld"), 403945221);
+/// ```
+pub struct Hash32A;
 
-impl FastHash for Murmur2A {
-    type Value = u32;
+impl FastHash for Hash32A {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::MurmurHash2A(bytes.as_ref().as_ptr() as *const c_void,
-                              bytes.as_ref().len() as i32,
-                              seed)
+            ffi::MurmurHash2A(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(Murmur2AHasher, Murmur2A);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur2::Hasher32A, FastHasher};
+
+let mut h = Hasher32A::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 259931098);
+
+h.write(b"world");
+assert_eq!(h.finish(), 403945221);
+```
+"#]
+    Hasher32A,
+    Hash32A
+);
 
 /// `MurmurHash2` 32-bit neutral hash functions for the (slower) endian-neutral implementation
-pub struct MurmurNeutral2 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur2::Hash32Neutral, FastHash};
+///
+/// assert_eq!(Hash32Neutral::hash(b"hello"), 3848350155);
+/// assert_eq!(Hash32Neutral::hash_with_seed(b"hello", 123), 2385981934);
+/// assert_eq!(Hash32Neutral::hash(b"helloworld"), 2155944146);
+/// ```
+pub struct Hash32Neutral;
 
-impl FastHash for MurmurNeutral2 {
-    type Value = u32;
+impl FastHash for Hash32Neutral {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::MurmurHashNeutral2(bytes.as_ref().as_ptr() as *const c_void,
-                                    bytes.as_ref().len() as i32,
-                                    seed)
+            ffi::MurmurHashNeutral2(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(MurmurNeutral2Hasher, MurmurNeutral2);
+impl_hasher!(
+    #[doc = r#"
+# Example
 
-/// `MurmurHash2` 32-bit aligned hash functions
-/// for the little-endian aligned-read-only implementation
-pub struct MurmurAligned2 {}
+```
+use std::hash::Hasher;
 
-impl FastHash for MurmurAligned2 {
-    type Value = u32;
+use fasthash::{murmur2::Hasher32Neutral, FastHasher};
+
+let mut h = Hasher32Neutral::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 3848350155);
+
+h.write(b"world");
+assert_eq!(h.finish(), 2155944146);
+```
+"#]
+    Hasher32Neutral,
+    Hash32Neutral
+);
+
+/// `MurmurHash2` 32-bit aligned hash functions for the little-endian aligned-read-only implementation
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur2::Hash32Aligned, FastHash};
+///
+/// assert_eq!(Hash32Aligned::hash(b"hello"), 3848350155);
+/// assert_eq!(Hash32Aligned::hash_with_seed(b"hello", 123), 2385981934);
+/// assert_eq!(Hash32Aligned::hash(b"helloworld"), 2155944146);
+/// ```
+pub struct Hash32Aligned;
+
+impl FastHash for Hash32Aligned {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
-            ffi::MurmurHashAligned2(bytes.as_ref().as_ptr() as *const c_void,
-                                    bytes.as_ref().len() as i32,
-                                    seed)
+            ffi::MurmurHashAligned2(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(MurmurAligned2Hasher, MurmurAligned2);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur2::Hasher32Aligned, FastHasher};
+
+let mut h = Hasher32Aligned::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 3848350155);
+
+h.write(b"world");
+assert_eq!(h.finish(), 2155944146);
+```
+"#]
+    Hasher32Aligned,
+    Hash32Aligned
+);
 
 /// `MurmurHash2` 64-bit hash functions for 64-bit processors
-pub struct Murmur2_x64_64 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur2::Hash64_x64, FastHash};
+///
+/// assert_eq!(Hash64_x64::hash(b"hello"), 2191231550387646743);
+/// assert_eq!(
+///     Hash64_x64::hash_with_seed(b"hello", 123),
+///     2597646618390559622
+/// );
+/// assert_eq!(Hash64_x64::hash(b"helloworld"), 2139823713852166039);
+/// ```
+pub struct Hash64_x64;
 
-impl FastHash for Murmur2_x64_64 {
-    type Value = u64;
+impl FastHash for Hash64_x64 {
+    type Hash = u64;
     type Seed = u64;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
-            ffi::MurmurHash64A(bytes.as_ref().as_ptr() as *const c_void,
-                               bytes.as_ref().len() as i32,
-                               seed)
+            ffi::MurmurHash64A(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(Murmur2Hasher_x64_64, Murmur2_x64_64);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur2::Hasher64_x64, FastHasher};
+
+let mut h = Hasher64_x64::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 2191231550387646743);
+
+h.write(b"world");
+assert_eq!(h.finish(), 2139823713852166039);
+```
+"#]
+    Hasher64_x64,
+    Hash64_x64
+);
 
 /// `MurmurHash2` 64-bit hash functions for 32-bit processors
-pub struct Murmur2_x86_64 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{murmur2::Hash64_x86, FastHash};
+///
+/// assert_eq!(Hash64_x86::hash(b"hello"), 17658855022785723775);
+/// assert_eq!(
+///     Hash64_x86::hash_with_seed(b"hello", 123),
+///     1883382312211796549
+/// );
+/// assert_eq!(Hash64_x86::hash(b"helloworld"), 14017254558097603378);
+/// ```
+pub struct Hash64_x86;
 
-impl FastHash for Murmur2_x86_64 {
-    type Value = u64;
+impl FastHash for Hash64_x86 {
+    type Hash = u64;
     type Seed = u64;
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
-            ffi::MurmurHash64B(bytes.as_ref().as_ptr() as *const c_void,
-                               bytes.as_ref().len() as i32,
-                               seed)
+            ffi::MurmurHash64B(
+                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().len() as i32,
+                seed,
+            )
         }
     }
 }
 
-impl_hasher!(Murmur2Hasher_x86_64, Murmur2_x86_64);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{murmur2::Hasher64_x86, FastHasher};
+
+let mut h = Hasher64_x86::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 17658855022785723775);
+
+h.write(b"world");
+assert_eq!(h.finish(), 14017254558097603378);
+```
+"#]
+    Hasher64_x86,
+    Hash64_x86
+);
 
 /// `MurmurHash2` 32-bit hash functions for a byte array.
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    Murmur2A::hash(v)
+    Hash32A::hash(v)
 }
 
 /// `MurmurHash2` 32-bit hash function for a byte array.
 /// For convenience, a 32-bit seed is also hashed into the result.
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    Murmur2A::hash_with_seed(v, seed)
+    Hash32A::hash_with_seed(v, seed)
 }
 
 /// `MurmurHash2` 64-bit hash functions for a byte array.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
-    Murmur2_x64_64::hash(v)
+    if cfg!(target_pointer_width = "64") {
+        Hash64_x64::hash(v)
+    } else {
+        Hash64_x86::hash(v)
+    }
 }
 
 /// `MurmurHash2` 64-bit hash function for a byte array.
 /// For convenience, a 64-bit seed is also hashed into the result.
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
-    Murmur2_x64_64::hash_with_seed(v, seed)
-}
-
-#[cfg(test)]
-mod tests {
-    use std::hash::Hasher;
-
-    use hasher::{FastHash, FastHasher};
-    use super::*;
-
-    #[test]
-    fn test_murmur2() {
-        assert_eq!(Murmur2::hash(b"hello"), 3848350155);
-        assert_eq!(Murmur2::hash_with_seed(b"hello", 123), 2385981934);
-        assert_eq!(Murmur2::hash(b"helloworld"), 2155944146);
-
-        let mut h = Murmur2Hasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 3848350155);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 2155944146);
-    }
-
-    #[test]
-    fn test_murmur2a() {
-        assert_eq!(Murmur2A::hash(b"hello"), 259931098);
-        assert_eq!(Murmur2A::hash_with_seed(b"hello", 123), 509510832);
-        assert_eq!(Murmur2A::hash(b"helloworld"), 403945221);
-
-        let mut h = Murmur2AHasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 259931098);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 403945221);
-    }
-
-    #[test]
-    fn test_murmur2_neutral() {
-        assert_eq!(MurmurNeutral2::hash(b"hello"), 3848350155);
-        assert_eq!(MurmurNeutral2::hash_with_seed(b"hello", 123), 2385981934);
-        assert_eq!(MurmurNeutral2::hash(b"helloworld"), 2155944146);
-
-        let mut h = MurmurNeutral2Hasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 3848350155);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 2155944146);
-    }
-
-    #[test]
-    fn test_murmur2_aligned() {
-        assert_eq!(MurmurAligned2::hash(b"hello"), 3848350155);
-        assert_eq!(MurmurAligned2::hash_with_seed(b"hello", 123), 2385981934);
-        assert_eq!(MurmurAligned2::hash(b"helloworld"), 2155944146);
-
-        let mut h = MurmurAligned2Hasher::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 3848350155);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 2155944146);
-    }
-
-    #[test]
-    fn test_murmur2_x64_64() {
-        assert_eq!(Murmur2_x64_64::hash(b"hello"), 2191231550387646743);
-        assert_eq!(Murmur2_x64_64::hash_with_seed(b"hello", 123),
-                   2597646618390559622);
-        assert_eq!(Murmur2_x64_64::hash(b"helloworld"), 2139823713852166039);
-
-        let mut h = Murmur2Hasher_x64_64::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 2191231550387646743);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 2139823713852166039);
-    }
-
-    #[test]
-    fn test_murmur2_x86_64() {
-        assert_eq!(Murmur2_x86_64::hash(b"hello"), 17658855022785723775);
-        assert_eq!(Murmur2_x86_64::hash_with_seed(b"hello", 123),
-                   1883382312211796549);
-        assert_eq!(Murmur2_x86_64::hash(b"helloworld"), 14017254558097603378);
-
-        let mut h = Murmur2Hasher_x86_64::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 17658855022785723775);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 14017254558097603378);
+    if cfg!(target_pointer_width = "64") {
+        Hash64_x64::hash_with_seed(v, seed)
+    } else {
+        Hash64_x86::hash_with_seed(v, seed)
     }
 }

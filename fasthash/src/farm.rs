@@ -122,22 +122,32 @@ use std::mem;
 
 use ffi;
 
-use hasher::{FastHash, FastHasher, Fingerprint};
+use hasher::{FastHash, Fingerprint};
 
 /// `FarmHash` 32-bit hash functions
-pub struct FarmHash32 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{farm::Hash32, FastHash};
+///
+/// assert_eq!(Hash32::hash(b"hello"), 2535641019);
+/// assert_eq!(Hash32::hash_with_seed(b"world", 123), 60914537);
+/// assert_eq!(Hash32::hash(b"helloworld"), 2214725017);
+/// ```
+pub struct Hash32;
 
-impl FastHash for FarmHash32 {
-    type Value = u32;
+impl FastHash for Hash32 {
+    type Hash = u32;
     type Seed = u32;
 
     #[inline]
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u32 {
+    fn hash<T: AsRef<[u8]>>(bytes: T) -> u32 {
         unsafe { ffi::farmhash32(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u32) -> u32 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::farmhash32_with_seed(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -148,12 +158,49 @@ impl FastHash for FarmHash32 {
     }
 }
 
-impl_hasher!(FarmHasher32, FarmHash32);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{farm::Hasher32, FastHasher};
+
+let mut h = Hasher32::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 2535641019);
+
+h.write(b"world");
+assert_eq!(h.finish(), 2214725017);
+```
+"#]
+    Hasher32,
+    Hash32
+);
 
 /// `FarmHash` 64-bit hash functions
-pub struct FarmHash64 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{farm::Hash64, FastHash};
+///
+/// assert_eq!(Hash64::hash(b"hello"), 14403600180753024522);
+/// assert_eq!(
+///     Hash64::hash_with_seed(b"hello", 123),
+///     6856739100025169098
+/// );
+/// assert_eq!(
+///     Hash64::hash_with_seeds(b"hello", 123, 456),
+///     15077713332534145879
+/// );
+/// assert_eq!(Hash64::hash(b"helloworld"), 1077737941828767314);
+/// ```
+pub struct Hash64;
 
-impl FarmHash64 {
+impl Hash64 {
     /// Hash functions for a byte array.
     /// For convenience, seeds are also hashed into the result.
     #[inline]
@@ -169,17 +216,17 @@ impl FarmHash64 {
     }
 }
 
-impl FastHash for FarmHash64 {
-    type Value = u64;
+impl FastHash for Hash64 {
+    type Hash = u64;
     type Seed = u64;
 
     #[inline]
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u64 {
+    fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
         unsafe { ffi::farmhash64(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
     }
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u64) -> u64 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::farmhash64_with_seed(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -190,17 +237,56 @@ impl FastHash for FarmHash64 {
     }
 }
 
-impl_hasher!(FarmHasher64, FarmHash64);
+impl_hasher!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{farm::Hasher64, FastHasher};
+
+let mut h = Hasher64::new();
+
+h.write(b"hello");
+assert_eq!(h.finish(), 14403600180753024522);
+
+h.write(b"world");
+assert_eq!(h.finish(), 1077737941828767314);
+```
+"#]
+    Hasher64,
+    Hash64
+);
 
 /// `FarmHash` 128-bit hash functions
-pub struct FarmHash128 {}
+///
+/// # Example
+///
+/// ```
+/// use fasthash::{farm::Hash128, FastHash};
+///
+/// assert_eq!(
+///     Hash128::hash(b"hello"),
+///     268320354145561377850759526474794913342
+/// );
+/// assert_eq!(
+///     Hash128::hash_with_seed(b"hello", 123),
+///     280628494822616609321111119103184546347
+/// );
+/// assert_eq!(
+///     Hash128::hash(b"helloworld"),
+///     296377541162803340912737385112946231361
+/// );
+/// ```
+pub struct Hash128;
 
-impl FastHash for FarmHash128 {
-    type Value = u128;
+impl FastHash for Hash128 {
+    type Hash = u128;
     type Seed = u128;
 
     #[inline]
-    fn hash<T: AsRef<[u8]>>(bytes: &T) -> u128 {
+    fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
         unsafe {
             mem::transmute(ffi::farmhash128(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -210,7 +296,7 @@ impl FastHash for FarmHash128 {
     }
 
     #[inline]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: &T, seed: u128) -> u128 {
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
         unsafe {
             mem::transmute(ffi::farmhash128_with_seed(
                 bytes.as_ref().as_ptr() as *const i8,
@@ -221,7 +307,27 @@ impl FastHash for FarmHash128 {
     }
 }
 
-impl_hasher_ext!(FarmHasher128, FarmHash128);
+impl_hasher_ext!(
+    #[doc = r#"
+# Example
+
+```
+use std::hash::Hasher;
+
+use fasthash::{farm::Hasher128, FastHasher, HasherExt};
+
+let mut h = Hasher128::new();
+
+h.write(b"hello");
+assert_eq!(h.finish_ext(), 268320354145561377850759526474794913342);
+
+h.write(b"world");
+assert_eq!(h.finish_ext(), 296377541162803340912737385112946231361);
+```
+"#]
+    Hasher128,
+    Hash128
+);
 
 /// `FarmHash` 32-bit hash function for a byte array.
 ///
@@ -229,7 +335,7 @@ impl_hasher_ext!(FarmHasher128, FarmHash128);
 ///
 #[inline]
 pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
-    FarmHash32::hash(v)
+    Hash32::hash(v)
 }
 
 /// `FarmHash` 32-bit hash function for a byte array.
@@ -239,7 +345,7 @@ pub fn hash32<T: AsRef<[u8]>>(v: &T) -> u32 {
 ///
 #[inline]
 pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
-    FarmHash32::hash_with_seed(v, seed)
+    Hash32::hash_with_seed(v, seed)
 }
 
 /// `FarmHash` 64-bit hash function for a byte array.
@@ -247,7 +353,7 @@ pub fn hash32_with_seed<T: AsRef<[u8]>>(v: &T, seed: u32) -> u32 {
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 #[inline]
 pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
-    FarmHash64::hash(v)
+    Hash64::hash(v)
 }
 
 /// `FarmHash` 64-bit hash function for a byte array.
@@ -257,7 +363,7 @@ pub fn hash64<T: AsRef<[u8]>>(v: &T) -> u64 {
 ///
 #[inline]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
-    FarmHash64::hash_with_seed(v, seed)
+    Hash64::hash_with_seed(v, seed)
 }
 
 /// `FarmHash` 64-bit hash function for a byte array.
@@ -266,7 +372,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: &T, seed: u64) -> u64 {
 /// May change from time to time, may differ on different platforms, may differ depending on NDEBUG.
 ///
 pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
-    FarmHash64::hash_with_seeds(v, seed0, seed1)
+    Hash64::hash_with_seeds(v, seed0, seed1)
 }
 
 /// `FarmHash` 128-bit hash function for a byte array.
@@ -275,7 +381,7 @@ pub fn hash64_with_seeds<T: AsRef<[u8]>>(v: &T, seed0: u64, seed1: u64) -> u64 {
 ///
 #[inline]
 pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
-    FarmHash128::hash(v)
+    Hash128::hash(v)
 }
 
 /// `FarmHash` 128-bit hash function for a byte array.
@@ -285,22 +391,46 @@ pub fn hash128<T: AsRef<[u8]>>(v: &T) -> u128 {
 ///
 #[inline]
 pub fn hash128_with_seed<T: AsRef<[u8]>>(v: &T, seed: u128) -> u128 {
-    FarmHash128::hash_with_seed(v, seed)
+    Hash128::hash_with_seed(v, seed)
 }
 
 /// `FarmHash` 32-bit fingerprint function for a byte array.
+///
+/// # Example
+///
+/// ```
+/// use fasthash::farm::fingerprint32;
+///
+/// assert_eq!(fingerprint32(b"hello word"), 4146030890);
+/// ```
 #[inline]
 pub fn fingerprint32<T: AsRef<[u8]>>(v: &T) -> u32 {
     unsafe { ffi::farmhash_fingerprint32(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
 }
 
 /// `FarmHash` 64-bit fingerprint function for a byte array.
+///
+/// # Example
+///
+/// ```
+/// use fasthash::farm::fingerprint64;
+///
+/// assert_eq!(fingerprint64(b"hello word"), 2862784602449412590_u64);
+/// ```
 #[inline]
 pub fn fingerprint64<T: AsRef<[u8]>>(v: &T) -> u64 {
     unsafe { ffi::farmhash_fingerprint64(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
 }
 
 /// `FarmHash` 128-bit fingerprint function for a byte array.
+///
+/// # Example
+///
+/// ```
+/// use fasthash::farm::fingerprint128;
+///
+/// assert_eq!(fingerprint128(b"hello word"), 73675844590621301084713386800078304440);
+/// ```
 #[inline]
 pub fn fingerprint128<T: AsRef<[u8]>>(v: &T) -> u128 {
     unsafe {
@@ -327,84 +457,10 @@ impl Fingerprint<u64> for u128 {
 
 #[cfg(test)]
 mod tests {
-    use std::hash::Hasher;
-
-    use super::*;
-    use hasher::{FastHash, FastHasher, Fingerprint, HasherExt};
-
-    #[test]
-    fn test_farmhash32() {
-        let h1 = FarmHash32::hash(b"hello");
-        let h2 = FarmHash32::hash_with_seed(b"hello", 123);
-        let h3 = FarmHash32::hash(b"helloworld");
-
-        assert!(h1 != 0);
-        assert!(h2 != 0);
-        assert!(h3 != 0);
-
-        let mut h = FarmHasher32::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), h1 as u64);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), h3 as u64);
-    }
-
-    #[test]
-    fn test_farmhash64() {
-        assert_eq!(FarmHash64::hash(b"hello"), 14403600180753024522);
-        assert_eq!(
-            FarmHash64::hash_with_seed(b"hello", 123),
-            6856739100025169098
-        );
-        assert_eq!(
-            FarmHash64::hash_with_seeds(b"hello", 123, 456),
-            15077713332534145879
-        );
-        assert_eq!(FarmHash64::hash(b"helloworld"), 1077737941828767314);
-
-        let mut h = FarmHasher64::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish(), 14403600180753024522);
-
-        h.write(b"world");
-        assert_eq!(h.finish(), 1077737941828767314);
-    }
-
-    #[test]
-    fn test_farmhash128() {
-        assert_eq!(
-            FarmHash128::hash(b"hello"),
-            268320354145561377850759526474794913342
-        );
-        assert_eq!(
-            FarmHash128::hash_with_seed(b"hello", 123),
-            280628494822616609321111119103184546347
-        );
-        assert_eq!(
-            FarmHash128::hash(b"helloworld"),
-            296377541162803340912737385112946231361
-        );
-
-        let mut h = FarmHasher128::new();
-
-        h.write(b"hello");
-        assert_eq!(h.finish_ext(), 268320354145561377850759526474794913342);
-
-        h.write(b"world");
-        assert_eq!(h.finish_ext(), 296377541162803340912737385112946231361);
-    }
+    use hasher::Fingerprint;
 
     #[test]
     fn test_fingerprint() {
-        assert_eq!(fingerprint32(b"hello word"), 4146030890);
-        assert_eq!(fingerprint64(b"hello word"), 2862784602449412590_u64);
-        assert_eq!(
-            fingerprint128(b"hello word"),
-            73675844590621301084713386800078304440
-        );
         assert_eq!(123u64.fingerprint(), 4781265650859502840);
         assert_eq!(123u128.fingerprint(), 4011577241381678309);
     }
