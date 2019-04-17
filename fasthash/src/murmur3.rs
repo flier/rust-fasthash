@@ -47,6 +47,7 @@ use hasher::FastHash;
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 1573043710);
 /// assert_eq!(Hash32::hash(b"helloworld"), 2687965642);
 /// ```
+#[derive(Clone)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -112,6 +113,7 @@ assert_eq!(h.finish(), 2687965642);
 ///     83212725615010754952022132390053357814
 /// );
 /// ```
+#[derive(Clone)]
 pub struct Hash128_x86;
 
 impl FastHash for Hash128_x86 {
@@ -177,6 +179,7 @@ assert_eq!(h.finish_ext(), 83212725615010754952022132390053357814);
 ///     216280293825344914020777844322685271162
 /// );
 /// ```
+#[derive(Clone)]
 pub struct Hash128_x64;
 
 impl FastHash for Hash128_x64 {

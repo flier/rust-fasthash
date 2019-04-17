@@ -62,6 +62,7 @@ use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2211835972);
 /// assert_eq!(Hash32::hash(b"helloworld"), 3874077464);
 /// ```
+#[derive(Clone)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -119,6 +120,7 @@ assert_eq!(h.finish(), 3874077464);
 /// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 8819086853393477700);
 /// assert_eq!(Hash64::hash(b"helloworld"), 18412934266828208920);
 /// ```
+#[derive(Clone)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {
@@ -185,6 +187,7 @@ assert_eq!(h.finish(), 18412934266828208920);
 ///     339658686066216790682429200470429822413
 /// );
 /// ```
+#[derive(Clone)]
 pub struct Hash128;
 
 impl FastHash for Hash128 {
@@ -226,6 +229,7 @@ impl FastHash for Hash128 {
 /// h.write(b"world");
 /// assert_eq!(h.finish_ext(), 339658686066216790682429200470429822413);
 /// ```
+#[derive(Clone)]
 pub struct Hasher128(*mut c_void);
 
 impl Default for Hasher128 {

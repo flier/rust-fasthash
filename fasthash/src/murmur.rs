@@ -57,6 +57,7 @@ use hasher::FastHash;
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2155802495);
 /// assert_eq!(Hash32::hash(b"helloworld"), 567127608);
 /// ```
+#[derive(Clone)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -108,6 +109,7 @@ assert_eq!(h.finish(), 567127608);
 /// assert_eq!(Hash32Aligned::hash_with_seed(b"hello", 123), 2155802495);
 /// assert_eq!(Hash32Aligned::hash(b"helloworld"), 567127608);
 /// ```
+#[derive(Clone)]
 pub struct Hash32Aligned;
 
 impl FastHash for Hash32Aligned {

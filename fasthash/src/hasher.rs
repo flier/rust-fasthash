@@ -223,6 +223,7 @@ impl From<Seed> for u128 {
 /// assert_eq!(map.insert(37, "c"), Some("b"));
 /// assert_eq!(map[&37], "c");
 /// ```
+#[derive(Clone)]
 pub struct RandomState<T: FastHash> {
     seed: Seed,
     phantom: PhantomData<T>,

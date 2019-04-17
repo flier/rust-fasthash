@@ -135,6 +135,7 @@ use hasher::{FastHash, Fingerprint};
 /// assert_eq!(Hash32::hash_with_seed(b"world", 123), 60914537);
 /// assert_eq!(Hash32::hash(b"helloworld"), 2214725017);
 /// ```
+#[derive(Clone)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -198,6 +199,7 @@ assert_eq!(h.finish(), 2214725017);
 /// );
 /// assert_eq!(Hash64::hash(b"helloworld"), 1077737941828767314);
 /// ```
+#[derive(Clone)]
 pub struct Hash64;
 
 impl Hash64 {
@@ -279,6 +281,7 @@ assert_eq!(h.finish(), 1077737941828767314);
 ///     296377541162803340912737385112946231361
 /// );
 /// ```
+#[derive(Clone)]
 pub struct Hash128;
 
 impl FastHash for Hash128 {
