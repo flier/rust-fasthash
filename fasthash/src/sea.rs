@@ -29,7 +29,7 @@ use seahash;
 
 pub use seahash::{hash as hash64, hash_seeded as hash64_with_seeds, SeaHasher as Hasher64};
 
-use hasher::{FastHash, FastHasher, StreamHasher};
+use crate::hasher::{FastHash, FastHasher, StreamHasher};
 
 /// `SeaHash` 64-bit hash functions
 ///

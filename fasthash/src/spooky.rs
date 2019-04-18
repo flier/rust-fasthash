@@ -47,9 +47,9 @@
 use std::hash::Hasher;
 use std::os::raw::c_void;
 
-use ffi;
+use crate::ffi;
 
-use hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
+use crate::hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 
 /// `SpookyHash` 32-bit hash functions
 ///

@@ -41,9 +41,9 @@
 //!
 #![allow(non_camel_case_types)]
 
-use ffi;
+use crate::ffi;
 
-use hasher::FastHash;
+use crate::hasher::FastHash;
 
 /// `MetroHash` 64-bit hash functions
 ///

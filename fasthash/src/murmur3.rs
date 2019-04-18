@@ -32,9 +32,9 @@
 #![allow(non_camel_case_types)]
 use std::os::raw::c_void;
 
-use ffi;
+use crate::ffi;
 
-use hasher::FastHash;
+use crate::hasher::FastHash;
 
 /// `MurmurHash3` 32-bit hash functions
 ///

@@ -1,16 +1,10 @@
-#[cfg(feature = "bindgen")]
-extern crate bindgen;
-extern crate cc;
-
 use std::env;
-#[cfg(not(feature = "bindgen"))]
-use std::fs;
 use std::path::Path;
 
 #[cfg(feature = "bindgen")]
 fn generate_binding(out_file: &Path) {
     let _ = bindgen::builder()
-        .clang_arg("--std=c++11")
+        .clang_args(&["-x", "c++"])
         .clang_arg(if cfg!(feature = "sse42") {
             "-msse4.2"
         } else {
@@ -39,6 +33,8 @@ fn generate_binding(out_file: &Path) {
 
 #[cfg(not(feature = "bindgen"))]
 fn generate_binding(out_file: &Path) {
+    use std::fs;
+
     let os = if cfg!(target_os = "macos") {
         "macos"
     } else {

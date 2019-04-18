@@ -122,9 +122,9 @@
 //!
 use std::mem;
 
-use ffi;
+use crate::ffi;
 
-use hasher::FastHash;
+use crate::hasher::FastHash;
 
 /// `CityHash` 32-bit hash functions
 ///

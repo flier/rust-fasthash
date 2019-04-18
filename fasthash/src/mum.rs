@@ -55,9 +55,9 @@
 #![allow(non_camel_case_types)]
 use std::os::raw::c_void;
 
-use ffi;
+use crate::ffi;
 
-use hasher::FastHash;
+use crate::hasher::FastHash;
 
 /// `MumHash` 64-bit hash functions
 ///

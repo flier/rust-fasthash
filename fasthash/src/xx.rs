@@ -31,9 +31,9 @@
 use std::hash::Hasher;
 use std::os::raw::c_void;
 
-use ffi;
+use crate::ffi;
 
-use hasher::{FastHash, FastHasher, StreamHasher};
+use crate::hasher::{FastHash, FastHasher, StreamHasher};
 
 /// xxHash 32-bit hash functions
 ///

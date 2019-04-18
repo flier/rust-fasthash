@@ -120,9 +120,9 @@
 //!
 use std::mem;
 
-use ffi;
+use crate::ffi;
 
-use hasher::{FastHash, Fingerprint};
+use crate::hasher::{FastHash, Fingerprint};
 
 /// `FarmHash` 32-bit hash functions
 ///
@@ -460,7 +460,7 @@ impl Fingerprint<u64> for u128 {
 
 #[cfg(test)]
 mod tests {
-    use hasher::Fingerprint;
+    use crate::hasher::Fingerprint;
 
     #[test]
     fn test_fingerprint() {

@@ -46,7 +46,7 @@
 //! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
-use hasher::FastHash;
+use crate::hasher::FastHash;
 
 ///
 /// t1ha2 = 64 and 128-bit, SLIGHTLY MORE ATTENTION FOR QUALITY AND STRENGTH.
@@ -60,7 +60,7 @@ use hasher::FastHash;
 ///      Provides streaming mode and 128-bit result.
 ///
 pub mod t1ha2 {
-    use hasher::FastHash;
+    use crate::hasher::FastHash;
 
     /// The at-once variant with 64-bit result
     ///
@@ -205,7 +205,7 @@ assert_eq!(h.finish_ext(), 315212713565720527393405448145758944961);
 ///      that was initially planned to providing a bit more quality.
 ///
 pub mod t1ha1 {
-    use hasher::FastHash;
+    use crate::hasher::FastHash;
 
     cfg_if! {
         if #[cfg(target_endian = "little")] {
@@ -336,7 +336,7 @@ assert_eq!(h.finish(), 15825971635414726702);
 ///      will be selected in runtime, depending on current CPU capabilities
 ///
 pub mod t1ha0 {
-    use hasher::FastHash;
+    use crate::hasher::FastHash;
 
     cfg_if! {
         if #[cfg(any(feature = "avx2", target_feature = "avx2"))] {

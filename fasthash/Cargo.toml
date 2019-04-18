@@ -8,6 +8,7 @@ repository = "https://github.com/flier/rust-fasthash.git"
 documentation = "https://flier.github.io/rust-fasthash/"
 keywords = ["hash", "hashing"]
 license = "Apache-2.0"
+edition = "2018"
 
 [features]
 default = ["sse42", "aes", "avx", "avx2", "doc"]
