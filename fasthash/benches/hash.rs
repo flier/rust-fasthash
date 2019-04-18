@@ -4,9 +4,6 @@
 extern crate lazy_static;
 #[macro_use]
 extern crate criterion;
-#[macro_use]
-extern crate cfg_if;
-extern crate fasthash;
 
 use std::mem;
 use std::slice;
