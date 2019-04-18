@@ -1,6 +1,6 @@
 #[cfg(feature = "bindgen")]
 extern crate bindgen;
-extern crate gcc;
+extern crate cc;
 
 use std::env;
 #[cfg(not(feature = "bindgen"))]
@@ -49,9 +49,10 @@ fn generate_binding(out_file: &Path) {
 }
 
 fn main() {
-    let mut gcc_config = gcc::Build::new();
+    let mut build = cc::Build::new();
 
-    gcc_config
+    build
+        .cpp(true)
         .define("T1HA0_RUNTIME_SELECT", Some("1"))
         .flag("-Wno-implicit-fallthrough")
         .flag("-Wno-unknown-attributes")
@@ -72,32 +73,32 @@ fn main() {
         .file("src/t1ha/src/t1ha2.c");
 
     if cfg!(feature = "sse42") {
-        gcc_config
+        build
             .flag("-msse4.2")
             .file("src/smhasher/metrohash64crc.cpp")
             .file("src/smhasher/metrohash128crc.cpp");
     }
 
     if cfg!(feature = "aes") {
-        gcc_config
+        build
             .define("T1HA0_AESNI_AVAILABLE", Some("1"))
             .flag("-maes")
             .file("src/t1ha/src/t1ha0_ia32aes_noavx.c");
 
         if cfg!(feature = "avx") {
-            gcc_config
+            build
                 .flag("-mavx")
                 .file("src/t1ha/src/t1ha0_ia32aes_avx.c");
         }
 
         if cfg!(feature = "avx2") {
-            gcc_config
+            build
                 .flag("-mavx2")
                 .file("src/t1ha/src/t1ha0_ia32aes_avx2.c");
         }
     }
 
-    gcc_config.compile("libfasthash.a");
+    build.compile("libfasthash.a");
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("src/fasthash.rs");
@@ -108,6 +109,5 @@ fn main() {
         println!("cargo:rustc-link-lib=dylib=c++");
     } else {
         println!("cargo:rustc-link-lib=dylib=stdc++");
-        println!("cargo:rustc-link-lib=dylib=gcc");
     }
 }

@@ -21,5 +21,5 @@ gen = ["bindgen"]
 [dependencies]
 
 [build-dependencies]
-gcc = "0.3"
-bindgen = { version="0.37", optional=true }
+cc = "1.0"
+bindgen = { version="0.49", optional=true }
