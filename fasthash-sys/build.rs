@@ -6,7 +6,11 @@ fn generate_binding(out_file: &Path) {
     let _ = bindgen::builder()
         .clang_args(&["-x", "c++"])
         .clang_args(&["-DT1HA0_RUNTIME_SELECT=1", "-Dt1ha_EXPORTS"])
-        .clang_arg(if cfg!(feature = "aes") { "-DT1HA0_AESNI_AVAILABLE=1" } else { "" })
+        .clang_arg(if cfg!(feature = "aes") {
+            "-DT1HA0_AESNI_AVAILABLE=1"
+        } else {
+            ""
+        })
         .clang_arg(if cfg!(feature = "sse42") {
             "-msse4.2"
         } else {
@@ -80,7 +84,8 @@ fn build_fasthash() {
 fn build_t1() {
     let mut build = cc::Build::new();
 
-    build.define("T1HA0_RUNTIME_SELECT", Some("1"))
+    build
+        .define("T1HA0_RUNTIME_SELECT", Some("1"))
         .file("src/t1ha/src/t1ha0.c")
         .file("src/t1ha/src/t1ha1.c")
         .file("src/t1ha/src/t1ha2.c");
@@ -92,9 +97,7 @@ fn build_t1() {
             .file("src/t1ha/src/t1ha0_ia32aes_noavx.c");
 
         if cfg!(feature = "avx") {
-            build
-                .flag("-mavx")
-                .file("src/t1ha/src/t1ha0_ia32aes_avx.c");
+            build.flag("-mavx").file("src/t1ha/src/t1ha0_ia32aes_avx.c");
         }
 
         if cfg!(feature = "avx2") {

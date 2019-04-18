@@ -15,12 +15,12 @@
 //!
 //! Excellent performance - measured on an Intel Core 2 Duo @ 2.4 ghz
 //!
-//!    - `OneAtATime` - 354.163715 mb/sec
-//!    - `FNV` - 443.668038 mb/sec
-//!    - `SuperFastHash` - 985.335173 mb/sec
-//!    - `lookup3` - 988.080652 mb/sec
-//!    - `MurmurHash` 1.0 - 1363.293480 mb/sec
-//!    - `MurmurHash` 2.0 - 2056.885653 mb/sec
+//!    - OneAtATime - 354.163715 mb/sec
+//!    - FNV - 443.668038 mb/sec
+//!    - SuperFastHash - 985.335173 mb/sec
+//!    - lookup3 - 988.080652 mb/sec
+//!    - MurmurHash 1.0 - 1363.293480 mb/sec
+//!    - MurmurHash 2.0 - 2056.885653 mb/sec
 //!
 //! # Example
 //!
