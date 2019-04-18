@@ -35,15 +35,15 @@
 //!
 //! use fasthash::{t1ha, T1haHasher};
 //!
-//! fn hash<T: Hash>(t: &T) -> u64 {
-//!     let mut s: T1haHasher = Default::default();
-//!     t.hash(&mut s);
-//!     s.finish()
-//! }
+//! let h = t1ha::hash64(b"hello world");
 //!
-//! let h = t1ha::hash64(b"hello world\xff");
+//! assert_eq!(h, 17676503408873599861);
 //!
-//! assert_eq!(h, hash(&"hello world"));
+//! let mut s: T1haHasher = Default::default();
+//! b"hello world".hash(&mut s);
+//! let h = s.finish();
+//!
+//! assert_eq!(h, 14267663792334695945);
 //! ```
 //!
 use crate::hasher::FastHash;
@@ -60,7 +60,11 @@ use crate::hasher::FastHash;
 ///      Provides streaming mode and 128-bit result.
 ///
 pub mod t1ha2 {
-    use crate::hasher::FastHash;
+    use std::hash::Hasher;
+    use std::mem;
+    use std::ptr;
+
+    use crate::hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 
     /// The at-once variant with 64-bit result
     ///
@@ -100,28 +104,6 @@ pub mod t1ha2 {
             }
         }
     }
-
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{t1ha2::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 3053206065578472372);
-
-h.write(b"world");
-assert_eq!(h.finish(), 15302361616348747620);
-```
-"#]
-        Hasher64,
-        Hash64AtOnce
-    );
 
     /// The at-once variant with 64-bit result
     ///
@@ -167,27 +149,86 @@ assert_eq!(h.finish(), 15302361616348747620);
         }
     }
 
-    impl_hasher_ext!(
-        #[doc = r#"
-# Example
+    /// An `t1ha2` implementation of `std::hash::Hasher`.
+    ///
+    /// # Note
+    ///
+    /// Due performance reason 64- and 128-bit results are completely different each other,
+    /// i.e. 64-bit result is NOT any part of 128-bit. */
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{t1ha2::Hasher128, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 11611394885310216856);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 189154943715293976030023582550666960629);
+    /// ```
+    #[derive(Clone)]
+    pub struct Hasher128(ptr::NonNull<ffi::t1ha_context_t>);
 
-```
-use std::hash::Hasher;
+    impl Default for Hasher128 {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
 
-use fasthash::{t1ha2::Hasher128, FastHasher, HasherExt};
+    impl Drop for Hasher128 {
+        fn drop(&mut self) {
+            unsafe { mem::drop(Box::from_raw(self.0.as_ptr())) }
+        }
+    }
 
-let mut h = Hasher128::new();
+    impl Hasher for Hasher128 {
+        #[inline(always)]
+        fn write(&mut self, bytes: &[u8]) {
+            unsafe {
+                ffi::t1ha2_update(self.0.as_ptr(), bytes.as_ptr() as *const _, bytes.len());
+            }
+        }
 
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 181522150951767732353014146495581994137);
+        #[inline(always)]
+        fn finish(&self) -> u64 {
+            unsafe { ffi::t1ha2_final(self.0.as_ptr(), ptr::null_mut()) }
+        }
+    }
 
-h.write(b"world");
-assert_eq!(h.finish_ext(), 315212713565720527393405448145758944961);
-```
-"#]
-        Hasher128,
-        Hash128AtOnce
-    );
+    impl HasherExt for Hasher128 {
+        fn finish_ext(&self) -> u128 {
+            let mut hi = 0;
+            let lo = unsafe { ffi::t1ha2_final(self.0.as_ptr(), &mut hi) };
+
+            (u128::from(hi) << 64) + u128::from(lo)
+        }
+    }
+
+    impl FastHasher for Hasher128 {
+        type Seed = (u64, u64);
+
+        #[inline(always)]
+        fn with_seed(seed: (u64, u64)) -> Self {
+            unsafe {
+                let ctx: ptr::NonNull<ffi::t1ha_context_t> =
+                    ptr::NonNull::new_unchecked(Box::into_raw(Box::new(mem::zeroed())));
+
+                ffi::t1ha2_init(ctx.as_ptr(), seed.0, seed.1);
+
+                Hasher128(ctx)
+            }
+        }
+    }
+
+    impl StreamHasher for Hasher128 {}
+
+    impl_fasthash!(Hasher128, Hash64AtOnce);
+    impl_fasthash!(Hasher128, Hash128AtOnce);
 }
 
 ///
