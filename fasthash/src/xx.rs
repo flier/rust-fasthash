@@ -30,6 +30,7 @@
 //!
 use std::hash::Hasher;
 use std::os::raw::c_void;
+use std::ptr::NonNull;
 
 use crate::ffi;
 
@@ -143,7 +144,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
 /// assert_eq!(h.finish(), 2113960620);
 /// ```
 #[derive(Clone)]
-pub struct Hasher32(*mut ffi::XXH32_state_t);
+pub struct Hasher32(NonNull<ffi::XXH32_state_t>);
 
 impl Default for Hasher32 {
     fn default() -> Self {
@@ -155,7 +156,7 @@ impl Drop for Hasher32 {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            ffi::XXH32_freeState(self.0);
+            ffi::XXH32_freeState(self.0.as_ptr());
         }
     }
 }
@@ -163,13 +164,17 @@ impl Drop for Hasher32 {
 impl Hasher for Hasher32 {
     #[inline(always)]
     fn finish(&self) -> u64 {
-        unsafe { u64::from(ffi::XXH32_digest(self.0)) }
+        unsafe { u64::from(ffi::XXH32_digest(self.0.as_ptr())) }
     }
 
     #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::XXH32_update(self.0, bytes.as_ptr() as *const c_void, bytes.len());
+            ffi::XXH32_update(
+                self.0.as_ptr(),
+                bytes.as_ptr() as *const c_void,
+                bytes.len(),
+            );
         }
     }
 }
@@ -179,13 +184,13 @@ impl FastHasher for Hasher32 {
 
     #[inline(always)]
     fn with_seed(seed: u32) -> Self {
-        let h = unsafe { ffi::XXH32_createState() };
-
         unsafe {
-            ffi::XXH32_reset(h, seed);
-        }
+            let h = ffi::XXH32_createState();
 
-        Hasher32(h)
+            ffi::XXH32_reset(h, seed);
+
+            Hasher32(NonNull::new_unchecked(h))
+        }
     }
 }
 
@@ -215,7 +220,7 @@ impl_fasthash!(Hasher32, Hash32);
 /// assert_eq!(h.finish(), 6304142433100597454);
 /// ```
 #[derive(Clone)]
-pub struct Hasher64(*mut ffi::XXH64_state_t);
+pub struct Hasher64(NonNull<ffi::XXH64_state_t>);
 
 impl Default for Hasher64 {
     fn default() -> Self {
@@ -226,7 +231,7 @@ impl Default for Hasher64 {
 impl Drop for Hasher64 {
     fn drop(&mut self) {
         unsafe {
-            ffi::XXH64_freeState(self.0);
+            ffi::XXH64_freeState(self.0.as_ptr());
         }
     }
 }
@@ -234,13 +239,17 @@ impl Drop for Hasher64 {
 impl Hasher for Hasher64 {
     #[inline(always)]
     fn finish(&self) -> u64 {
-        unsafe { ffi::XXH64_digest(self.0) }
+        unsafe { ffi::XXH64_digest(self.0.as_ptr()) }
     }
 
     #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::XXH64_update(self.0, bytes.as_ptr() as *const c_void, bytes.len());
+            ffi::XXH64_update(
+                self.0.as_ptr(),
+                bytes.as_ptr() as *const c_void,
+                bytes.len(),
+            );
         }
     }
 }
@@ -250,13 +259,13 @@ impl FastHasher for Hasher64 {
 
     #[inline(always)]
     fn with_seed(seed: u64) -> Self {
-        let h = unsafe { ffi::XXH64_createState() };
-
         unsafe {
-            ffi::XXH64_reset(h, seed);
-        }
+            let h = ffi::XXH64_createState();
 
-        Hasher64(h)
+            ffi::XXH64_reset(h, seed);
+
+            Hasher64(NonNull::new_unchecked(h))
+        }
     }
 }
 

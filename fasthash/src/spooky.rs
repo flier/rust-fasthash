@@ -46,6 +46,7 @@
 //!
 use std::hash::Hasher;
 use std::os::raw::c_void;
+use std::ptr::NonNull;
 
 use crate::ffi;
 
@@ -230,7 +231,7 @@ impl FastHash for Hash128 {
 /// assert_eq!(h.finish_ext(), 339658686066216790682429200470429822413);
 /// ```
 #[derive(Clone)]
-pub struct Hasher128(*mut c_void);
+pub struct Hasher128(NonNull<c_void>);
 
 impl Default for Hasher128 {
     fn default() -> Self {
@@ -241,7 +242,7 @@ impl Default for Hasher128 {
 impl Drop for Hasher128 {
     #[inline(always)]
     fn drop(&mut self) {
-        unsafe { ffi::SpookyHasherFree(self.0) }
+        unsafe { ffi::SpookyHasherFree(self.0.as_ptr()) }
     }
 }
 
@@ -253,7 +254,13 @@ impl Hasher for Hasher128 {
 
     #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
-        unsafe { ffi::SpookyHasherUpdate(self.0, bytes.as_ptr() as *const c_void, bytes.len()) }
+        unsafe {
+            ffi::SpookyHasherUpdate(
+                self.0.as_ptr(),
+                bytes.as_ptr() as *const c_void,
+                bytes.len(),
+            )
+        }
     }
 }
 
@@ -264,7 +271,7 @@ impl HasherExt for Hasher128 {
         let mut lo = 0_u64;
 
         unsafe {
-            ffi::SpookyHasherFinal(self.0, &mut hi, &mut lo);
+            ffi::SpookyHasherFinal(self.0.as_ptr(), &mut hi, &mut lo);
         }
 
         u128::from(hi).wrapping_shl(64) + u128::from(lo)
@@ -276,13 +283,13 @@ impl FastHasher for Hasher128 {
 
     #[inline(always)]
     fn with_seed(seed: Self::Seed) -> Hasher128 {
-        let h = unsafe { ffi::SpookyHasherNew() };
-
         unsafe {
-            ffi::SpookyHasherInit(h, seed.0, seed.1);
-        }
+            let h = ffi::SpookyHasherNew();
 
-        Hasher128(h)
+            ffi::SpookyHasherInit(h, seed.0, seed.1);
+
+            Hasher128(NonNull::new_unchecked(h))
+        }
     }
 }
 
