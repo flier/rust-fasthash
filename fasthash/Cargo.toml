@@ -21,13 +21,13 @@ gen = ["fasthash-sys/gen"]
 
 [dependencies]
 cfg-if = "0.1"
+lazy_static = "1.3"
 num-traits = "0.2"
 xoroshiro128 = "0.3"
 seahash = "3.0"
 fasthash-sys = { version = "0.3.2", path = "../fasthash-sys" }
 
 [dev-dependencies]
-lazy_static = "1.3"
 criterion = "0.2"
 
 [[bench]]

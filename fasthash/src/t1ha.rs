@@ -338,16 +338,8 @@ assert_eq!(h.finish(), 15825971635414726702);
 pub mod t1ha0 {
     use crate::hasher::FastHash;
 
-    cfg_if! {
-        if #[cfg(any(feature = "avx2", target_feature = "avx2"))] {
-            pub use self::avx2::Hasher64 as Hasher64;
-        } else if #[cfg(any(feature = "avx", target_feature = "avx"))] {
-            pub use self::avx::Hasher64 as Hasher64;
-        } else if #[cfg(any(feature = "aes", target_feature = "aes"))] {
-            pub use self::aes::Hash64 as Hasher64;
-        } else {
-            pub use self::Hasher64_64 as Hasher64;
-        }
+    lazy_static! {
+        static ref T1HA0: ffi::t1ha0_function_t = unsafe { ffi::t1ha0_resolve() };
     }
 
     /// `T1Hash` 64-bit hash functions.
@@ -374,7 +366,7 @@ pub mod t1ha0 {
         #[inline(always)]
         fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
             unsafe {
-                ffi::t1ha0_64(
+                T1HA0.unwrap_or(ffi::t1ha0_64)(
                     bytes.as_ref().as_ptr() as *const _,
                     bytes.as_ref().len(),
                     seed,
@@ -401,132 +393,9 @@ h.write(b"world");
 assert_eq!(h.finish(), 15302361616348747620);
 ```
 "#]
-        Hasher64_64,
+        Hasher64,
         Hash64
     );
-
-    #[cfg(any(feature = "aes", target_feature = "aes"))]
-    /// `T1Hash` 64-bit hash functions with AES.
-    pub mod aes {
-        use crate::FastHash;
-
-        /// `T1Hash` 64-bit hash functions with AES.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use fasthash::{FastHash, t1ha0::aes::Hash64};
-        ///
-        /// assert_eq!(Hash64::hash(b"hello"), 3053206065578472372);
-        /// assert_eq!(
-        ///     Hash64::hash_with_seed(b"hello", 123),
-        ///     14202271713409552392
-        /// );
-        /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
-        /// ```
-        #[derive(Clone)]
-        pub struct Hash64;
-
-        impl FastHash for Hash64 {
-            type Hash = u64;
-            type Seed = u64;
-
-            #[inline(always)]
-            fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
-                unsafe {
-                    ffi::t1ha0_ia32aes_noavx(
-                        bytes.as_ref().as_ptr() as *const _,
-                        bytes.as_ref().len(),
-                        seed,
-                    )
-                }
-            }
-        }
-
-        impl_hasher!(Hasher64, Hash64);
-    }
-
-    #[cfg(any(feature = "avx", target_feature = "avx"))]
-    /// `T1Hash` 64-bit hash functions with AVX.
-    pub mod avx {
-        use crate::FastHash;
-
-        /// `T1Hash` 64-bit hash functions with AVX.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use fasthash::{FastHash, t1ha0::avx::Hash64};
-        ///
-        /// assert_eq!(Hash64::hash(b"hello"), 3053206065578472372);
-        /// assert_eq!(
-        ///     Hash64::hash_with_seed(b"hello", 123),
-        ///     14202271713409552392
-        /// );
-        /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
-        /// ```
-        #[derive(Clone)]
-        pub struct Hash64;
-
-        impl FastHash for Hash64 {
-            type Hash = u64;
-            type Seed = u64;
-
-            #[inline(always)]
-            fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
-                unsafe {
-                    ffi::t1ha0_ia32aes_avx(
-                        bytes.as_ref().as_ptr() as *const _,
-                        bytes.as_ref().len(),
-                        seed,
-                    )
-                }
-            }
-        }
-
-        impl_hasher!(Hasher64, Hash64);
-    }
-
-    #[cfg(any(feature = "avx2", target_feature = "avx2"))]
-    /// `T1Hash` 64-bit hash functions with AVX2.
-    pub mod avx2 {
-        use crate::FastHash;
-
-        /// `T1Hash` 64-bit hash functions with AVX2.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use fasthash::{FastHash, t1ha0::avx2::Hash64};
-        ///
-        /// assert_eq!(Hash64::hash(b"hello"), 3053206065578472372);
-        /// assert_eq!(
-        ///     Hash64::hash_with_seed(b"hello", 123),
-        ///     14202271713409552392
-        /// );
-        /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
-        /// ```
-        #[derive(Clone)]
-        pub struct Hash64;
-
-        impl FastHash for Hash64 {
-            type Hash = u64;
-            type Seed = u64;
-
-            #[inline(always)]
-            fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
-                unsafe {
-                    ffi::t1ha0_ia32aes_avx2(
-                        bytes.as_ref().as_ptr() as *const _,
-                        bytes.as_ref().len(),
-                        seed,
-                    )
-                }
-            }
-        }
-
-        impl_hasher!(Hasher64, Hash64);
-    }
 }
 
 /// `T1Hash` 64-bit hash functions for a byte array.

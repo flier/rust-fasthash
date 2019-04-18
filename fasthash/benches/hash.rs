@@ -147,21 +147,6 @@ fn bench_hash64(c: &mut Criterion) {
                 b.iter(|| metro::crc::Hash64_2::hash_with_seed(&DATA[..size], SEED as u32));
             });
     }
-    if cfg!(target_feature = "aes") {
-        bench = bench.with_function("t1ha0::aes::hash64", move |b, &&size| {
-            b.iter(|| t1ha0::aes::Hash64::hash_with_seed(&DATA[..size], SEED));
-        });
-    }
-    if cfg!(target_feature = "avx") {
-        bench = bench.with_function("t1ha0::avx::hash64", move |b, &&size| {
-            b.iter(|| t1ha0::avx::Hash64::hash_with_seed(&DATA[..size], SEED));
-        });
-    }
-    if cfg!(target_feature = "avx2") {
-        bench = bench.with_function("t1ha0::avx2::hash64", move |b, &&size| {
-            b.iter(|| t1ha0::avx2::Hash64::hash_with_seed(&DATA[..size], SEED));
-        });
-    }
 
     c.bench(
         "hash64",

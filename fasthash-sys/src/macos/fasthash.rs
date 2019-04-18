@@ -525,109 +525,40 @@ extern "C" {
     #[link_name = "\u{1}_t1ha1_be"]
     pub fn t1ha1_be(data: *const ::std::os::raw::c_void, length: usize, seed: u64) -> u64;
 }
+pub type t1ha0_function_t = ::std::option::Option<
+    unsafe extern "C" fn(arg1: *const ::std::os::raw::c_void, arg2: usize, arg3: u64) -> u64,
+>;
 extern "C" {
-    #[link_name = "\u{1}_t1ha0_32le"]
-    pub fn t1ha0_32le(data: *const ::std::os::raw::c_void, length: usize, seed: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "\u{1}_t1ha0_32be"]
-    pub fn t1ha0_32be(data: *const ::std::os::raw::c_void, length: usize, seed: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "\u{1}_t1ha0_ia32aes_noavx"]
-    pub fn t1ha0_ia32aes_noavx(
-        data: *const ::std::os::raw::c_void,
-        length: usize,
-        seed: u64,
-    ) -> u64;
-}
-extern "C" {
-    #[link_name = "\u{1}_t1ha0_ia32aes_avx"]
-    pub fn t1ha0_ia32aes_avx(data: *const ::std::os::raw::c_void, length: usize, seed: u64) -> u64;
-}
-extern "C" {
-    #[link_name = "\u{1}_t1ha0_ia32aes_avx2"]
-    pub fn t1ha0_ia32aes_avx2(data: *const ::std::os::raw::c_void, length: usize, seed: u64)
-        -> u64;
+    #[link_name = "\u{1}_t1ha0_resolve"]
+    pub fn t1ha0_resolve() -> t1ha0_function_t;
 }
 pub const XXH_errorcode_XXH_OK: XXH_errorcode = 0;
 pub const XXH_errorcode_XXH_ERROR: XXH_errorcode = 1;
-#[doc = "Type"]
 pub type XXH_errorcode = u32;
 extern "C" {
-    #[doc = "Simple Hash Functions"]
+    #[link_name = "\u{1}_XXH_versionNumber"]
+    pub fn XXH_versionNumber() -> ::std::os::raw::c_uint;
+}
+pub type XXH32_hash_t = ::std::os::raw::c_uint;
+extern "C" {
+    #[doc = " XXH32() :"]
+    #[doc = "Calculate the 32-bit hash of sequence \"length\" bytes stored at memory address \"input\"."]
+    #[doc = "The memory between input & input+length must be valid (allocated and read-accessible)."]
+    #[doc = "\"seed\" can be used to alter the result predictably."]
+    #[doc = "Speed on Core 2 Duo @ 3 GHz (single thread, SMHasher benchmark) : 5.4 GB/s"]
     #[link_name = "\u{1}_XXH32"]
     pub fn XXH32(
         input: *const ::std::os::raw::c_void,
         length: usize,
         seed: ::std::os::raw::c_uint,
-    ) -> ::std::os::raw::c_uint;
-}
-extern "C" {
-    #[link_name = "\u{1}_XXH64"]
-    pub fn XXH64(
-        input: *const ::std::os::raw::c_void,
-        length: usize,
-        seed: ::std::os::raw::c_ulonglong,
-    ) -> ::std::os::raw::c_ulonglong;
-}
-#[doc = "Advanced Hash Functions"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct XXH32_state_t {
-    pub ll: [::std::os::raw::c_longlong; 6usize],
-}
-#[test]
-fn bindgen_test_layout_XXH32_state_t() {
-    assert_eq!(
-        ::std::mem::size_of::<XXH32_state_t>(),
-        48usize,
-        concat!("Size of: ", stringify!(XXH32_state_t))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<XXH32_state_t>(),
-        8usize,
-        concat!("Alignment of ", stringify!(XXH32_state_t))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH32_state_t>())).ll as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH32_state_t),
-            "::",
-            stringify!(ll)
-        )
-    );
+    ) -> XXH32_hash_t;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct XXH64_state_t {
-    pub ll: [::std::os::raw::c_longlong; 11usize],
+pub struct XXH32_state_s {
+    _unused: [u8; 0],
 }
-#[test]
-fn bindgen_test_layout_XXH64_state_t() {
-    assert_eq!(
-        ::std::mem::size_of::<XXH64_state_t>(),
-        88usize,
-        concat!("Size of: ", stringify!(XXH64_state_t))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<XXH64_state_t>(),
-        8usize,
-        concat!("Alignment of ", stringify!(XXH64_state_t))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH64_state_t>())).ll as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH64_state_t),
-            "::",
-            stringify!(ll)
-        )
-    );
-}
+pub type XXH32_state_t = XXH32_state_s;
 extern "C" {
     #[link_name = "\u{1}_XXH32_createState"]
     pub fn XXH32_createState() -> *mut XXH32_state_t;
@@ -637,12 +568,8 @@ extern "C" {
     pub fn XXH32_freeState(statePtr: *mut XXH32_state_t) -> XXH_errorcode;
 }
 extern "C" {
-    #[link_name = "\u{1}_XXH64_createState"]
-    pub fn XXH64_createState() -> *mut XXH64_state_t;
-}
-extern "C" {
-    #[link_name = "\u{1}_XXH64_freeState"]
-    pub fn XXH64_freeState(statePtr: *mut XXH64_state_t) -> XXH_errorcode;
+    #[link_name = "\u{1}_XXH32_copyState"]
+    pub fn XXH32_copyState(dst_state: *mut XXH32_state_t, src_state: *const XXH32_state_t);
 }
 extern "C" {
     #[link_name = "\u{1}_XXH32_reset"]
@@ -659,7 +586,74 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "\u{1}_XXH32_digest"]
-    pub fn XXH32_digest(statePtr: *const XXH32_state_t) -> ::std::os::raw::c_uint;
+    pub fn XXH32_digest(statePtr: *const XXH32_state_t) -> XXH32_hash_t;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH32_canonical_t {
+    pub digest: [::std::os::raw::c_uchar; 4usize],
+}
+#[test]
+fn bindgen_test_layout_XXH32_canonical_t() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH32_canonical_t>(),
+        4usize,
+        concat!("Size of: ", stringify!(XXH32_canonical_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH32_canonical_t>(),
+        1usize,
+        concat!("Alignment of ", stringify!(XXH32_canonical_t))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_canonical_t>())).digest as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_canonical_t),
+            "::",
+            stringify!(digest)
+        )
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}_XXH32_canonicalFromHash"]
+    pub fn XXH32_canonicalFromHash(dst: *mut XXH32_canonical_t, hash: XXH32_hash_t);
+}
+extern "C" {
+    #[link_name = "\u{1}_XXH32_hashFromCanonical"]
+    pub fn XXH32_hashFromCanonical(src: *const XXH32_canonical_t) -> XXH32_hash_t;
+}
+pub type XXH64_hash_t = ::std::os::raw::c_ulonglong;
+extern "C" {
+    #[doc = " XXH64() :"]
+    #[doc = "Calculate the 64-bit hash of sequence of length \"len\" stored at memory address \"input\"."]
+    #[doc = "\"seed\" can be used to alter the result predictably."]
+    #[doc = "This function runs faster on 64-bit systems, but slower on 32-bit systems (see benchmark)."]
+    #[link_name = "\u{1}_XXH64"]
+    pub fn XXH64(
+        input: *const ::std::os::raw::c_void,
+        length: usize,
+        seed: ::std::os::raw::c_ulonglong,
+    ) -> XXH64_hash_t;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH64_state_s {
+    _unused: [u8; 0],
+}
+pub type XXH64_state_t = XXH64_state_s;
+extern "C" {
+    #[link_name = "\u{1}_XXH64_createState"]
+    pub fn XXH64_createState() -> *mut XXH64_state_t;
+}
+extern "C" {
+    #[link_name = "\u{1}_XXH64_freeState"]
+    pub fn XXH64_freeState(statePtr: *mut XXH64_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    #[link_name = "\u{1}_XXH64_copyState"]
+    pub fn XXH64_copyState(dst_state: *mut XXH64_state_t, src_state: *const XXH64_state_t);
 }
 extern "C" {
     #[link_name = "\u{1}_XXH64_reset"]
@@ -678,7 +672,43 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "\u{1}_XXH64_digest"]
-    pub fn XXH64_digest(statePtr: *const XXH64_state_t) -> ::std::os::raw::c_ulonglong;
+    pub fn XXH64_digest(statePtr: *const XXH64_state_t) -> XXH64_hash_t;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH64_canonical_t {
+    pub digest: [::std::os::raw::c_uchar; 8usize],
+}
+#[test]
+fn bindgen_test_layout_XXH64_canonical_t() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH64_canonical_t>(),
+        8usize,
+        concat!("Size of: ", stringify!(XXH64_canonical_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH64_canonical_t>(),
+        1usize,
+        concat!("Alignment of ", stringify!(XXH64_canonical_t))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_canonical_t>())).digest as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_canonical_t),
+            "::",
+            stringify!(digest)
+        )
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}_XXH64_canonicalFromHash"]
+    pub fn XXH64_canonicalFromHash(dst: *mut XXH64_canonical_t, hash: XXH64_hash_t);
+}
+extern "C" {
+    #[link_name = "\u{1}_XXH64_hashFromCanonical"]
+    pub fn XXH64_hashFromCanonical(src: *const XXH64_canonical_t) -> XXH64_hash_t;
 }
 extern "C" {
     #[link_name = "\u{1}__Z28farmhash_fingerprint_uint12811uint128_c_t"]

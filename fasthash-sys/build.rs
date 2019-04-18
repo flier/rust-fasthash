@@ -1,10 +1,12 @@
 use std::env;
 use std::path::Path;
 
-#[cfg(feature = "bindgen")]
+#[cfg(feature = "gen")]
 fn generate_binding(out_file: &Path) {
     let _ = bindgen::builder()
         .clang_args(&["-x", "c++"])
+        .clang_args(&["-DT1HA0_RUNTIME_SELECT=1", "-Dt1ha_EXPORTS"])
+        .clang_arg(if cfg!(feature = "aes") { "-DT1HA0_AESNI_AVAILABLE=1" } else { "" })
         .clang_arg(if cfg!(feature = "sse42") {
             "-msse4.2"
         } else {
@@ -24,6 +26,7 @@ fn generate_binding(out_file: &Path) {
         .whitelist_function("^MurmurHash.*")
         .whitelist_function("^SpookyHasher.*")
         .whitelist_function("^t1ha.*")
+        .blacklist_function("^t1ha_selfcheck__.*")
         .whitelist_function("^XXH.*")
         .generate()
         .unwrap()
@@ -31,7 +34,7 @@ fn generate_binding(out_file: &Path) {
         .expect("fail to write bindings");
 }
 
-#[cfg(not(feature = "bindgen"))]
+#[cfg(not(feature = "gen"))]
 fn generate_binding(out_file: &Path) {
     use std::fs;
 
