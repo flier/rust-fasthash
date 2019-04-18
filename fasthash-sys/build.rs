@@ -44,12 +44,11 @@ fn generate_binding(out_file: &Path) {
     fs::copy(format!("src/{}/fasthash.rs", os), out_file).expect("fail to copy bindings");
 }
 
-fn main() {
+fn build_fasthash() {
     let mut build = cc::Build::new();
 
     build
         .cpp(true)
-        .define("T1HA0_RUNTIME_SELECT", Some("1"))
         .flag("-Wno-implicit-fallthrough")
         .flag("-Wno-unknown-attributes")
         .file("src/fasthash.cpp")
@@ -63,10 +62,7 @@ fn main() {
         .file("src/smhasher/MurmurHash2.cpp")
         .file("src/smhasher/MurmurHash3.cpp")
         .file("src/smhasher/Spooky.cpp")
-        .file("src/smhasher/xxhash.c")
-        .file("src/t1ha/src/t1ha0.c")
-        .file("src/t1ha/src/t1ha1.c")
-        .file("src/t1ha/src/t1ha2.c");
+        .file("src/smhasher/xxhash.c");
 
     if cfg!(feature = "sse42") {
         build
@@ -74,6 +70,17 @@ fn main() {
             .file("src/smhasher/metrohash64crc.cpp")
             .file("src/smhasher/metrohash128crc.cpp");
     }
+
+    build.compile("libfasthash.a");
+}
+
+fn build_t1() {
+    let mut build = cc::Build::new();
+
+    build.define("T1HA0_RUNTIME_SELECT", Some("1"))
+        .file("src/t1ha/src/t1ha0.c")
+        .file("src/t1ha/src/t1ha1.c")
+        .file("src/t1ha/src/t1ha2.c");
 
     if cfg!(feature = "aes") {
         build
@@ -94,7 +101,13 @@ fn main() {
         }
     }
 
-    build.compile("libfasthash.a");
+    build.compile("libt1.a");
+}
+
+fn main() {
+    build_fasthash();
+
+    build_t1();
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("src/fasthash.rs");
