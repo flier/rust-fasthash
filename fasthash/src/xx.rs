@@ -46,6 +46,7 @@ use hasher::{FastHash, FastHasher, StreamHasher};
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2147069998);
 /// assert_eq!(Hash32::hash(b"helloworld"), 593682946);
 /// ```
+#[derive(Clone)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -75,6 +76,7 @@ impl FastHash for Hash32 {
 /// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 2900467397628653179);
 /// assert_eq!(Hash64::hash(b"helloworld"), 9228181307863624271);
 /// ```
+#[derive(Clone)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {
@@ -140,6 +142,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
 /// h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
 /// assert_eq!(h.finish(), 2113960620);
 /// ```
+#[derive(Clone)]
 pub struct Hasher32(*mut ffi::XXH32_state_t);
 
 impl Default for Hasher32 {
@@ -211,6 +214,7 @@ impl_fasthash!(Hasher32, Hash32);
 /// h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
 /// assert_eq!(h.finish(), 6304142433100597454);
 /// ```
+#[derive(Clone)]
 pub struct Hasher64(*mut ffi::XXH64_state_t);
 
 impl Default for Hasher64 {

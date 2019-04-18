@@ -82,6 +82,7 @@ pub mod t1ha2 {
     ///     15302361616348747620
     /// );
     /// ```
+    #[derive(Clone)]
     pub struct Hash64AtOnce;
 
     impl FastHash for Hash64AtOnce {
@@ -142,6 +143,7 @@ assert_eq!(h.finish(), 15302361616348747620);
     ///     315212713565720527393405448145758944961
     /// );
     /// ```
+    #[derive(Clone)]
     pub struct Hash128AtOnce;
 
     impl FastHash for Hash128AtOnce {
@@ -227,6 +229,7 @@ pub mod t1ha1 {
     /// );
     /// assert_eq!(Hash64Le::hash(b"helloworld"), 16997942636322422782);
     /// ```
+    #[derive(Clone)]
     pub struct Hash64Le;
 
     impl FastHash for Hash64Le {
@@ -281,6 +284,7 @@ assert_eq!(h.finish(), 16997942636322422782);
     /// );
     /// assert_eq!(Hash64Be::hash(b"helloworld"), 15825971635414726702);
     /// ```
+    #[derive(Clone)]
     pub struct Hash64Be;
 
     impl FastHash for Hash64Be {
@@ -360,6 +364,7 @@ pub mod t1ha0 {
     /// );
     /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
     /// ```
+    #[derive(Clone)]
     pub struct Hash64;
 
     impl FastHash for Hash64 {
@@ -419,6 +424,7 @@ assert_eq!(h.finish(), 15302361616348747620);
         /// );
         /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
         /// ```
+        #[derive(Clone)]
         pub struct Hash64;
 
         impl FastHash for Hash64 {
@@ -459,6 +465,7 @@ assert_eq!(h.finish(), 15302361616348747620);
         /// );
         /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
         /// ```
+        #[derive(Clone)]
         pub struct Hash64;
 
         impl FastHash for Hash64 {
@@ -499,6 +506,7 @@ assert_eq!(h.finish(), 15302361616348747620);
         /// );
         /// assert_eq!(Hash64::hash(b"helloworld"), 15302361616348747620);
         /// ```
+        #[derive(Clone)]
         pub struct Hash64;
 
         impl FastHash for Hash64 {
