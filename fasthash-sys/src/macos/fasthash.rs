@@ -425,6 +425,7 @@ fn bindgen_test_layout_t1ha_state256() {
 }
 pub type t1ha_state256_t = t1ha_state256;
 #[repr(C)]
+#[repr(align(32))]
 #[derive(Copy, Clone)]
 pub struct t1ha_context {
     pub state: t1ha_state256_t,
@@ -439,6 +440,11 @@ fn bindgen_test_layout_t1ha_context() {
         ::std::mem::size_of::<t1ha_context>(),
         96usize,
         concat!("Size of: ", stringify!(t1ha_context))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<t1ha_context>(),
+        32usize,
+        concat!("Alignment of ", stringify!(t1ha_context))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<t1ha_context>())).state as *const _ as usize },
@@ -546,10 +552,10 @@ extern "C" {
 }
 pub const XXH_errorcode_XXH_OK: XXH_errorcode = 0;
 pub const XXH_errorcode_XXH_ERROR: XXH_errorcode = 1;
-/// Type
+#[doc = "Type"]
 pub type XXH_errorcode = u32;
 extern "C" {
-    /// Simple Hash Functions
+    #[doc = "Simple Hash Functions"]
     #[link_name = "\u{1}_XXH32"]
     pub fn XXH32(
         input: *const ::std::os::raw::c_void,
@@ -565,7 +571,7 @@ extern "C" {
         seed: ::std::os::raw::c_ulonglong,
     ) -> ::std::os::raw::c_ulonglong;
 }
-/// Advanced Hash Functions
+#[doc = "Advanced Hash Functions"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH32_state_t {
