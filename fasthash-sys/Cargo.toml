@@ -19,7 +19,8 @@ avx2 = ["aes"]
 gen = ["bindgen"]
 
 [dependencies]
+cfg-if = "0.1"
 
 [build-dependencies]
 cc = "1.0"
-bindgen = { version="0.49", optional=true }
+bindgen = { version="0.51", optional=true }

@@ -39,16 +39,7 @@ fn generate_binding(out_file: &Path) {
 }
 
 #[cfg(not(feature = "gen"))]
-fn generate_binding(out_file: &Path) {
-    use std::fs;
-
-    let os = if cfg!(target_os = "macos") {
-        "macos"
-    } else {
-        "linux"
-    };
-
-    fs::copy(format!("src/{}/fasthash.rs", os), out_file).expect("fail to copy bindings");
+fn generate_binding(_out_file: &Path) {
 }
 
 fn build_fasthash() {
@@ -112,11 +103,10 @@ fn build_t1() {
 
 fn main() {
     build_fasthash();
-
     build_t1();
 
     let out_dir = env::var("OUT_DIR").unwrap();
-    let out_file = Path::new(&out_dir).join("src/fasthash.rs");
+    let out_file = Path::new(&out_dir).join("fasthash.rs");
 
     generate_binding(&out_file);
 
