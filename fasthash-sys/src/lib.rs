@@ -11,4 +11,3 @@ cfg_if! {
         include!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/fasthash.rs"));
     }
 }
-

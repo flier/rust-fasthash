@@ -3,9 +3,15 @@ use std::path::Path;
 
 #[cfg(feature = "gen")]
 fn generate_binding(out_file: &Path) {
+    println!("generate binding file @ {:?}.", out_file);
+
     let _ = bindgen::builder()
         .clang_args(&["-x", "c++"])
-        .clang_args(&["-DT1HA0_RUNTIME_SELECT=1", "-Dt1ha_EXPORTS"])
+        .clang_args(&[
+            "-DT1HA0_RUNTIME_SELECT=1",
+            "-Dt1ha_EXPORTS",
+            "-DXXH_STATIC_LINKING_ONLY",
+        ])
         .clang_arg(if cfg!(feature = "aes") {
             "-DT1HA0_AESNI_AVAILABLE=1"
         } else {
@@ -40,6 +46,7 @@ fn generate_binding(out_file: &Path) {
 
 #[cfg(not(feature = "gen"))]
 fn generate_binding(_out_file: &Path) {
+    println!("direct include pregenerated binding file.");
 }
 
 fn build_fasthash() {
@@ -107,6 +114,9 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("fasthash.rs");
+
+    println!("cargo:rerun-if-changed=src/fasthash.hpp");
+    println!("cargo:rerun-if-changed=src/fasthash.cpp");
 
     generate_binding(&out_file);
 

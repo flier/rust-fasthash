@@ -532,11 +532,6 @@ extern "C" {
         seed: ::std::os::raw::c_uint,
     ) -> XXH32_hash_t;
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct XXH32_state_s {
-    _unused: [u8; 0],
-}
 pub type XXH32_state_t = XXH32_state_s;
 extern "C" {
     pub fn XXH32_createState() -> *mut XXH32_state_t;
@@ -607,11 +602,6 @@ extern "C" {
         seed: ::std::os::raw::c_ulonglong,
     ) -> XXH64_hash_t;
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct XXH64_state_s {
-    _unused: [u8; 0],
-}
 pub type XXH64_state_t = XXH64_state_s;
 extern "C" {
     pub fn XXH64_createState() -> *mut XXH64_state_t;
@@ -671,6 +661,293 @@ extern "C" {
 }
 extern "C" {
     pub fn XXH64_hashFromCanonical(src: *const XXH64_canonical_t) -> XXH64_hash_t;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH32_state_s {
+    pub total_len_32: u32,
+    pub large_len: u32,
+    pub v1: u32,
+    pub v2: u32,
+    pub v3: u32,
+    pub v4: u32,
+    pub mem32: [u32; 4usize],
+    pub memsize: u32,
+    pub reserved: u32,
+}
+#[test]
+fn bindgen_test_layout_XXH32_state_s() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH32_state_s>(),
+        48usize,
+        concat!("Size of: ", stringify!(XXH32_state_s))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH32_state_s>(),
+        4usize,
+        concat!("Alignment of ", stringify!(XXH32_state_s))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).total_len_32 as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(total_len_32)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).large_len as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(large_len)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).v1 as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(v1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).v2 as *const _ as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(v2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).v3 as *const _ as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(v3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).v4 as *const _ as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(v4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).mem32 as *const _ as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(mem32)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).memsize as *const _ as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(memsize)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH32_state_s>())).reserved as *const _ as usize },
+        44usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH32_state_s),
+            "::",
+            stringify!(reserved)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH64_state_s {
+    pub total_len: u64,
+    pub v1: u64,
+    pub v2: u64,
+    pub v3: u64,
+    pub v4: u64,
+    pub mem64: [u64; 4usize],
+    pub memsize: u32,
+    pub reserved: [u32; 2usize],
+}
+#[test]
+fn bindgen_test_layout_XXH64_state_s() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH64_state_s>(),
+        88usize,
+        concat!("Size of: ", stringify!(XXH64_state_s))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH64_state_s>(),
+        8usize,
+        concat!("Alignment of ", stringify!(XXH64_state_s))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).total_len as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(total_len)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).v1 as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(v1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).v2 as *const _ as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(v2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).v3 as *const _ as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(v3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).v4 as *const _ as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(v4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).mem64 as *const _ as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(mem64)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).memsize as *const _ as usize },
+        72usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(memsize)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).reserved as *const _ as usize },
+        76usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(reserved)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH128_hash_t {
+    pub low64: XXH64_hash_t,
+    pub high64: XXH64_hash_t,
+}
+#[test]
+fn bindgen_test_layout_XXH128_hash_t() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH128_hash_t>(),
+        16usize,
+        concat!("Size of: ", stringify!(XXH128_hash_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH128_hash_t>(),
+        8usize,
+        concat!("Alignment of ", stringify!(XXH128_hash_t))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH128_hash_t>())).low64 as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH128_hash_t),
+            "::",
+            stringify!(low64)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH128_hash_t>())).high64 as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH128_hash_t),
+            "::",
+            stringify!(high64)
+        )
+    );
+}
+extern "C" {
+    pub fn XXH128(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        seed: ::std::os::raw::c_ulonglong,
+    ) -> XXH128_hash_t;
+}
+extern "C" {
+    pub fn XXH3_64bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH64_hash_t;
+}
+extern "C" {
+    pub fn XXH3_64bits_withSeed(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        seed: ::std::os::raw::c_ulonglong,
+    ) -> XXH64_hash_t;
+}
+extern "C" {
+    pub fn XXH3_128bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH128_hash_t;
+}
+extern "C" {
+    pub fn XXH3_128bits_withSeed(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        seed: ::std::os::raw::c_ulonglong,
+    ) -> XXH128_hash_t;
 }
 extern "C" {
     #[link_name = "\u{1}__Z28farmhash_fingerprint_uint12811uint128_c_t"]
