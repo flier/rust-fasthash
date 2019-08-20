@@ -137,7 +137,7 @@ fn bench_hash64(c: &mut Criterion) {
     .with_function("xx::hash64", move |b, &&size| {
         b.iter(|| xx::hash64_with_seed(&DATA[..size], SEED));
     })
-    .with_function("xx::hash64", move |b, &&size| {
+    .with_function("xxh3::hash64", move |b, &&size| {
         b.iter(|| xxh3::hash64_with_seed(&DATA[..size], SEED));
     });
 
