@@ -139,6 +139,9 @@ fn bench_hash64(c: &mut Criterion) {
     })
     .with_function("xxh3::hash64", move |b, &&size| {
         b.iter(|| xxh3::hash64_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("highway::hash64", move |b, &&size| {
+        b.iter(|| highway::hash64_with_seed(&DATA[..size], [SEED, SEED, SEED, SEED]));
     });
 
     if cfg!(any(feature = "sse4.2", target_feature = "sse4.2")) {
@@ -190,7 +193,10 @@ fn bench_hash128(c: &mut Criterion) {
         b.iter(|| t1ha2::Hash128AtOnce::hash_with_seed(&DATA[..size], SEED));
     })
     .with_function("xxh3::hash128", move |b, &&size| {
-        b.iter(|| t1ha2::Hash128AtOnce::hash_with_seed(&DATA[..size], SEED));
+        b.iter(|| xxh3::hash128_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("highway::hash128", move |b, &&size| {
+        b.iter(|| highway::hash128_with_seed(&DATA[..size], [SEED, SEED, SEED, SEED]));
     });
 
     if cfg!(any(feature = "sse4.2", target_feature = "sse4.2")) {
