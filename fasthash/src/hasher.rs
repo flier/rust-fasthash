@@ -189,6 +189,8 @@ impl_from_seed!(u32);
 impl_from_seed!(u64);
 impl_from_seed!((u64, u64));
 impl_from_seed!((u64, u64, u64, u64));
+impl_from_seed!([u64; 2]);
+impl_from_seed!([u64; 4]);
 
 impl From<Seed> for u128 {
     #[inline(always)]

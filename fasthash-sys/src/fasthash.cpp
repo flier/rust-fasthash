@@ -1,5 +1,8 @@
 #include "fasthash.hpp"
 
+#include "highwayhash/highwayhash_target.h"
+#include "highwayhash/instruction_sets.h"
+
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x)
 {
     return farmhash_fingerprint_uint128_c_t(x);
@@ -55,4 +58,14 @@ void SpookyHasherFinal(
 uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed)
 {
     return t1ha0(data, length, seed);
+}
+
+void HighwayHash128(const HHKey key, const char* bytes, const uint64_t size, HHResult128& hash) {
+    highwayhash::InstructionSets::Run<highwayhash::HighwayHash>(
+        *reinterpret_cast<const HHKey*>(key), bytes, size, reinterpret_cast<HHResult128*>(hash));
+}
+
+void HighwayHash256(const HHKey key, const char* bytes, const uint64_t size, HHResult256& hash) {
+    highwayhash::InstructionSets::Run<highwayhash::HighwayHash>(
+        *reinterpret_cast<const HHKey*>(key), bytes, size, reinterpret_cast<HHResult256*>(hash));
 }

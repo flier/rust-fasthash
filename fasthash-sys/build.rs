@@ -1,30 +1,96 @@
 use std::env;
 use std::path::Path;
 
+use lazy_static::lazy_static;
+use raw_cpuid::CpuId;
+
+lazy_static! {
+    static ref CPUID: CpuId = CpuId::new();
+}
+
+fn has_aesni() -> bool {
+    cfg!(feature = "native")
+        && CPUID
+            .get_feature_info()
+            .map_or(false, |features| features.has_aesni())
+}
+
+fn has_sse41() -> bool {
+    cfg!(feature = "native")
+        && CPUID
+            .get_feature_info()
+            .map_or(false, |features| features.has_sse41())
+}
+
+fn has_sse42() -> bool {
+    cfg!(feature = "native")
+        && CPUID
+            .get_feature_info()
+            .map_or(false, |features| features.has_sse42())
+}
+
+fn has_avx() -> bool {
+    cfg!(feature = "native")
+        && CPUID
+            .get_feature_info()
+            .map_or(false, |features| features.has_avx())
+}
+
+fn has_avx2() -> bool {
+    cfg!(feature = "native")
+        && CPUID
+            .get_extended_feature_info()
+            .map_or(false, |features| features.has_avx2())
+}
+
+fn support_aesni() -> bool {
+    cfg!(any(feature = "aes", target_feature = "aes")) || has_aesni()
+}
+
+fn support_sse41() -> bool {
+    cfg!(any(feature = "sse41", target_feature = "sse41")) || has_sse41()
+}
+
+fn support_sse42() -> bool {
+    cfg!(any(feature = "sse42", target_feature = "sse42")) || has_sse42()
+}
+
+fn support_avx() -> bool {
+    cfg!(any(feature = "avx", target_feature = "avx")) || has_avx()
+}
+
+fn support_avx2() -> bool {
+    cfg!(any(feature = "avx2", target_feature = "avx2")) || has_avx2()
+}
+
 #[cfg(feature = "gen")]
 fn generate_binding(out_file: &Path) {
     println!("generate binding file @ {:?}.", out_file);
 
     let _ = bindgen::builder()
-        .clang_args(&["-x", "c++"])
+        .clang_args(&["-x", "c++", "-std=c++11"])
         .clang_args(&[
-            "-DT1HA0_RUNTIME_SELECT=1",
             "-Dt1ha_EXPORTS",
             "-DXXH_STATIC_LINKING_ONLY",
+            "-Isrc/highwayhash",
         ])
-        .clang_arg(if cfg!(feature = "aes") {
-            "-DT1HA0_AESNI_AVAILABLE=1"
+        .clang_args(if support_aesni() {
+            &[
+                "-maes",
+                "-DT1HA0_RUNTIME_SELECT=1",
+                "-DT1HA0_AESNI_AVAILABLE=1",
+            ][..]
+        } else {
+            &[][..]
+        })
+        .clang_arg(if cfg!(feature = "native") {
+            "-march=native"
         } else {
             ""
         })
-        .clang_arg(if cfg!(feature = "sse42") {
-            "-msse4.2"
-        } else {
-            ""
-        })
-        .clang_arg(if cfg!(feature = "aes") { "-maes" } else { "" })
-        .clang_arg(if cfg!(feature = "avx") { "-mavx" } else { "" })
-        .clang_arg(if cfg!(feature = "avx2") { "-mavx2" } else { "" })
+        .clang_arg(if support_sse42() { "-msse4.2" } else { "" })
+        .clang_arg(if support_avx() { "-mavx" } else { "" })
+        .clang_arg(if support_avx2() { "-mavx2" } else { "" })
         .header("src/fasthash.hpp")
         .generate_inline_functions(true)
         .disable_name_namespacing()
@@ -38,6 +104,7 @@ fn generate_binding(out_file: &Path) {
         .whitelist_function("^t1ha.*")
         .blacklist_function("^t1ha_selfcheck__.*")
         .whitelist_function("^XXH.*")
+        .whitelist_function("^HighwayHash.*")
         .generate()
         .unwrap()
         .write_to_file(out_file)
@@ -54,8 +121,10 @@ fn build_fasthash() {
 
     build
         .cpp(true)
+        .flag("-std=c++11")
         .flag("-Wno-implicit-fallthrough")
         .flag("-Wno-unknown-attributes")
+        .include("src/highwayhash")
         .file("src/fasthash.cpp")
         .file("src/smhasher/City.cpp")
         .file("src/smhasher/farmhash-c.c")
@@ -67,50 +136,95 @@ fn build_fasthash() {
         .file("src/smhasher/MurmurHash2.cpp")
         .file("src/smhasher/MurmurHash3.cpp")
         .file("src/smhasher/Spooky.cpp")
-        .file("src/smhasher/xxhash.c");
+        .file("src/xxHash/xxhash.c");
 
-    if cfg!(feature = "sse42") {
+    if support_sse42() {
         build
             .flag("-msse4.2")
             .file("src/smhasher/metrohash64crc.cpp")
             .file("src/smhasher/metrohash128crc.cpp");
     }
 
-    build.compile("libfasthash.a");
+    build.static_flag(true).compile("fasthash");
 }
 
 fn build_t1() {
     let mut build = cc::Build::new();
 
     build
-        .define("T1HA0_RUNTIME_SELECT", Some("1"))
         .file("src/t1ha/src/t1ha0.c")
         .file("src/t1ha/src/t1ha1.c")
         .file("src/t1ha/src/t1ha2.c");
 
-    if cfg!(feature = "aes") {
+    if support_aesni() {
         build
+            .define("T1HA0_RUNTIME_SELECT", Some("1"))
             .define("T1HA0_AESNI_AVAILABLE", Some("1"))
             .flag("-maes")
-            .file("src/t1ha/src/t1ha0_ia32aes_noavx.c");
+            .file("src/t1ha/src/t1ha0_ia32aes_noavx.c")
+            .file("src/t1ha/src/t1ha0_ia32aes_avx.c")
+            .file("src/t1ha/src/t1ha0_ia32aes_avx2.c");
 
-        if cfg!(feature = "avx") {
-            build.flag("-mavx").file("src/t1ha/src/t1ha0_ia32aes_avx.c");
+        if support_avx() {
+            build.flag("-mavx");
         }
 
-        if cfg!(feature = "avx2") {
-            build
-                .flag("-mavx2")
-                .file("src/t1ha/src/t1ha0_ia32aes_avx2.c");
+        if support_avx2() {
+            build.flag("-mavx2");
         }
     }
 
-    build.compile("libt1.a");
+    build.static_flag(true).compile("t1ha");
+}
+
+fn build_highway() {
+    let mut build = cc::Build::new();
+
+    build
+        .cpp(true)
+        .flag("-std=c++11")
+        .include("src/highwayhash")
+        .file("src/highwayhash/highwayhash/arch_specific.cc")
+        .file("src/highwayhash/highwayhash/instruction_sets.cc")
+        .file("src/highwayhash/highwayhash/os_specific.cc")
+        .file("src/highwayhash/highwayhash/hh_portable.cc")
+        .file("src/highwayhash/highwayhash/c_bindings.cc");
+
+    if support_sse41() {
+        build
+            .flag("-msse4.1")
+            .file("src/highwayhash/highwayhash/hh_sse41.cc");
+    }
+
+    if support_avx2() {
+        build
+            .flag("-mavx2")
+            .file("src/highwayhash/highwayhash/hh_avx2.cc");
+    }
+
+    build.static_flag(true).compile("highwayhash");
 }
 
 fn main() {
+    if has_aesni() {
+        println!(r#"cargo:rustc-cfg=feature="aes""#);
+    }
+    if has_sse41() {
+        println!(r#"cargo:rustc-cfg=feature="sse41""#);
+    }
+    if has_sse42() {
+        println!(r#"cargo:rustc-cfg=feature="sse42""#);
+    }
+    if has_avx() {
+        println!(r#"cargo:rustc-cfg=feature="avx""#);
+    }
+    if has_avx2() {
+        println!(r#"cargo:rustc-cfg=feature="avx2""#);
+    }
+
     build_fasthash();
     build_t1();
+    build_highway();
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("fasthash.rs");
@@ -119,10 +233,4 @@ fn main() {
     println!("cargo:rerun-if-changed=src/fasthash.cpp");
 
     generate_binding(&out_file);
-
-    if cfg!(target_os = "macos") {
-        println!("cargo:rustc-link-lib=dylib=c++");
-    } else {
-        println!("cargo:rustc-link-lib=dylib=stdc++");
-    }
 }

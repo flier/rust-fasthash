@@ -143,7 +143,6 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
 /// h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
 /// assert_eq!(h.finish(), 2113960620);
 /// ```
-#[derive(Clone)]
 pub struct Hasher32(NonNull<ffi::XXH32_state_t>);
 
 impl Default for Hasher32 {
@@ -157,6 +156,18 @@ impl Drop for Hasher32 {
     fn drop(&mut self) {
         unsafe {
             ffi::XXH32_freeState(self.0.as_ptr());
+        }
+    }
+}
+
+impl Clone for Hasher32 {
+    fn clone(&self) -> Self {
+        unsafe {
+            let state = ffi::XXH32_createState();
+
+            ffi::XXH32_copyState(state, self.0.as_ptr());
+
+            Hasher32(NonNull::new_unchecked(state))
         }
     }
 }
@@ -219,7 +230,6 @@ impl_fasthash!(Hasher32, Hash32);
 /// h.write_stream(&mut Cursor::new(&[0_u8; 4567][..])).unwrap();
 /// assert_eq!(h.finish(), 6304142433100597454);
 /// ```
-#[derive(Clone)]
 pub struct Hasher64(NonNull<ffi::XXH64_state_t>);
 
 impl Default for Hasher64 {
@@ -232,6 +242,18 @@ impl Drop for Hasher64 {
     fn drop(&mut self) {
         unsafe {
             ffi::XXH64_freeState(self.0.as_ptr());
+        }
+    }
+}
+
+impl Clone for Hasher64 {
+    fn clone(&self) -> Self {
+        unsafe {
+            let state = ffi::XXH64_createState();
+
+            ffi::XXH64_copyState(state, self.0.as_ptr());
+
+            Hasher64(NonNull::new_unchecked(state))
         }
     }
 }
@@ -272,168 +294,3 @@ impl FastHasher for Hasher64 {
 impl StreamHasher for Hasher64 {}
 
 impl_fasthash!(Hasher64, Hash64);
-
-pub mod xxh3 {
-    //! XXH3 is a new hash algorithm, featuring vastly improved speed performance for both small and large inputs.
-    use std::mem;
-
-    use crate::FastHash;
-
-    /// 64-bit hash functions for a byte array.
-    #[inline(always)]
-    pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
-        Hash64::hash(v)
-    }
-
-    /// 64-bit hash function for a byte array.
-    /// For convenience, a 64-bit seed is also hashed into the result.
-    #[inline(always)]
-    pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
-        Hash64::hash_with_seed(v, seed)
-    }
-
-    /// 128-bit hash function for a byte array.
-    #[inline(always)]
-    pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
-        Hash128::hash(v)
-    }
-
-    /// 128-bit hash function for a byte array.
-    ///
-    /// For convenience, a 128-bit seed is also hashed into the result.
-    #[inline(always)]
-    pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u128 {
-        Hash128::hash_with_seed(v, seed)
-    }
-
-    /// An implementation of `std::hash::Hasher`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use std::hash::Hasher;
-    /// use std::io::Cursor;
-    ///
-    /// use fasthash::{xxh3::Hasher64, FastHasher, StreamHasher};
-    ///
-    /// let mut h = Hasher64::new();
-    ///
-    /// h.write(b"hello");
-    /// assert_eq!(h.finish(), 9756980668191802116);
-    ///
-    /// h.write(b"world");
-    /// assert_eq!(h.finish(), 16984218253351461780);
-    /// ```
-    #[derive(Clone)]
-    pub struct Hash64;
-
-    impl FastHash for Hash64 {
-        type Hash = u64;
-        type Seed = u64;
-
-        #[inline(always)]
-        fn hash<T: AsRef<[u8]>>(bytes: T) -> Self::Hash {
-            let bytes = bytes.as_ref();
-
-            unsafe { ffi::XXH3_64bits(bytes.as_ptr() as *const _, bytes.len()) }
-        }
-
-        #[inline(always)]
-        fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: Self::Seed) -> Self::Hash {
-            let bytes = bytes.as_ref();
-
-            unsafe { ffi::XXH3_64bits_withSeed(bytes.as_ptr() as *const _, bytes.len(), seed) }
-        }
-    }
-
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{xxh3::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 9756980668191802116);
-
-h.write(b"world");
-assert_eq!(h.finish(), 16984218253351461780);
-```
-"#]
-        Hasher64,
-        Hash64
-    );
-
-    /// An implementation of `std::hash::Hasher`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use std::hash::Hasher;
-    /// use std::io::Cursor;
-    ///
-    /// use fasthash::{xxh3::Hasher128, FastHasher, StreamHasher};
-    ///
-    /// let mut h = Hasher128::new();
-    ///
-    /// h.write(b"hello");
-    /// assert_eq!(h.finish(), 9756980668191802116);
-    ///
-    /// h.write(b"world");
-    /// assert_eq!(h.finish(), 17941653810766712799);
-    /// ```
-    #[derive(Clone)]
-    pub struct Hash128;
-
-    impl FastHash for Hash128 {
-        type Hash = u128;
-        type Seed = u64;
-
-        #[inline(always)]
-        fn hash<T: AsRef<[u8]>>(bytes: T) -> Self::Hash {
-            let bytes = bytes.as_ref();
-
-            unsafe { mem::transmute(ffi::XXH3_128bits(bytes.as_ptr() as *const _, bytes.len())) }
-        }
-
-        #[inline(always)]
-        fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: Self::Seed) -> Self::Hash {
-            let bytes = bytes.as_ref();
-
-            unsafe {
-                mem::transmute(ffi::XXH3_128bits_withSeed(
-                    bytes.as_ptr() as *const _,
-                    bytes.len(),
-                    seed,
-                ))
-            }
-        }
-    }
-
-    impl_hasher_ext!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{xxh3::Hasher128, FastHasher};
-
-let mut h = Hasher128::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 9756980668191802116);
-
-h.write(b"world");
-assert_eq!(h.finish(), 17941653810766712799);
-```
-"#]
-        Hasher128,
-        Hash128
-    );
-
-}

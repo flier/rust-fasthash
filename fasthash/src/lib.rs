@@ -64,6 +64,7 @@ extern crate fasthash_sys as ffi;
 mod hasher;
 pub mod city;
 pub mod farm;
+pub mod highway;
 pub mod lookup3;
 pub mod metro;
 pub mod mum;
@@ -74,6 +75,7 @@ pub mod sea;
 pub mod spooky;
 pub mod t1ha;
 pub mod xx;
+pub mod xxh3;
 
 pub use crate::hasher::{
     BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
@@ -89,7 +91,7 @@ pub use crate::sea::Hasher64 as SeaHasher;
 pub use crate::spooky::{Hasher128 as SpookyHasherExt, Hasher64 as SpookyHasher};
 pub use crate::t1ha::{t1ha0, t1ha1, t1ha2};
 pub use crate::t1ha2::{Hasher128 as T1haHasherExt, Hasher128 as T1haHasher};
-pub use crate::xx::{xxh3, Hasher64 as XXHasher};
+pub use crate::xx::Hasher64 as XXHasher;
 cfg_if! {
     if #[cfg(target_pointer_width = "64")] {
         pub use crate::murmur2::Hasher64_x64 as Murmur2Hasher;

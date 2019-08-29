@@ -8,14 +8,14 @@
 #include "smhasher/MurmurHash3.h"
 #include "smhasher/Spooky.h"
 #include "t1ha/t1ha.h"
+#include "xxHash/xxhash.h"
+#include "highwayhash/highwayhash/c_bindings.h"
 
-#include "smhasher/xxhash.h"
+uint32_t lookup3(const void *key, int length, uint32_t initval);
 
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x);
 
 uint64_t farmhash_fingerprint_uint64(uint64_t x);
-
-uint32_t lookup3(const void *key, int length, uint32_t initval);
 
 uint64_t mum_hash_(const void *key, size_t len, uint64_t seed);
 
@@ -45,3 +45,7 @@ void SpookyHasherFinal(
     uint64 *hash2); // out only: second 64 bits of hash value.
 
 uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed);
+
+void HighwayHash128(const HHKey key, const char* bytes, const uint64_t size, HHResult128& hash);
+
+void HighwayHash256(const HHKey key, const char* bytes, const uint64_t size, HHResult256& hash);

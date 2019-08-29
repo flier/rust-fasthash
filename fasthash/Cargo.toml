@@ -11,10 +11,12 @@ license = "Apache-2.0"
 edition = "2018"
 
 [features]
-default = ["sse42", "aes", "avx", "avx2", "doc"]
+default = ["doc", "native"]
 doc = []
-sse42 = ["fasthash-sys/sse42"]
+native = ["fasthash-sys/native"]
 aes = ["fasthash-sys/aes"]
+sse41 = ["fasthash-sys/sse41"]
+sse42 = ["fasthash-sys/sse42"]
 avx = ["fasthash-sys/avx"]
 avx2 = ["fasthash-sys/avx2"]
 gen = ["fasthash-sys/gen"]
@@ -28,7 +30,10 @@ seahash = "3.0"
 fasthash-sys = { version = "0.3.2", path = "../fasthash-sys" }
 
 [dev-dependencies]
-criterion = "0.2"
+criterion = "0.3"
+
+[build-dependencies]
+raw-cpuid = "6"
 
 [[bench]]
 name = "hash"

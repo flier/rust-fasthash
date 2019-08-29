@@ -519,7 +519,7 @@ pub type XXH_errorcode = u32;
 extern "C" {
     pub fn XXH_versionNumber() -> ::std::os::raw::c_uint;
 }
-pub type XXH32_hash_t = ::std::os::raw::c_uint;
+pub type XXH32_hash_t = u32;
 extern "C" {
     #[doc = " XXH32() :"]
     #[doc = "Calculate the 32-bit hash of sequence \"length\" bytes stored at memory address \"input\"."]
@@ -590,7 +590,7 @@ extern "C" {
 extern "C" {
     pub fn XXH32_hashFromCanonical(src: *const XXH32_canonical_t) -> XXH32_hash_t;
 }
-pub type XXH64_hash_t = ::std::os::raw::c_ulonglong;
+pub type XXH64_hash_t = u64;
 extern "C" {
     #[doc = " XXH64() :"]
     #[doc = "Calculate the 64-bit hash of sequence of length \"len\" stored at memory address \"input\"."]
@@ -665,15 +665,15 @@ extern "C" {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH32_state_s {
-    pub total_len_32: u32,
-    pub large_len: u32,
-    pub v1: u32,
-    pub v2: u32,
-    pub v3: u32,
-    pub v4: u32,
-    pub mem32: [u32; 4usize],
-    pub memsize: u32,
-    pub reserved: u32,
+    pub total_len_32: XXH32_hash_t,
+    pub large_len: XXH32_hash_t,
+    pub v1: XXH32_hash_t,
+    pub v2: XXH32_hash_t,
+    pub v3: XXH32_hash_t,
+    pub v4: XXH32_hash_t,
+    pub mem32: [XXH32_hash_t; 4usize],
+    pub memsize: XXH32_hash_t,
+    pub reserved: XXH32_hash_t,
 }
 #[test]
 fn bindgen_test_layout_XXH32_state_s() {
@@ -781,14 +781,14 @@ fn bindgen_test_layout_XXH32_state_s() {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH64_state_s {
-    pub total_len: u64,
-    pub v1: u64,
-    pub v2: u64,
-    pub v3: u64,
-    pub v4: u64,
-    pub mem64: [u64; 4usize],
-    pub memsize: u32,
-    pub reserved: [u32; 2usize],
+    pub total_len: XXH64_hash_t,
+    pub v1: XXH64_hash_t,
+    pub v2: XXH64_hash_t,
+    pub v3: XXH64_hash_t,
+    pub v4: XXH64_hash_t,
+    pub mem64: [XXH64_hash_t; 4usize],
+    pub memsize: XXH32_hash_t,
+    pub reserved: [XXH32_hash_t; 2usize],
 }
 #[test]
 fn bindgen_test_layout_XXH64_state_s() {
@@ -883,6 +883,222 @@ fn bindgen_test_layout_XXH64_state_s() {
         )
     );
 }
+extern "C" {
+    pub fn XXH3_64bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH64_hash_t;
+}
+extern "C" {
+    pub fn XXH3_64bits_withSecret(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH64_hash_t;
+}
+extern "C" {
+    pub fn XXH3_64bits_withSeed(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        seed: XXH64_hash_t,
+    ) -> XXH64_hash_t;
+}
+pub type XXH3_state_t = XXH3_state_s;
+#[repr(C)]
+#[repr(align(64))]
+#[derive(Copy, Clone)]
+pub struct XXH3_state_s {
+    pub acc: [XXH64_hash_t; 8usize],
+    pub customSecret: [::std::os::raw::c_char; 192usize],
+    pub buffer: [::std::os::raw::c_char; 256usize],
+    pub secret: *const ::std::os::raw::c_void,
+    pub bufferedSize: XXH32_hash_t,
+    pub nbStripesPerBlock: XXH32_hash_t,
+    pub nbStripesSoFar: XXH32_hash_t,
+    pub reserved32: XXH32_hash_t,
+    pub reserved32_2: XXH32_hash_t,
+    pub secretLimit: XXH32_hash_t,
+    pub totalLen: XXH64_hash_t,
+    pub seed: XXH64_hash_t,
+    pub reserved64: XXH64_hash_t,
+    pub __bindgen_padding_0: u64,
+}
+#[test]
+fn bindgen_test_layout_XXH3_state_s() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH3_state_s>(),
+        576usize,
+        concat!("Size of: ", stringify!(XXH3_state_s))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH3_state_s>(),
+        64usize,
+        concat!("Alignment of ", stringify!(XXH3_state_s))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).acc as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(acc)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).customSecret as *const _ as usize },
+        64usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(customSecret)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).buffer as *const _ as usize },
+        256usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(buffer)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secret as *const _ as usize },
+        512usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(secret)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).bufferedSize as *const _ as usize },
+        520usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(bufferedSize)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesPerBlock as *const _ as usize },
+        524usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(nbStripesPerBlock)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesSoFar as *const _ as usize },
+        528usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(nbStripesSoFar)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).reserved32 as *const _ as usize },
+        532usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(reserved32)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).reserved32_2 as *const _ as usize },
+        536usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(reserved32_2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secretLimit as *const _ as usize },
+        540usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(secretLimit)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).totalLen as *const _ as usize },
+        544usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(totalLen)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).seed as *const _ as usize },
+        552usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(seed)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).reserved64 as *const _ as usize },
+        560usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(reserved64)
+        )
+    );
+}
+extern "C" {
+    pub fn XXH3_createState() -> *mut XXH3_state_t;
+}
+extern "C" {
+    pub fn XXH3_freeState(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_copyState(dst_state: *mut XXH3_state_t, src_state: *const XXH3_state_t);
+}
+extern "C" {
+    pub fn XXH3_64bits_reset(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_reset_withSeed(
+        statePtr: *mut XXH3_state_t,
+        seed: XXH64_hash_t,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_reset_withSecret(
+        statePtr: *mut XXH3_state_t,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_update(
+        statePtr: *mut XXH3_state_t,
+        input: *const ::std::os::raw::c_void,
+        length: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_digest(statePtr: *const XXH3_state_t) -> XXH64_hash_t;
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH128_hash_t {
@@ -926,18 +1142,8 @@ extern "C" {
     pub fn XXH128(
         data: *const ::std::os::raw::c_void,
         len: usize,
-        seed: ::std::os::raw::c_ulonglong,
+        seed: XXH64_hash_t,
     ) -> XXH128_hash_t;
-}
-extern "C" {
-    pub fn XXH3_64bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH64_hash_t;
-}
-extern "C" {
-    pub fn XXH3_64bits_withSeed(
-        data: *const ::std::os::raw::c_void,
-        len: usize,
-        seed: ::std::os::raw::c_ulonglong,
-    ) -> XXH64_hash_t;
 }
 extern "C" {
     pub fn XXH3_128bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH128_hash_t;
@@ -946,16 +1152,119 @@ extern "C" {
     pub fn XXH3_128bits_withSeed(
         data: *const ::std::os::raw::c_void,
         len: usize,
-        seed: ::std::os::raw::c_ulonglong,
+        seed: XXH64_hash_t,
     ) -> XXH128_hash_t;
 }
 extern "C" {
-    #[link_name = "\u{1}__Z28farmhash_fingerprint_uint12811uint128_c_t"]
-    pub fn farmhash_fingerprint_uint128(x: uint128_c_t) -> u64;
+    pub fn XXH3_128bits_withSecret(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH128_hash_t;
 }
 extern "C" {
-    #[link_name = "\u{1}__Z27farmhash_fingerprint_uint64y"]
-    pub fn farmhash_fingerprint_uint64(x: u64) -> u64;
+    pub fn XXH3_128bits_reset(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_reset_withSeed(
+        statePtr: *mut XXH3_state_t,
+        seed: XXH64_hash_t,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_reset_withSecret(
+        statePtr: *mut XXH3_state_t,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_update(
+        statePtr: *mut XXH3_state_t,
+        input: *const ::std::os::raw::c_void,
+        length: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_digest(statePtr: *const XXH3_state_t) -> XXH128_hash_t;
+}
+extern "C" {
+    pub fn XXH128_isEqual(h1: XXH128_hash_t, h2: XXH128_hash_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn XXH128_cmp(
+        h128_1: *const ::std::os::raw::c_void,
+        h128_2: *const ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH128_canonical_t {
+    pub digest: [::std::os::raw::c_uchar; 16usize],
+}
+#[test]
+fn bindgen_test_layout_XXH128_canonical_t() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH128_canonical_t>(),
+        16usize,
+        concat!("Size of: ", stringify!(XXH128_canonical_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH128_canonical_t>(),
+        1usize,
+        concat!("Alignment of ", stringify!(XXH128_canonical_t))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH128_canonical_t>())).digest as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH128_canonical_t),
+            "::",
+            stringify!(digest)
+        )
+    );
+}
+extern "C" {
+    pub fn XXH128_canonicalFromHash(dst: *mut XXH128_canonical_t, hash: XXH128_hash_t);
+}
+extern "C" {
+    pub fn XXH128_hashFromCanonical(src: *const XXH128_canonical_t) -> XXH128_hash_t;
+}
+pub type HHKey = [u64; 4usize];
+pub type HHResult128 = [u64; 2usize];
+pub type HHResult256 = [u64; 4usize];
+extern "C" {
+    pub fn HighwayHash64(key: *mut u64, bytes: *const ::std::os::raw::c_char, size: u64) -> u64;
+}
+extern "C" {
+    pub fn HighwayHash64_TargetPortable(
+        key: *mut u64,
+        bytes: *const ::std::os::raw::c_char,
+        size: u64,
+    ) -> u64;
+}
+extern "C" {
+    pub fn HighwayHash64_TargetSSE41(
+        key: *mut u64,
+        bytes: *const ::std::os::raw::c_char,
+        size: u64,
+    ) -> u64;
+}
+extern "C" {
+    pub fn HighwayHash64_TargetAVX2(
+        key: *mut u64,
+        bytes: *const ::std::os::raw::c_char,
+        size: u64,
+    ) -> u64;
+}
+extern "C" {
+    pub fn HighwayHash64_TargetVSX(
+        key: *mut u64,
+        bytes: *const ::std::os::raw::c_char,
+        size: u64,
+    ) -> u64;
 }
 extern "C" {
     #[link_name = "\u{1}__Z7lookup3PKvij"]
@@ -964,6 +1273,14 @@ extern "C" {
         length: ::std::os::raw::c_int,
         initval: u32,
     ) -> u32;
+}
+extern "C" {
+    #[link_name = "\u{1}__Z28farmhash_fingerprint_uint12811uint128_c_t"]
+    pub fn farmhash_fingerprint_uint128(x: uint128_c_t) -> u64;
+}
+extern "C" {
+    #[link_name = "\u{1}__Z27farmhash_fingerprint_uint64y"]
+    pub fn farmhash_fingerprint_uint64(x: u64) -> u64;
 }
 extern "C" {
     #[link_name = "\u{1}__Z9mum_hash_PKvmy"]
@@ -1009,6 +1326,24 @@ extern "C" {
 extern "C" {
     #[link_name = "\u{1}__Z8t1ha0_64PKvmy"]
     pub fn t1ha0_64(data: *const ::std::os::raw::c_void, length: usize, seed: u64) -> u64;
+}
+extern "C" {
+    #[link_name = "\u{1}__Z14HighwayHash128PKyPKcyRA2_y"]
+    pub fn HighwayHash128(
+        key: *mut u64,
+        bytes: *const ::std::os::raw::c_char,
+        size: u64,
+        hash: *mut HHResult128,
+    );
+}
+extern "C" {
+    #[link_name = "\u{1}__Z14HighwayHash256PKyPKcyRA4_y"]
+    pub fn HighwayHash256(
+        key: *mut u64,
+        bytes: *const ::std::os::raw::c_char,
+        size: u64,
+        hash: *mut HHResult256,
+    );
 }
 #[test]
 fn __bindgen_test_layout_pair_open0_uint64_uint64_close0_instantiation() {

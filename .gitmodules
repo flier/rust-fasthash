@@ -4,3 +4,9 @@
 [submodule "fasthash-sys/src/t1ha"]
 	path = fasthash-sys/src/t1ha
 	url = https://github.com/leo-yuriev/t1ha.git
+[submodule "fasthash-sys/src/xxHash"]
+	path = fasthash-sys/src/xxHash
+	url = https://github.com/Cyan4973/xxHash.git
+[submodule "fasthash-sys/src/highwayhash"]
+	path = fasthash-sys/src/highwayhash
+	url = https://github.com/google/highwayhash.git

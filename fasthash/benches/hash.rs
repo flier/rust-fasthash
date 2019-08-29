@@ -36,7 +36,7 @@ fn bench_memory(c: &mut Criterion) {
             },
             &PARAMS,
         )
-        .throughput(|&&size| Throughput::Bytes(size as u32)),
+        .throughput(|&&size| Throughput::Bytes(size as u64)),
     );
 }
 
@@ -86,7 +86,7 @@ fn bench_hash32(c: &mut Criterion) {
         .with_function("xx::hash32", move |b, &&size| {
             b.iter(|| xx::hash32_with_seed(&DATA[..size], SEED as u32));
         })
-        .throughput(|&&size| Throughput::Bytes(size as u32)),
+        .throughput(|&&size| Throughput::Bytes(size as u64)),
     );
 }
 
@@ -141,7 +141,7 @@ fn bench_hash64(c: &mut Criterion) {
         b.iter(|| xxh3::hash64_with_seed(&DATA[..size], SEED));
     });
 
-    if cfg!(target_feature = "sse4.2") {
+    if cfg!(any(feature = "sse4.2", target_feature = "sse4.2")) {
         bench = bench
             .with_function("metro::crc::hash64_1", move |b, &&size| {
                 b.iter(|| metro::crc::Hash64_1::hash_with_seed(&DATA[..size], SEED as u32));
@@ -153,7 +153,7 @@ fn bench_hash64(c: &mut Criterion) {
 
     c.bench(
         "hash64",
-        bench.throughput(|&&size| Throughput::Bytes(size as u32)),
+        bench.throughput(|&&size| Throughput::Bytes(size as u64)),
     );
 }
 
@@ -193,7 +193,7 @@ fn bench_hash128(c: &mut Criterion) {
         b.iter(|| t1ha2::Hash128AtOnce::hash_with_seed(&DATA[..size], SEED));
     });
 
-    if cfg!(target_feature = "sse4.2") {
+    if cfg!(any(feature = "sse4.2", target_feature = "sse4.2")) {
         bench = bench
             .with_function("city::crc::hash128", move |b, &&size| {
                 b.iter(|| city::crc::Hash128::hash_with_seed(&DATA[..size], SEED as u128));
@@ -208,7 +208,7 @@ fn bench_hash128(c: &mut Criterion) {
 
     c.bench(
         "hash128",
-        bench.throughput(|&&size| Throughput::Bytes(size as u32)),
+        bench.throughput(|&&size| Throughput::Bytes(size as u64)),
     );
 }
 

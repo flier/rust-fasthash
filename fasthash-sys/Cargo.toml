@@ -11,16 +11,20 @@ build = "build.rs"
 edition = "2018"
 
 [features]
-default = ["sse42", "aes", "avx", "avx2"]
-sse42 = []
+default = ["native"]
+native = []
 aes = []
-avx = ["aes"]
-avx2 = ["aes"]
+sse41 = []
+sse42 = ["sse41"]
+avx = []
+avx2 = ["avx"]
 gen = ["bindgen"]
 
 [dependencies]
 cfg-if = "0.1"
 
 [build-dependencies]
+lazy_static = "1.4"
+raw-cpuid = "6"
 cc = "1.0"
 bindgen = { version="0.51", optional=true }
