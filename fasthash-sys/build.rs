@@ -190,7 +190,7 @@ fn build_highway() {
         .file("src/highwayhash/highwayhash/hh_portable.cc")
         .file("src/highwayhash/highwayhash/c_bindings.cc");
 
-    if cfg!(target_arch = "x86_64") {
+    if cfg!(any(target_arch = "x86", target_arch = "x86_64")) {
         if support_sse41() {
             build
                 .flag("-msse4.1")

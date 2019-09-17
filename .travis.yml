@@ -38,8 +38,8 @@ before_script:
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then . ./.travis/before_install.sh llvm; fi
   - cd fasthash
 script:
-  - cargo build --verbose $FEATURES
-  - cargo test --verbose $FEATURES
+  - cargo build -vvv $FEATURES
+  - cargo test -vvv $FEATURES
 cache:
   cargo: true
   directories:
