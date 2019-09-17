@@ -788,7 +788,8 @@ pub struct XXH64_state_s {
     pub v4: XXH64_hash_t,
     pub mem64: [XXH64_hash_t; 4usize],
     pub memsize: XXH32_hash_t,
-    pub reserved: [XXH32_hash_t; 2usize],
+    pub reserved32: XXH32_hash_t,
+    pub reserved64: XXH64_hash_t,
 }
 #[test]
 fn bindgen_test_layout_XXH64_state_s() {
@@ -873,13 +874,23 @@ fn bindgen_test_layout_XXH64_state_s() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).reserved as *const _ as usize },
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).reserved32 as *const _ as usize },
         76usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH64_state_s),
             "::",
-            stringify!(reserved)
+            stringify!(reserved32)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH64_state_s>())).reserved64 as *const _ as usize },
+        80usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH64_state_s),
+            "::",
+            stringify!(reserved64)
         )
     );
 }
@@ -909,16 +920,16 @@ pub struct XXH3_state_s {
     pub acc: [XXH64_hash_t; 8usize],
     pub customSecret: [::std::os::raw::c_char; 192usize],
     pub buffer: [::std::os::raw::c_char; 256usize],
-    pub secret: *const ::std::os::raw::c_void,
     pub bufferedSize: XXH32_hash_t,
     pub nbStripesPerBlock: XXH32_hash_t,
     pub nbStripesSoFar: XXH32_hash_t,
+    pub secretLimit: XXH32_hash_t,
     pub reserved32: XXH32_hash_t,
     pub reserved32_2: XXH32_hash_t,
-    pub secretLimit: XXH32_hash_t,
     pub totalLen: XXH64_hash_t,
     pub seed: XXH64_hash_t,
     pub reserved64: XXH64_hash_t,
+    pub secret: *const ::std::os::raw::c_void,
     pub __bindgen_padding_0: u64,
 }
 #[test]
@@ -964,18 +975,8 @@ fn bindgen_test_layout_XXH3_state_s() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secret as *const _ as usize },
-        512usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH3_state_s),
-            "::",
-            stringify!(secret)
-        )
-    );
-    assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).bufferedSize as *const _ as usize },
-        520usize,
+        512usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -985,7 +986,7 @@ fn bindgen_test_layout_XXH3_state_s() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesPerBlock as *const _ as usize },
-        524usize,
+        516usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -995,7 +996,7 @@ fn bindgen_test_layout_XXH3_state_s() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesSoFar as *const _ as usize },
-        528usize,
+        520usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -1004,8 +1005,18 @@ fn bindgen_test_layout_XXH3_state_s() {
         )
     );
     assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secretLimit as *const _ as usize },
+        524usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(secretLimit)
+        )
+    );
+    assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).reserved32 as *const _ as usize },
-        532usize,
+        528usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -1015,7 +1026,7 @@ fn bindgen_test_layout_XXH3_state_s() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).reserved32_2 as *const _ as usize },
-        536usize,
+        532usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -1024,18 +1035,8 @@ fn bindgen_test_layout_XXH3_state_s() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secretLimit as *const _ as usize },
-        540usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH3_state_s),
-            "::",
-            stringify!(secretLimit)
-        )
-    );
-    assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).totalLen as *const _ as usize },
-        544usize,
+        536usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -1045,7 +1046,7 @@ fn bindgen_test_layout_XXH3_state_s() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).seed as *const _ as usize },
-        552usize,
+        544usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -1055,12 +1056,22 @@ fn bindgen_test_layout_XXH3_state_s() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).reserved64 as *const _ as usize },
-        560usize,
+        552usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
             "::",
             stringify!(reserved64)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secret as *const _ as usize },
+        560usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(secret)
         )
     );
 }
