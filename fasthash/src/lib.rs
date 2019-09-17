@@ -60,8 +60,13 @@ extern crate cfg_if;
 extern crate lazy_static;
 extern crate fasthash_sys as ffi;
 
-#[cfg(feature = "digest")]
-pub extern crate digest;
+cfg_if! {
+    if #[cfg(feature = "digest")] {
+        pub extern crate digest;
+
+        pub use crate::hasher::Output;
+    }
+}
 
 #[macro_use]
 mod hasher;
@@ -81,8 +86,7 @@ pub mod xx;
 pub mod xxh3;
 
 pub use crate::hasher::{
-    BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, Output, RandomState, Seed,
-    StreamHasher,
+    BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
 };
 
 pub use crate::farm::{Hasher128 as FarmHasherExt, Hasher64 as FarmHasher};
