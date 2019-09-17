@@ -68,18 +68,21 @@ assert_eq!(map[&37], "c");
 ## Hash Functions
 
 - Modern Hash Functions
-  - [x] [City Hash](https://github.com/google/cityhash)
-  - [x] [Farm Hash](https://github.com/google/farmhash)
-  - [x] [Metro Hash](https://github.com/jandrewrogers/MetroHash)
-  - [x] [Mum Hash](https://github.com/vnmakarov/mum-hash)
-  - [x] [Murmur Hash](https://sites.google.com/site/murmurhash/)
-  - [x] [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
-  - [x] [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
-  - [x] [T1ha Hash](https://github.com/leo-yuriev/t1ha)
-  - [x] [xx Hash](https://github.com/Cyan4973/xxHash)
+  - [City Hash](https://github.com/google/cityhash)
+  - [Farm Hash](https://github.com/google/farmhash)
+  - [Metro Hash](https://github.com/jandrewrogers/MetroHash)
+  - [Mum Hash](https://github.com/vnmakarov/mum-hash)
+  - [Murmur Hash](https://sites.google.com/site/murmurhash/)
+  - [Lookup3](https://en.wikipedia.org/wiki/Jenkins_hash_function)
+  - [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
+  - [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
+  - [T1ha Hash](https://github.com/leo-yuriev/t1ha)
+  - [xx Hash](https://github.com/Cyan4973/xxHash) with  **experimental** [XXH3](https://github.com/Cyan4973/xxHash#new-experimental-hash-algorithm) hash algorithm
+  - [Highway Hash](https://github.com/google/highwayhash)
 - Compatibility
-  - [x] [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
-  - [x] std::collections::{[HashMap](https://doc.rust-lang.org/std/collections/struct.HashMap.html), [HashSet](https://doc.rust-lang.org/std/collections/struct.HashSet.html)} with `RandomState`
+  - [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
+  - std::collections::{[HashMap](https://doc.rust-lang.org/std/collections/struct.HashMap.html), [HashSet](https://doc.rust-lang.org/std/collections/struct.HashSet.html)} with `RandomState`
+  - [Digest](https://docs.rs/digest/0.8.1/digest/trait.Digest.html) (optional)
 
 ## Benchmark
 
