@@ -20,8 +20,10 @@ matrix:
             - gcc-6
             - g++-6
       env:
-        - CC=gcc-6
-        - CXX=g++-6
+        global:
+          - CC=gcc-6
+          - CXX=g++-6
+          - CFLAGS=-lgcc
   allow_failures:
     - rust: nightly
 compiler:
