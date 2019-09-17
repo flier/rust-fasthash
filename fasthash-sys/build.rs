@@ -192,16 +192,16 @@ fn build_highway() {
 
     if cfg!(target_arch = "x86_64") {
         if support_sse41() {
-            build.flag("-msse4.1");
+            build
+                .flag("-msse4.1")
+                .file("src/highwayhash/highwayhash/hh_sse41.cc");
         }
 
         if support_avx2() {
-            build.flag("-mavx2");
+            build
+                .flag("-mavx2")
+                .file("src/highwayhash/highwayhash/hh_avx2.cc");
         }
-
-        build
-            .file("src/highwayhash/highwayhash/hh_sse41.cc")
-            .file("src/highwayhash/highwayhash/hh_avx2.cc");
     }
 
     build.static_flag(true).compile("highwayhash");

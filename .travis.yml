@@ -4,29 +4,35 @@ rust:
   - stable
   - beta
   - nightly
-os:
-  - osx
-  - linux
 matrix:
+  include:
+    - os: osx
+      addons:
+        homebrew:
+          packages:
+            - llvm
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-6
+            - g++-6
+      env:
+        - CC=gcc-6
+        - CXX=g++-6
   allow_failures:
     - rust: nightly
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-6
-      - g++-6
 compiler:
   - gcc
   - clang
 env:
   global:
-    - LLVM_VERSION=3.9
+    - LLVM_VERSION=6.0
     - RUST_BACKTRACE=full
     - RUSTFLAGS="-C target-cpu=native"
 before_script:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install llvm; fi
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then . ./.travis/before_install.sh llvm; fi
   - cd fasthash
 script:
