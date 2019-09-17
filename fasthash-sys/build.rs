@@ -190,15 +190,17 @@ fn build_highway() {
         .file("src/highwayhash/highwayhash/hh_portable.cc")
         .file("src/highwayhash/highwayhash/c_bindings.cc");
 
-    if support_sse41() {
-        build
-            .flag("-msse4.1")
-            .file("src/highwayhash/highwayhash/hh_sse41.cc");
-    }
+    if cfg!(target_arch = "x86_64") {
+        if support_sse41() {
+            build.flag("-msse4.1");
+        }
 
-    if support_avx2() {
+        if support_avx2() {
+            build.flag("-mavx2");
+        }
+
         build
-            .flag("-mavx2")
+            .file("src/highwayhash/highwayhash/hh_sse41.cc")
             .file("src/highwayhash/highwayhash/hh_avx2.cc");
     }
 
