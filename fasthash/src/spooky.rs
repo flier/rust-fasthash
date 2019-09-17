@@ -88,27 +88,24 @@ impl FastHash for Hash32 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{spooky::Hasher32, FastHasher};
-
-let mut h = Hasher32::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 3907268544);
-
-h.write(b"world");
-assert_eq!(h.finish(), 3874077464);
-```
-"#]
-    Hasher32,
-    Hash32
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{spooky::Hasher32, FastHasher};
+    ///
+    /// let mut h = Hasher32::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 3907268544);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 3874077464);
+    /// ```
+    Hasher32(Hash32) -> u32
+}
 
 /// `SpookyHash` 64-bit hash functions
 ///
@@ -146,27 +143,24 @@ impl FastHash for Hash64 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{spooky::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 6105954949053820864);
-
-h.write(b"world");
-assert_eq!(h.finish(), 18412934266828208920);
-```
-"#]
-    Hasher64,
-    Hash64
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{spooky::Hasher64, FastHasher};
+    ///
+    /// let mut h = Hasher64::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 6105954949053820864);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 18412934266828208920);
+    /// ```
+    Hasher64(Hash64) -> u64
+}
 
 /// `SpookyHash` 128-bit hash functions
 ///
@@ -280,6 +274,7 @@ impl HasherExt for Hasher128 {
 
 impl FastHasher for Hasher128 {
     type Seed = (u64, u64);
+    type Output = u128;
 
     #[inline(always)]
     fn with_seed(seed: Self::Seed) -> Hasher128 {
@@ -295,7 +290,7 @@ impl FastHasher for Hasher128 {
 
 impl StreamHasher for Hasher128 {}
 
-impl_fasthash!(Hasher128, Hash128);
+impl_build_hasher!(Hasher128, Hash128);
 
 /// `SpookyHash` 32-bit hash functions for a byte array.
 #[inline(always)]

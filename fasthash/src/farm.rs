@@ -159,27 +159,24 @@ impl FastHash for Hash32 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{farm::Hasher32, FastHasher};
-
-let mut h = Hasher32::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 2535641019);
-
-h.write(b"world");
-assert_eq!(h.finish(), 2214725017);
-```
-"#]
-    Hasher32,
-    Hash32
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{farm::Hasher32, FastHasher};
+    ///
+    /// let mut h = Hasher32::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 2535641019);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 2214725017);
+    /// ```
+    Hasher32(Hash32) -> u32
+}
 
 /// `FarmHash` 64-bit hash functions
 ///
@@ -239,27 +236,24 @@ impl FastHash for Hash64 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{farm::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 14403600180753024522);
-
-h.write(b"world");
-assert_eq!(h.finish(), 1077737941828767314);
-```
-"#]
-    Hasher64,
-    Hash64
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{farm::Hasher64, FastHasher};
+    ///
+    /// let mut h = Hasher64::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 14403600180753024522);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 1077737941828767314);
+    /// ```
+    Hasher64(Hash64) -> u64
+}
 
 /// `FarmHash` 128-bit hash functions
 ///
@@ -310,27 +304,24 @@ impl FastHash for Hash128 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{farm::Hasher128, FastHasher, HasherExt};
-
-let mut h = Hasher128::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 268320354145561377850759526474794913342);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 296377541162803340912737385112946231361);
-```
-"#]
-    Hasher128,
-    Hash128
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{farm::Hasher128, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 268320354145561377850759526474794913342);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 296377541162803340912737385112946231361);
+    /// ```
+    Hasher128(Hash128) -> u128
+}
 
 /// `FarmHash` 32-bit hash function for a byte array.
 ///

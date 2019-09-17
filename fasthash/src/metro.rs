@@ -80,27 +80,24 @@ impl FastHash for Hash64_1 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::Hasher64_1, FastHasher};
-
-let mut h = Hasher64_1::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 15663805623366682943);
-
-h.write(b"world");
-assert_eq!(h.finish(), 4615394705531318333);
-```
-"#]
-    Hasher64_1,
-    Hash64_1
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{metro::Hasher64_1, FastHasher};
+    ///
+    /// let mut h = Hasher64_1::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 15663805623366682943);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 4615394705531318333);
+    /// ```
+    Hasher64_1(Hash64_1) -> u64
+}
 
 /// `MetroHash` 64-bit hash functions
 ///
@@ -137,27 +134,24 @@ impl FastHash for Hash64_2 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::Hasher64_2, FastHasher};
-
-let mut h = Hasher64_2::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 12352443828090181231);
-
-h.write(b"world");
-assert_eq!(h.finish(), 13816693401637061492);
-```
-"#]
-    Hasher64_2,
-    Hash64_2
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{metro::Hasher64_2, FastHasher};
+    ///
+    /// let mut h = Hasher64_2::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 12352443828090181231);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 13816693401637061492);
+    /// ```
+    Hasher64_2(Hash64_2) -> u64
+}
 
 /// `MetroHash` 128-bit hash functions
 ///
@@ -203,27 +197,24 @@ impl FastHash for Hash128_1 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::Hasher128_1, FastHasher, HasherExt};
-
-let mut h = Hasher128_1::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 62770881785623818170589043281119530380);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 168124756093089300765778527570074281113);
-```
-"#]
-    Hasher128_1,
-    Hash128_1
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{metro::Hasher128_1, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128_1::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 62770881785623818170589043281119530380);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 168124756093089300765778527570074281113);
+    /// ```
+    Hasher128_1(Hash128_1) -> u128
+}
 
 /// `MetroHash` 128-bit hash functions
 ///
@@ -269,27 +260,24 @@ impl FastHash for Hash128_2 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::Hasher128_2, FastHasher, HasherExt};
-
-let mut h = Hasher128_2::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 159488125173835797791070285137966695505);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 296295343271043311657399689121923046467);
-```
-"#]
-    Hasher128_2,
-    Hash128_2
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{metro::Hasher128_2, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128_2::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 159488125173835797791070285137966695505);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 296295343271043311657399689121923046467);
+    /// ```
+    Hasher128_2(Hash128_2) -> u128
+}
 
 /// hash functions using HW CRC instruction.
 #[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
@@ -334,27 +322,24 @@ pub mod crc {
         }
     }
 
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::crc::Hasher64_1, FastHasher};
-
-let mut h = Hasher64_1::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 6455825309044375053);
-
-h.write(b"world");
-assert_eq!(h.finish(), 15512397028293617890);
-```
-"#]
-        Hasher64_1,
-        Hash64_1
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{metro::crc::Hasher64_1, FastHasher};
+        ///
+        /// let mut h = Hasher64_1::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish(), 6455825309044375053);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish(), 15512397028293617890);
+        /// ```
+        Hasher64_1(Hash64_1) -> u64
+    }
 
     /// `MetroHash` 64-bit hash functions using HW CRC instruction.
     ///
@@ -394,27 +379,24 @@ assert_eq!(h.finish(), 15512397028293617890);
         }
     }
 
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::crc::Hasher64_2, FastHasher};
-
-let mut h = Hasher64_2::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 6093890398749886132);
-
-h.write(b"world");
-assert_eq!(h.finish(), 11309399771810154329);
-```
-"#]
-        Hasher64_2,
-        Hash64_2
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{metro::crc::Hasher64_2, FastHasher};
+        ///
+        /// let mut h = Hasher64_2::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish(), 6093890398749886132);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish(), 11309399771810154329);
+        /// ```
+        Hasher64_2(Hash64_2) -> u64
+    }
 
     /// `MetroHash` 128-bit hash functions using HW CRC instruction.
     ///
@@ -460,27 +442,24 @@ assert_eq!(h.finish(), 11309399771810154329);
         }
     }
 
-    impl_hasher_ext!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::crc::Hasher128_1, FastHasher, HasherExt};
-
-let mut h = Hasher128_1::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 305698986830952061993175238670398112766);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 330807979290440384643858402038145360287);
-```
-"#]
-        Hasher128_1,
-        Hash128_1
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{metro::crc::Hasher128_1, FastHasher, HasherExt};
+        ///
+        /// let mut h = Hasher128_1::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish_ext(), 305698986830952061993175238670398112766);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish_ext(), 330807979290440384643858402038145360287);
+        /// ```
+        Hasher128_1(Hash128_1) -> u128
+    }
 
     /// `MetroHash` 128-bit hash functions using HW CRC instruction.
     ///
@@ -526,27 +505,24 @@ assert_eq!(h.finish_ext(), 330807979290440384643858402038145360287);
         }
     }
 
-    impl_hasher_ext!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{metro::crc::Hasher128_2, FastHasher, HasherExt};
-
-let mut h = Hasher128_2::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 72185604606880289212099011688929773703);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 332348429832512530891646387991260171468);
-```
-"#]
-        Hasher128_2,
-        Hash128_2
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{metro::crc::Hasher128_2, FastHasher, HasherExt};
+        ///
+        /// let mut h = Hasher128_2::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish_ext(), 72185604606880289212099011688929773703);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish_ext(), 332348429832512530891646387991260171468);
+        /// ```
+        Hasher128_2(Hash128_2) -> u128
+    }
 }
 
 cfg_if! {

@@ -59,27 +59,24 @@ impl FastHash for Hash32 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{lookup3::Hasher32, FastHasher};
-
-let mut h = Hasher32::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 885767278);
-
-h.write(b"world");
-assert_eq!(h.finish(), 1392336737);
-```
-"#]
-    Hasher32,
-    Hash32
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{lookup3::Hasher32, FastHasher};
+    ///
+    /// let mut h = Hasher32::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 885767278);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 1392336737);
+    /// ```
+    Hasher32(Hash32) -> u32
+}
 
 /// `Lookup3` 32-bit hash functions for a byte array.
 #[inline(always)]

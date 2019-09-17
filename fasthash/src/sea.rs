@@ -63,10 +63,11 @@ impl FastHash for Hash64 {
     }
 }
 
-impl_fasthash!(Hasher64, Hash64);
+impl_build_hasher!(Hasher64, Hash64);
 
 impl FastHasher for Hasher64 {
     type Seed = (u64, u64, u64, u64);
+    type Output = u64;
 
     #[inline(always)]
     fn new() -> Self {

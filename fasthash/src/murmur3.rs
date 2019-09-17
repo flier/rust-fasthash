@@ -71,27 +71,24 @@ impl FastHash for Hash32 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{murmur3::Hasher32, FastHasher};
-
-let mut h = Hasher32::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 613153351);
-
-h.write(b"world");
-assert_eq!(h.finish(), 2687965642);
-```
-"#]
-    Hasher32,
-    Hash32
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{murmur3::Hasher32, FastHasher};
+    ///
+    /// let mut h = Hasher32::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 613153351);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 2687965642);
+    /// ```
+    Hasher32(Hash32) -> u32
+}
 
 /// `MurmurHash3` 128-bit hash functions for 32-bit processors
 ///
@@ -137,27 +134,24 @@ impl FastHash for Hash128_x86 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{murmur3::Hasher128_x86, FastHasher, HasherExt};
-
-let mut h = Hasher128_x86::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 205839232668418009241864179939306390688);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 83212725615010754952022132390053357814);
-```
-"#]
-    Hasher128_x86,
-    Hash128_x86
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{murmur3::Hasher128_x86, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128_x86::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 205839232668418009241864179939306390688);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 83212725615010754952022132390053357814);
+    /// ```
+    Hasher128_x86(Hash128_x86) -> u128
+}
 
 /// `MurmurHash3` 128-bit hash functions for 64-bit processors
 ///
@@ -203,27 +197,24 @@ impl FastHash for Hash128_x64 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{murmur3::Hasher128_x64, FastHasher, HasherExt};
-
-let mut h = Hasher128_x64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 121118445609844952839898260755277781762);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 216280293825344914020777844322685271162);
-```
-"#]
-    Hasher128_x64,
-    Hash128_x64
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{murmur3::Hasher128_x64, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128_x64::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 121118445609844952839898260755277781762);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 216280293825344914020777844322685271162);
+    /// ```
+    Hasher128_x64(Hash128_x64) -> u128
+}
 
 /// `MurmurHash3` 32-bit hash functions for a byte array.
 #[inline(always)]

@@ -1,7 +1,7 @@
-use std::cell::RefCell;
-use std::hash::{BuildHasher, Hasher};
+use core::cell::RefCell;
+use core::hash::{BuildHasher, Hasher};
+use core::marker::PhantomData;
 use std::io;
-use std::marker::PhantomData;
 
 use num_traits::PrimInt;
 use xoroshiro128::{Rng, SeedableRng, Xoroshiro128Rng};
@@ -42,6 +42,9 @@ where
     /// The seed to generate hash value.
     type Seed: Default + Copy + From<Seed>;
 
+    /// The output type
+    type Output;
+
     /// Constructs a new `FastHasher`.
     #[inline(always)]
     fn new() -> Self {
@@ -49,7 +52,7 @@ where
     }
 
     /// Constructs a new `FastHasher` with a random seed.
-    fn new_with_random_seed() -> Self {
+    fn with_random_seed() -> Self {
         Self::with_seed(Seed::gen().into())
     }
 
@@ -259,7 +262,7 @@ impl<T: FastHash> Default for RandomState<T> {
 }
 
 #[doc(hidden)]
-macro_rules! impl_fasthash {
+macro_rules! impl_build_hasher {
     ($hasher:ident, $hash:ident) => {
         impl ::std::hash::BuildHasher for $hash {
             type Hasher = $hasher;
@@ -276,10 +279,100 @@ macro_rules! impl_fasthash {
     };
 }
 
+impl<T> HasherExt for T
+where
+    T: TrivialHasher + FastHasher<Output = u128>,
+{
+    #[inline(always)]
+    fn finish_ext(&self) -> u128 {
+        self.finalize()
+    }
+}
+
+#[doc(hidden)]
+macro_rules! impl_digest {
+    ($hasher:ident, $output:ident) => {
+        #[cfg(feature = "digest")]
+        impl digest::Digest for $hasher {
+            type OutputSize = <$output as crate::hasher::Output>::Size;
+
+            fn new() -> Self {
+                Self::default()
+            }
+
+            fn input<B: AsRef<[u8]>>(&mut self, data: B) {
+                use core::hash::Hasher;
+
+                self.write(data.as_ref());
+            }
+
+            fn chain<B: AsRef<[u8]>>(mut self, data: B) -> Self
+            where
+                Self: Sized,
+            {
+                self.input(data);
+                self
+            }
+
+            fn result(self) -> digest::generic_array::GenericArray<u8, Self::OutputSize> {
+                use crate::hasher::TrivialHasher;
+
+                self.finalize().to_ne_bytes().into()
+            }
+
+            fn result_reset(
+                &mut self,
+            ) -> digest::generic_array::GenericArray<u8, Self::OutputSize> {
+                let result = self.clone().result();
+                self.reset();
+                result
+            }
+
+            fn reset(&mut self) {
+                *self = Self::default();
+            }
+
+            fn output_size() -> usize {
+                core::mem::size_of::<$output>()
+            }
+
+            fn digest(data: &[u8]) -> digest::generic_array::GenericArray<u8, Self::OutputSize> {
+                Self::default().chain(data).result()
+            }
+        }
+    };
+}
+
+cfg_if! {
+    if #[cfg(feature = "digest")] {
+        /// The `Digest` output type
+        pub trait Output {
+            /// The `Digest` output size
+            type Size;
+        }
+
+        impl Output for u32 {
+            type Size = digest::generic_array::typenum::U4;
+        }
+
+        impl Output for u64 {
+            type Size = digest::generic_array::typenum::U8;
+        }
+
+        impl Output for u128 {
+            type Size = digest::generic_array::typenum::U16;
+        }
+    }
+}
+
+pub trait TrivialHasher: FastHasher {
+    fn finalize(&self) -> Self::Output;
+}
+
 #[doc(hidden)]
 #[macro_export]
-macro_rules! impl_hasher {
-    ($(#[$meta:meta])* $hasher:ident, $hash:ident) => {
+macro_rules! trivial_hasher {
+    ($(#[$meta:meta])* $hasher:ident ( $hash:ident ) -> $output:ident) => {
         /// An implementation of `std::hash::Hasher`.
         #[derive(Clone, Debug)]
         $(#[$meta])*
@@ -294,16 +387,25 @@ macro_rules! impl_hasher {
             }
         }
 
-        impl ::std::hash::Hasher for $hasher {
+        impl $crate::hasher::TrivialHasher for $hasher {
             #[inline(always)]
-            fn finish(&self) -> u64 {
+            fn finalize(&self) -> $output {
                 self.seed
                     .map_or_else(
                         || $hash::hash(&self.bytes),
                         |seed| $hash::hash_with_seed(&self.bytes, seed),
                     )
-                    .into()
             }
+        }
+
+        impl ::std::hash::Hasher for $hasher {
+            #[inline(always)]
+            fn finish(&self) -> u64 {
+                use crate::hasher::TrivialHasher;
+
+                self.finalize() as u64
+            }
+
             #[inline(always)]
             fn write(&mut self, bytes: &[u8]) {
                 self.bytes.extend_from_slice(bytes)
@@ -311,6 +413,7 @@ macro_rules! impl_hasher {
         }
 
         impl $crate::hasher::FastHasher for $hasher {
+            type Output = $output;
             type Seed = <$hash as $crate::hasher::FastHash>::Seed;
 
             #[inline(always)]
@@ -341,88 +444,8 @@ macro_rules! impl_hasher {
             }
         }
 
-        impl_fasthash!($hasher, $hash);
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! impl_hasher_ext {
-    ($(#[$meta:meta])* $hasher:ident, $hash:ident) => {
-        /// An implementation of `std::hash::Hasher` and `fasthash::HasherExt`.
-        #[derive(Clone, Debug)]
-        $(#[$meta])*
-        pub struct $hasher {
-            seed: Option<<$hash as $crate::hasher::FastHash>::Seed>,
-            bytes: Vec<u8>,
-        }
-
-        impl $hasher {
-            #[inline(always)]
-            fn finalize(&self) -> u128 {
-                self.seed.map_or_else(
-                    || $hash::hash(&self.bytes),
-                    |seed| $hash::hash_with_seed(&self.bytes, seed),
-                )
-            }
-        }
-
-        impl Default for $hasher {
-            fn default() -> Self {
-                <$hasher as $crate::hasher::FastHasher>::new()
-            }
-        }
-
-        impl ::std::hash::Hasher for $hasher {
-            #[inline(always)]
-            fn finish(&self) -> u64 {
-                self.finalize() as u64
-            }
-            #[inline(always)]
-            fn write(&mut self, bytes: &[u8]) {
-                self.bytes.extend_from_slice(bytes)
-            }
-        }
-
-        impl $crate::hasher::HasherExt for $hasher {
-            #[inline(always)]
-            fn finish_ext(&self) -> u128 {
-                self.finalize()
-            }
-        }
-
-        impl $crate::hasher::FastHasher for $hasher {
-            type Seed = <$hash as $crate::hasher::FastHash>::Seed;
-
-            #[inline(always)]
-            fn new() -> Self {
-                <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, None)
-            }
-
-            #[inline(always)]
-            fn with_seed(seed: Self::Seed) -> Self {
-                <Self as $crate::hasher::BufHasher>::with_capacity_and_seed(64, Some(seed))
-            }
-        }
-
-        impl ::std::convert::AsRef<[u8]> for $hasher {
-            #[inline(always)]
-            fn as_ref(&self) -> &[u8] {
-                &self.bytes
-            }
-        }
-
-        impl $crate::hasher::BufHasher for $hasher {
-            #[inline(always)]
-            fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self {
-                $hasher {
-                    seed,
-                    bytes: Vec::with_capacity(capacity),
-                }
-            }
-        }
-
-        impl_fasthash!($hasher, $hash);
+        impl_build_hasher!($hasher, $hash);
+        impl_digest!($hasher, $output);
     };
 }
 

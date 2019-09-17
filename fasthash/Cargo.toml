@@ -27,13 +27,15 @@ lazy_static = "1.3"
 num-traits = "0.2"
 xoroshiro128 = "0.3"
 seahash = "3.0"
+digest = { version = "0.8", optional = true }
+
 fasthash-sys = { version = "0.4", path = "../fasthash-sys" }
 
 [dev-dependencies]
 criterion = "0.3"
 
 [build-dependencies]
-raw-cpuid = "6"
+raw-cpuid = "7"
 
 [[bench]]
 name = "hash"

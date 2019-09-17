@@ -211,6 +211,7 @@ pub mod t1ha2 {
 
     impl FastHasher for Hasher128 {
         type Seed = (u64, u64);
+        type Output = u128;
 
         #[inline(always)]
         fn with_seed(seed: (u64, u64)) -> Self {
@@ -227,8 +228,8 @@ pub mod t1ha2 {
 
     impl StreamHasher for Hasher128 {}
 
-    impl_fasthash!(Hasher128, Hash64AtOnce);
-    impl_fasthash!(Hasher128, Hash128AtOnce);
+    impl_build_hasher!(Hasher128, Hash64AtOnce);
+    impl_build_hasher!(Hasher128, Hash128AtOnce);
 }
 
 ///
@@ -289,27 +290,24 @@ pub mod t1ha1 {
         }
     }
 
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{t1ha1::Hasher64Le, FastHasher};
-
-let mut h = Hasher64Le::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 12810198970222070563);
-
-h.write(b"world");
-assert_eq!(h.finish(), 16997942636322422782);
-```
-"#]
-        Hasher64Le,
-        Hash64Le
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{t1ha1::Hasher64Le, FastHasher};
+        ///
+        /// let mut h = Hasher64Le::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish(), 12810198970222070563);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish(), 16997942636322422782);
+        /// ```
+        Hasher64Le(Hash64Le) -> u64
+    }
 
     /// `T1Hash` 64-bit hash functions for 64-bit big-endian platforms.
     ///
@@ -344,27 +342,24 @@ assert_eq!(h.finish(), 16997942636322422782);
         }
     }
 
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{t1ha1::Hasher64Be, FastHasher};
-
-let mut h = Hasher64Be::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 14880640220959195744);
-
-h.write(b"world");
-assert_eq!(h.finish(), 15825971635414726702);
-```
-"#]
-        Hasher64Be,
-        Hash64Be
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{t1ha1::Hasher64Be, FastHasher};
+        ///
+        /// let mut h = Hasher64Be::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish(), 14880640220959195744);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish(), 15825971635414726702);
+        /// ```
+        Hasher64Be(Hash64Be) -> u64
+    }
 }
 
 ///
@@ -416,27 +411,24 @@ pub mod t1ha0 {
         }
     }
 
-    impl_hasher!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{t1ha0::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 3053206065578472372);
-
-h.write(b"world");
-assert_eq!(h.finish(), 15302361616348747620);
-```
-"#]
-        Hasher64,
-        Hash64
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{t1ha0::Hasher64, FastHasher};
+        ///
+        /// let mut h = Hasher64::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish(), 3053206065578472372);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish(), 15302361616348747620);
+        /// ```
+        Hasher64(Hash64) -> u64
+    }
 }
 
 /// `T1Hash` 64-bit hash functions for a byte array.

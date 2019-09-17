@@ -129,27 +129,24 @@ impl FastHash for Hash64 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{highway::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 16088634173958985784);
-
-h.write(b"world");
-assert_eq!(h.finish(), 14621305948273251148);
-```
-"#]
-    Hasher64,
-    Hash64
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{highway::Hasher64, FastHasher};
+    ///
+    /// let mut h = Hasher64::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 16088634173958985784);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 14621305948273251148);
+    /// ```
+    Hasher64(Hash64) -> u64
+}
 
 /// An implementation of `std::hash::Hasher`.
 ///
@@ -188,24 +185,21 @@ impl FastHash for Hash128 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{highway::Hasher128, FastHasher, HasherExt};
-
-let mut h = Hasher128::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 25004695140143629173192629076022730068);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 11585459712122041444150834631428357454);
-```
-"#]
-    Hasher128,
-    Hash128
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{highway::Hasher128, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 25004695140143629173192629076022730068);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 11585459712122041444150834631428357454);
+    /// ```
+    Hasher128(Hash128) -> u128
+}

@@ -192,6 +192,7 @@ impl Hasher for Hasher32 {
 
 impl FastHasher for Hasher32 {
     type Seed = u32;
+    type Output = u32;
 
     #[inline(always)]
     fn with_seed(seed: u32) -> Self {
@@ -207,7 +208,7 @@ impl FastHasher for Hasher32 {
 
 impl StreamHasher for Hasher32 {}
 
-impl_fasthash!(Hasher32, Hash32);
+impl_build_hasher!(Hasher32, Hash32);
 
 /// An implementation of `std::hash::Hasher`.
 ///
@@ -278,6 +279,7 @@ impl Hasher for Hasher64 {
 
 impl FastHasher for Hasher64 {
     type Seed = u64;
+    type Output = u64;
 
     #[inline(always)]
     fn with_seed(seed: u64) -> Self {
@@ -293,4 +295,4 @@ impl FastHasher for Hasher64 {
 
 impl StreamHasher for Hasher64 {}
 
-impl_fasthash!(Hasher64, Hash64);
+impl_build_hasher!(Hasher64, Hash64);

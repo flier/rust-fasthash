@@ -76,27 +76,24 @@ impl FastHash for Hash32 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{murmur::Hasher32, FastHasher};
-
-let mut h = Hasher32::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 1773990585);
-
-h.write(b"world");
-assert_eq!(h.finish(), 567127608);
-```
-"#]
-    Hasher32,
-    Hash32
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{murmur::Hasher32, FastHasher};
+    ///
+    /// let mut h = Hasher32::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 1773990585);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 567127608);
+    /// ```
+    Hasher32(Hash32) -> u32
+}
 
 /// `MurmurHash` 32-bit aligned hash functions
 ///
@@ -128,27 +125,24 @@ impl FastHash for Hash32Aligned {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{murmur::Hasher32Aligned, FastHasher};
-
-let mut h = Hasher32Aligned::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 1773990585);
-
-h.write(b"world");
-assert_eq!(h.finish(), 567127608);
-```
-"#]
-    Hasher32Aligned,
-    Hash32Aligned
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{murmur::Hasher32Aligned, FastHasher};
+    ///
+    /// let mut h = Hasher32Aligned::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 1773990585);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 567127608);
+    /// ```
+    Hasher32Aligned(Hash32Aligned) -> u32
+}
 
 /// `MurmurHash` 32-bit hash functions for a byte array.
 #[inline(always)]

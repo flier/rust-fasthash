@@ -89,27 +89,24 @@ impl FastHash for Hash64 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{mum::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 9723359729180093834);
-
-h.write(b"world");
-assert_eq!(h.finish(), 9122204010978352975);
-```
-"#]
-    Hasher64,
-    Hash64
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{mum::Hasher64, FastHasher};
+    ///
+    /// let mut h = Hasher64::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 9723359729180093834);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 9122204010978352975);
+    /// ```
+    Hasher64(Hash64) -> u64
+}
 
 /// `MumHash` 64-bit hash functions for a byte array.
 #[inline(always)]

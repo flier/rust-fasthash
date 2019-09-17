@@ -156,27 +156,24 @@ impl FastHash for Hash32 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{city::Hasher32, FastHasher};
-
-let mut h = Hasher32::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 2039911270);
-
-h.write(b"world");
-assert_eq!(h.finish(), 4037657980);
-```
-"#]
-    Hasher32,
-    Hash32
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{city::Hasher32, FastHasher};
+    ///
+    /// let mut h = Hasher32::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 2039911270);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 4037657980);
+    /// ```
+    Hasher32(Hash32) -> u32
+}
 
 /// `CityHash` 64-bit hash functions
 ///
@@ -238,27 +235,24 @@ impl FastHash for Hash64 {
     }
 }
 
-impl_hasher!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{city::Hasher64, FastHasher};
-
-let mut h = Hasher64::new();
-
-h.write(b"hello");
-assert_eq!(h.finish(), 2578220239953316063);
-
-h.write(b"world");
-assert_eq!(h.finish(), 16622738483577116029);
-```
-"#]
-    Hasher64,
-    Hash64
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{city::Hasher64, FastHasher};
+    ///
+    /// let mut h = Hasher64::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish(), 2578220239953316063);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish(), 16622738483577116029);
+    /// ```
+    Hasher64(Hash64) -> u64
+}
 
 /// `CityHash` 128-bit hash functions
 ///
@@ -309,27 +303,24 @@ impl FastHash for Hash128 {
     }
 }
 
-impl_hasher_ext!(
-    #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{city::Hasher128, FastHasher, HasherExt};
-
-let mut h = Hasher128::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
-```
-"#]
-    Hasher128,
-    Hash128
-);
+trivial_hasher! {
+    /// # Example
+    ///
+    /// ```
+    /// use std::hash::Hasher;
+    ///
+    /// use fasthash::{city::Hasher128, FastHasher, HasherExt};
+    ///
+    /// let mut h = Hasher128::new();
+    ///
+    /// h.write(b"hello");
+    /// assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
+    ///
+    /// h.write(b"world");
+    /// assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
+    /// ```
+    Hasher128(Hash128) -> u128
+}
 
 /// `CityHash` hash functions using HW CRC instruction.
 #[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
@@ -388,27 +379,24 @@ pub mod crc {
         }
     }
 
-    impl_hasher_ext!(
-        #[doc = r#"
-# Example
-
-```
-use std::hash::Hasher;
-
-use fasthash::{city::crc::Hasher128, FastHasher, HasherExt};
-
-let mut h = Hasher128::new();
-
-h.write(b"hello");
-assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
-
-h.write(b"world");
-assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
-```
-"#]
-        Hasher128,
-        Hash128
-    );
+    trivial_hasher! {
+        /// # Example
+        ///
+        /// ```
+        /// use std::hash::Hasher;
+        ///
+        /// use fasthash::{city::crc::Hasher128, FastHasher, HasherExt};
+        ///
+        /// let mut h = Hasher128::new();
+        ///
+        /// h.write(b"hello");
+        /// assert_eq!(h.finish_ext(), 321050694807308650239948771137913318383);
+        ///
+        /// h.write(b"world");
+        /// assert_eq!(h.finish_ext(), 137438709495761624905137796394169174828);
+        /// ```
+        Hasher128(Hash128) -> u128
+    }
 }
 
 /// `CityHash` 32-bit hash functions for a byte array.
