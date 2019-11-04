@@ -21,9 +21,9 @@ let h = metro::hash64_with_seed("hello world", 123);
 ### `std::hash::Hash`
 
 ```rust
-use std::hash::Hash;
+use std::hash::{Hash, Hasher};
 
-use fasthash::MetroHasher;
+use fasthash::{MetroHasher, FastHasher};
 
 fn hash<T: Hash>(t: &T) -> u64 {
     let mut s = MetroHasher::new();
@@ -39,9 +39,9 @@ hash(&"hello world");
 ```rust
 use std::collections::HashSet;
 
-use fasthash::spooky::SpookyHash128;
+use fasthash::spooky::Hash128;
 
-let mut set = HashSet::with_hasher(SpookyHash128);
+let mut set = HashSet::with_hasher(Hash128);
 
 set.insert(2);
 ```
@@ -52,9 +52,9 @@ set.insert(2);
 use std::collections::HashMap;
 
 use fasthash::RandomState;
-use fasthash::city::CityHash64;
+use fasthash::city::Hash64;
 
-let s = RandomState::<CityHash64>::new();
+let s = RandomState::<Hash64>::new();
 let mut map = HashMap::with_hasher(s);
 
 assert_eq!(map.insert(37, "a"), None);
