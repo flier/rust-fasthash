@@ -26,7 +26,9 @@ use std::hash::{Hash, Hasher};
 use fasthash::{MetroHasher, FastHasher};
 
 fn hash<T: Hash>(t: &T) -> u64 {
-    let mut s = MetroHasher::new();
+    // Or use any of the `*Hasher` struct's available as aliases from 
+    // root or in their respective modules as Hasher32/64 and some 128.
+    let mut s = MetroHasher::default();
     t.hash(&mut s);
     s.finish()
 }
