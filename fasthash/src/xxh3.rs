@@ -88,7 +88,7 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u128 {
 /// h.write(b"world");
 /// assert_eq!(h.finish(), 5799861518677282342);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {
@@ -207,7 +207,7 @@ impl_build_hasher!(Hasher64, Hash64);
 /// h.write(b"world");
 /// assert_eq!(h.finish_ext(), 235571704612606125258077068431826739245);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128;
 
 impl FastHash for Hash128 {

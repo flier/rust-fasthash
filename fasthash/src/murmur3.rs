@@ -47,7 +47,7 @@ use crate::hasher::FastHash;
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 1573043710);
 /// assert_eq!(Hash32::hash(b"helloworld"), 2687965642);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -110,7 +110,7 @@ trivial_hasher! {
 ///     83212725615010754952022132390053357814
 /// );
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128_x86;
 
 impl FastHash for Hash128_x86 {
@@ -173,7 +173,7 @@ trivial_hasher! {
 ///     216280293825344914020777844322685271162
 /// );
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128_x64;
 
 impl FastHash for Hash128_x64 {

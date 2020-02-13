@@ -63,7 +63,7 @@ use crate::hasher::{FastHash, FastHasher, HasherExt, StreamHasher};
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2211835972);
 /// assert_eq!(Hash32::hash(b"helloworld"), 3874077464);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -118,7 +118,7 @@ trivial_hasher! {
 /// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 8819086853393477700);
 /// assert_eq!(Hash64::hash(b"helloworld"), 18412934266828208920);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {
@@ -182,7 +182,7 @@ trivial_hasher! {
 ///     339658686066216790682429200470429822413
 /// );
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128;
 
 impl FastHash for Hash128 {
