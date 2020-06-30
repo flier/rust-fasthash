@@ -106,6 +106,7 @@ fn generate_binding(out_file: &Path) {
         .blacklist_function("^t1ha_selfcheck__.*")
         .whitelist_function("^XXH.*")
         .whitelist_function("^HighwayHash.*")
+        .whitelist_function("^wyhash.*")
         .generate()
         .unwrap()
         .write_to_file(out_file)

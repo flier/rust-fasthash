@@ -1371,6 +1371,10 @@ extern "C" {
         hash: *mut HHResult256,
     );
 }
+extern "C" {
+    #[link_name = "\u{1}__Z8wyhash64PKvyy"]
+    pub fn wyhash64(key: *const ::std::os::raw::c_void, len: u64, seed: u64) -> u64;
+}
 #[test]
 fn __bindgen_test_layout_pair_open0_uint64_uint64_close0_instantiation() {
     assert_eq!(

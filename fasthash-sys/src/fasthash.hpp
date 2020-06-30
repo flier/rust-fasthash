@@ -49,3 +49,5 @@ uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed);
 void HighwayHash128(const HHKey key, const char *bytes, const uint64_t size, HHResult128 &hash);
 
 void HighwayHash256(const HHKey key, const char *bytes, const uint64_t size, HHResult256 &hash);
+
+uint64_t wyhash64(const void *key, uint64_t len, uint64_t seed);
