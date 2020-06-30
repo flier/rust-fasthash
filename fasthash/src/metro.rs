@@ -56,7 +56,7 @@ use crate::hasher::FastHash;
 /// assert_eq!(Hash64_1::hash_with_seed(b"hello", 123), 1128464039211059189);
 /// assert_eq!(Hash64_1::hash(b"helloworld"), 4615394705531318333);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64_1;
 
 impl FastHash for Hash64_1 {
@@ -110,7 +110,7 @@ trivial_hasher! {
 /// assert_eq!(Hash64_2::hash_with_seed(b"hello", 123), 5558499743061241201);
 /// assert_eq!(Hash64_2::hash(b"helloworld"), 13816693401637061492);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64_2;
 
 impl FastHash for Hash64_2 {
@@ -173,7 +173,7 @@ trivial_hasher! {
 ///     168124756093089300765778527570074281113
 /// );
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128_1;
 
 impl FastHash for Hash128_1 {
@@ -236,7 +236,7 @@ trivial_hasher! {
 ///     296295343271043311657399689121923046467
 /// );
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128_2;
 
 impl FastHash for Hash128_2 {
@@ -298,7 +298,7 @@ pub mod crc {
     /// );
     /// assert_eq!(Hash64_1::hash(b"helloworld"), 15512397028293617890);
     /// ```
-    #[derive(Clone)]
+    #[derive(Clone, Default)]
     pub struct Hash64_1;
 
     impl FastHash for Hash64_1 {
@@ -355,7 +355,7 @@ pub mod crc {
     /// );
     /// assert_eq!(Hash64_2::hash(b"helloworld"), 11309399771810154329);
     /// ```
-    #[derive(Clone)]
+    #[derive(Clone, Default)]
     pub struct Hash64_2;
 
     impl FastHash for Hash64_2 {
@@ -418,7 +418,7 @@ pub mod crc {
     ///     330807979290440384643858402038145360287
     /// );
     /// ```
-    #[derive(Clone)]
+    #[derive(Clone, Default)]
     pub struct Hash128_1;
 
     impl FastHash for Hash128_1 {
@@ -481,7 +481,7 @@ pub mod crc {
     ///     332348429832512530891646387991260171468
     /// );
     /// ```
-    #[derive(Clone)]
+    #[derive(Clone, Default)]
     pub struct Hash128_2;
 
     impl FastHash for Hash128_2 {

@@ -45,7 +45,7 @@ use crate::hasher::{FastHash, FastHasher, StreamHasher};
 /// );
 /// assert_eq!(Hash64::hash(b"helloworld"), 9532038143498849405);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {

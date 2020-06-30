@@ -70,7 +70,7 @@ use crate::hasher::FastHash;
 /// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 12693953100868515521);
 /// assert_eq!(Hash64::hash(b"helloworld"), 9122204010978352975);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {
