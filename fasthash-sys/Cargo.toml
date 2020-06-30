@@ -26,6 +26,6 @@ cfg-if = "0.1"
 
 [build-dependencies]
 lazy_static = "1.4"
-raw-cpuid = "6"
+raw-cpuid = "8"
 cc = "1.0"
-bindgen = { version="0.51", optional=true }
+bindgen = { version="0.54", optional=true }

@@ -22,11 +22,9 @@
 //!
 //! assert_eq!(sea::hash64(b"hello world\xff"), 8985868041853666652);
 //!
-//! assert_eq!(hash(&"hello world"), 1198299633807023012);
+//! assert_eq!(hash(&"hello world"), 8985868041853666652);
 //! ```
 //!
-use seahash;
-
 pub use seahash::{hash as hash64, hash_seeded as hash64_with_seeds, SeaHasher as Hasher64};
 
 use crate::hasher::{FastHash, FastHasher, StreamHasher};
@@ -93,9 +91,9 @@ mod tests {
         let mut h = Hasher64::new();
 
         h.write(b"hello");
-        assert_eq!(h.finish(), 11332652286493249837);
+        assert_eq!(h.finish(), 153251464476911497);
 
         h.write(b"world");
-        assert_eq!(h.finish(), 4332207266370068704);
+        assert_eq!(h.finish(), 9532038143498849405);
     }
 }
