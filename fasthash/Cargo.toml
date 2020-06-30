@@ -11,7 +11,7 @@ license = "Apache-2.0"
 edition = "2018"
 
 [features]
-default = ["doc", "native"]
+default = ["doc", "native", "t1ha"]
 doc = []
 native = ["fasthash-sys/native"]
 aes = ["fasthash-sys/aes"]
@@ -20,6 +20,7 @@ sse42 = ["fasthash-sys/sse42"]
 avx = ["fasthash-sys/avx"]
 avx2 = ["fasthash-sys/avx2"]
 gen = ["fasthash-sys/gen"]
+t1ha = ["fasthash-sys/t1ha"]
 
 [dependencies]
 cfg-if = "0.1"
