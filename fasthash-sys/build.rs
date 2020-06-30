@@ -92,6 +92,7 @@ fn generate_binding(out_file: &Path) {
         .clang_arg(if support_avx() { "-mavx" } else { "" })
         .clang_arg(if support_avx2() { "-mavx2" } else { "" })
         .header("src/fasthash.hpp")
+        .size_t_is_usize(true)
         .generate_inline_functions(true)
         .disable_name_namespacing()
         .whitelist_function("^CityHash.*")
@@ -130,8 +131,8 @@ fn build_fasthash() {
         .file("src/smhasher/farmhash-c.c")
         .file("src/smhasher/lookup3.cpp")
         .file("src/smhasher/mum.cc")
-        .file("src/smhasher/metrohash64.cpp")
-        .file("src/smhasher/metrohash128.cpp")
+        .file("src/smhasher/metrohash/metrohash64.cpp")
+        .file("src/smhasher/metrohash/metrohash128.cpp")
         .file("src/smhasher/MurmurHash1.cpp")
         .file("src/smhasher/MurmurHash2.cpp")
         .file("src/smhasher/MurmurHash3.cpp")
@@ -141,8 +142,8 @@ fn build_fasthash() {
     if support_sse42() {
         build
             .flag("-msse4.2")
-            .file("src/smhasher/metrohash64crc.cpp")
-            .file("src/smhasher/metrohash128crc.cpp");
+            .file("src/smhasher/metrohash/metrohash64crc.cpp")
+            .file("src/smhasher/metrohash/metrohash128crc.cpp");
     }
 
     build.static_flag(true).compile("fasthash");

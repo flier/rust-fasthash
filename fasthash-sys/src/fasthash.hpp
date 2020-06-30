@@ -1,7 +1,7 @@
 #include "smhasher/City.h"
 #include "smhasher/CityCrc.h"
 #include "smhasher/farmhash-c.h"
-#include "smhasher/metrohash.h"
+#include "smhasher/metrohash/metrohash.h"
 #include "smhasher/mum.h"
 #include "smhasher/MurmurHash1.h"
 #include "smhasher/MurmurHash2.h"
@@ -11,7 +11,7 @@
 #include "xxHash/xxhash.h"
 #include "highwayhash/highwayhash/c_bindings.h"
 
-uint32_t lookup3(const void *key, int length, uint32_t initval);
+uint32_t lookup3(const char *key, int length, uint32_t initval);
 
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x);
 
@@ -46,6 +46,6 @@ void SpookyHasherFinal(
 
 uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed);
 
-void HighwayHash128(const HHKey key, const char* bytes, const uint64_t size, HHResult128& hash);
+void HighwayHash128(const HHKey key, const char *bytes, const uint64_t size, HHResult128 &hash);
 
-void HighwayHash256(const HHKey key, const char* bytes, const uint64_t size, HHResult256& hash);
+void HighwayHash256(const HHKey key, const char *bytes, const uint64_t size, HHResult256 &hash);

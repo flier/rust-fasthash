@@ -439,7 +439,7 @@ macro_rules! trivial_hasher {
             #[inline(always)]
             fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self {
                 $hasher {
-                    seed: seed,
+                    seed,
                     bytes: Vec::with_capacity(capacity),
                 }
             }

@@ -12,7 +12,7 @@ use crate::{FastHash, FastHasher, HasherExt, StreamHasher};
 /// ```
 /// use fasthash::xxh3;
 ///
-/// assert_eq!(xxh3::hash64("hello world"), 16570915807259818516);
+/// assert_eq!(xxh3::hash64("hello world"), 15296390279056496779);
 /// ```
 #[inline(always)]
 pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
@@ -27,7 +27,7 @@ pub fn hash64<T: AsRef<[u8]>>(v: T) -> u64 {
 /// ```
 /// use fasthash::xxh3;
 ///
-/// assert_eq!(xxh3::hash64_with_seed("hello world", 123456789), 4348189770904135642);
+/// assert_eq!(xxh3::hash64_with_seed("hello world", 123456789), 14779966986402262731);
 /// ```
 #[inline(always)]
 pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
@@ -43,7 +43,7 @@ pub fn hash64_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u64 {
 ///
 /// assert_eq!(
 ///     xxh3::hash128("hello world"),
-///     128288990609274964305848329913092419595,
+///     297150157938599054391163723952090887879,
 /// );
 /// ```
 #[inline(always)]
@@ -62,7 +62,7 @@ pub fn hash128<T: AsRef<[u8]>>(v: T) -> u128 {
 ///
 /// assert_eq!(
 ///     xxh3::hash128_with_seed("hello world", 123456789),
-///     112158579375068369090976928977908020817,
+///     30898888592805294509478050770614222910,
 /// );
 /// ```
 #[inline(always)]
@@ -83,10 +83,10 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u64) -> u128 {
 /// let mut h = Hasher64::new();
 ///
 /// h.write(b"hello");
-/// assert_eq!(h.finish(), 11582064415867295669);
+/// assert_eq!(h.finish(), 10760762337991515389);
 ///
 /// h.write(b"world");
-/// assert_eq!(h.finish(), 5799861518677282342);
+/// assert_eq!(h.finish(), 18436838148490100038);
 /// ```
 #[derive(Clone, Default)]
 pub struct Hash64;
@@ -122,10 +122,10 @@ impl FastHash for Hash64 {
 /// let mut h = Hasher64::new();
 ///
 /// h.write(b"hello");
-/// assert_eq!(h.finish(), 11582064415867295669);
+/// assert_eq!(h.finish(), 10760762337991515389);
 ///
 /// h.write(b"world");
-/// assert_eq!(h.finish(), 5799861518677282342);
+/// assert_eq!(h.finish(), 18436838148490100038);
 /// ```
 pub struct Hasher64(NonNull<ffi::XXH3_state_t>);
 
@@ -202,10 +202,10 @@ impl_build_hasher!(Hasher64, Hash64);
 /// let mut h = Hasher128::new();
 ///
 /// h.write(b"hello");
-/// assert_eq!(h.finish_ext(), 313673640157813024953689973667877246901);
+/// assert_eq!(h.finish_ext(), 241804000618833338782870102822322583576);
 ///
 /// h.write(b"world");
-/// assert_eq!(h.finish_ext(), 235571704612606125258077068431826739245);
+/// assert_eq!(h.finish_ext(), 295047064626328774025194411167141021551);
 /// ```
 #[derive(Clone, Default)]
 pub struct Hash128;
@@ -247,10 +247,10 @@ impl FastHash for Hash128 {
 /// let mut h = Hasher128::new();
 ///
 /// h.write(b"hello");
-/// assert_eq!(h.finish_ext(), 313673640157813024953689973667877246901);
+/// assert_eq!(h.finish_ext(), 241804000618833338782870102822322583576);
 ///
 /// h.write(b"world");
-/// assert_eq!(h.finish_ext(), 235571704612606125258077068431826739245);
+/// assert_eq!(h.finish_ext(), 295047064626328774025194411167141021551);
 /// ```
 pub struct Hasher128(NonNull<ffi::XXH3_state_t>);
 
