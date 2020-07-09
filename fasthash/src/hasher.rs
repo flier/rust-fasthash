@@ -419,6 +419,8 @@ macro_rules! impl_hasher_ext {
             }
         }
 
+        impl $crate::StreamHasher for $hasher { }
+
         impl_fasthash!($hasher, $hash);
     };
 }
