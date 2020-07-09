@@ -338,6 +338,8 @@ macro_rules! impl_hasher {
             }
         }
 
+        impl $crate::StreamHasher for $hasher { }
+
         impl_fasthash!($hasher, $hash);
     };
 }
