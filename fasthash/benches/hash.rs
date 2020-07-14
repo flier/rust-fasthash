@@ -11,6 +11,7 @@ use std::slice;
 use criterion::{black_box, Criterion, ParameterizedBenchmark, Throughput};
 
 use fasthash::*;
+use std::hash::Hash;
 
 const KB: usize = 1024;
 const SEED: u64 = 0x0123456789ABCDEF;
@@ -118,6 +119,9 @@ fn bench_hash64(c: &mut Criterion) {
     })
     .with_function("murmur2::hash64_x86", move |b, &&size| {
         b.iter(|| murmur2::Hash64_x86::hash_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("ahash::hash64", move |b, &&size| {
+        b.iter(|| ahash::hash_with_seed(&DATA[..size], (SEED as u128, SEED as u128)))
     })
     .with_function("sea::hash64", move |b, &&size| {
         b.iter(|| sea::hash64_with_seeds(&DATA[..size], SEED, SEED, SEED, SEED));

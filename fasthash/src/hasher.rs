@@ -201,8 +201,20 @@ impl From<Seed> for u128 {
         let mut rng = seed.0;
         let hi = rng.gen::<u64>();
         let lo = rng.gen::<u64>();
-
         u128::from(hi).wrapping_shl(64) + u128::from(lo)
+    }
+}
+impl From<Seed> for (u128, u128) {
+    #[inline(always)]
+    fn from(seed: Seed) -> (u128, u128) {
+        let mut rng = seed.0;
+        let hi = rng.gen::<u64>();
+        let lo = rng.gen::<u64>();
+        let hi2 = rng.gen::<u64>();
+        let lo2 = rng.gen::<u64>();
+
+        (u128::from(hi).wrapping_shl(64) + u128::from(lo),
+         u128::from(hi2).wrapping_shl(64) + u128::from(lo2))
     }
 }
 
