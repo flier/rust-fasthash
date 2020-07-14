@@ -19,6 +19,7 @@ sse42 = ["sse41"]
 avx = []
 avx2 = ["avx"]
 gen = ["bindgen"]
+t1ha = []
 
 [dependencies]
 cfg-if = "0.1"

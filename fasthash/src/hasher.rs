@@ -578,6 +578,7 @@ mod tests {
         test_hashmap_with_hashers![murmur3::Hash32, murmur3::Hash128_x86, murmur3::Hash128_x64];
         test_hashmap_with_hashers![sea::Hash64];
         test_hashmap_with_hashers![spooky::Hash32, spooky::Hash64, spooky::Hash128];
+        #[cfg(feature = "t1ha")]
         test_hashmap_with_hashers![
             t1ha0::Hash64,
             t1ha1::Hash64Le,

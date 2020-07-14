@@ -108,7 +108,7 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: Seed) -> u128 {
 ///
 /// assert_eq!(highway::Hash64::hash_with_seed("hello world", [1, 2, 3, 4]), 6273970844710122614);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64;
 
 impl FastHash for Hash64 {
@@ -160,7 +160,7 @@ trivial_hasher! {
 ///
 /// assert_eq!(highway::Hash128::hash_with_seed("hello world", [1, 2, 3, 4]), 70726204502586093039340094508598794871);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash128;
 
 impl FastHash for Hash128 {

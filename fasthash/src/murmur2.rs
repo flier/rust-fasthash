@@ -81,7 +81,7 @@ use crate::hasher::FastHash;
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 2385981934);
 /// assert_eq!(Hash32::hash(b"helloworld"), 2155944146);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {
@@ -130,7 +130,7 @@ trivial_hasher! {
 /// assert_eq!(Hash32A::hash_with_seed(b"hello", 123), 509510832);
 /// assert_eq!(Hash32A::hash(b"helloworld"), 403945221);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32A;
 
 impl FastHash for Hash32A {
@@ -179,7 +179,7 @@ trivial_hasher! {
 /// assert_eq!(Hash32Neutral::hash_with_seed(b"hello", 123), 2385981934);
 /// assert_eq!(Hash32Neutral::hash(b"helloworld"), 2155944146);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32Neutral;
 
 impl FastHash for Hash32Neutral {
@@ -228,7 +228,7 @@ trivial_hasher! {
 /// assert_eq!(Hash32Aligned::hash_with_seed(b"hello", 123), 2385981934);
 /// assert_eq!(Hash32Aligned::hash(b"helloworld"), 2155944146);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32Aligned;
 
 impl FastHash for Hash32Aligned {
@@ -280,7 +280,7 @@ trivial_hasher! {
 /// );
 /// assert_eq!(Hash64_x64::hash(b"helloworld"), 2139823713852166039);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64_x64;
 
 impl FastHash for Hash64_x64 {
@@ -332,7 +332,7 @@ trivial_hasher! {
 /// );
 /// assert_eq!(Hash64_x86::hash(b"helloworld"), 14017254558097603378);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash64_x86;
 
 impl FastHash for Hash64_x86 {

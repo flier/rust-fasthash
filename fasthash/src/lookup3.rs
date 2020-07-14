@@ -40,7 +40,7 @@ use crate::hasher::FastHash;
 /// assert_eq!(Hash32::hash_with_seed(b"hello", 123), 632258402);
 /// assert_eq!(Hash32::hash(b"helloworld"), 1392336737);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Hash32;
 
 impl FastHash for Hash32 {

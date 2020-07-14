@@ -156,6 +156,9 @@ fn build_t1() {
         .file("src/t1ha/src/t1ha1.c")
         .file("src/t1ha/src/t1ha2.c");
 
+    // indirect functions are not supported on all targets (e.g. x86_64-unknown-linux-musl)
+    build.define("T1HA_USE_INDIRECT_FUNCTIONS", Some("0"));
+
     if support_aesni() {
         build
             .define("T1HA0_RUNTIME_SELECT", Some("1"))
@@ -225,7 +228,9 @@ fn main() {
     }
 
     build_fasthash();
-    build_t1();
+    if cfg!(feature = "t1ha") {
+        build_t1();
+    }
     build_highway();
 
     let out_dir = env::var("OUT_DIR").unwrap();
