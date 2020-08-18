@@ -157,6 +157,7 @@ fn build_t1() {
         .file("src/t1ha/src/t1ha2.c");
 
     // indirect functions are not supported on all targets (e.g. x86_64-unknown-linux-musl)
+    #[cfg(target_env = "musl")]
     build.define("T1HA_USE_INDIRECT_FUNCTIONS", Some("0"));
 
     if support_aesni() {
