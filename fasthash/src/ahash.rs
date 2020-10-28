@@ -5,7 +5,7 @@ use ahash;
 pub use ahash::*;
 
 use crate::hasher::{FastHash, FastHasher, StreamHasher};
-use std::hash::Hasher;
+use std::hash::BuildHasher;
 
 /// `aHash` 64-bit hash functions
 #[derive(Clone)]
@@ -13,27 +13,25 @@ pub struct Hash64;
 
 impl FastHash for Hash64 {
     type Hash = u64;
-    type Seed = (u128, u128);
+    type Seed = (u64, u64, u64, u64);
 
     #[inline(always)]
-    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: (u128, u128)) -> u64 {
-        let mut hasher = AHasher::new_with_keys(seed.0, seed.1);
-        hasher.write(bytes.as_ref());
-        hasher.finish()
+    fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: (u64, u64, u64, u64)) -> u64 {
+        let hasher = RandomState::with_seeds(seed.0, seed.1, seed.2, seed.3).build_hasher();
+        bytes.as_ref().get_hash(hasher)
     }
 
     #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
-        let mut hasher = AHasher::default();
-        hasher.write(bytes.as_ref());
-        hasher.finish()
+        let hasher = AHasher::default();
+        bytes.as_ref().get_hash(hasher)
     }
 }
 
 impl_build_hasher!(AHasher, Hash64);
 
 impl FastHasher for AHasher {
-    type Seed = (u128, u128);
+    type Seed = (u64, u64, u64, u64);
     type Output = u64;
 
     #[inline(always)]
@@ -43,7 +41,7 @@ impl FastHasher for AHasher {
 
     #[inline(always)]
     fn with_seed(seed: Self::Seed) -> Self {
-        AHasher::new_with_keys(seed.0, seed.1)
+        RandomState::with_seeds(seed.0, seed.1, seed.2, seed.3).build_hasher()
     }
 }
 
@@ -51,7 +49,7 @@ impl StreamHasher for AHasher {}
 
 /// `aHash` 64-bit hash function using supplied seed..
 #[inline(always)]
-pub fn hash_with_seed<T: AsRef<[u8]>>(v: T, seeds: (u128, u128)) -> u64 {
+pub fn hash_with_seed<T: AsRef<[u8]>>(v: T, seeds: (u64, u64, u64, u64)) -> u64 {
     Hash64::hash_with_seed(v, seeds)
 }
 
