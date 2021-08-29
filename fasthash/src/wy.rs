@@ -38,9 +38,9 @@ use crate::hasher::FastHash;
 /// ```
 /// use fasthash::{wy::Hash64, FastHash};
 ///
-/// assert_eq!(Hash64::hash(b"hello"), 14644830810967891504);
-/// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 16571276258368846266);
-/// assert_eq!(Hash64::hash(b"helloworld"), 10551505276834116893);
+/// assert_eq!(Hash64::hash(b"hello"), 18063072054746964485);
+/// assert_eq!(Hash64::hash_with_seed(b"hello", 123), 13299223181586284300);
+/// assert_eq!(Hash64::hash(b"helloworld"), 13016868308130960481);
 /// ```
 #[derive(Clone, Default)]
 pub struct Hash64;
@@ -72,10 +72,10 @@ trivial_hasher! {
     /// let mut h = Hasher64::new();
     ///
     /// h.write(b"hello");
-    /// assert_eq!(h.finish(), 14644830810967891504);
+    /// assert_eq!(h.finish(), 18063072054746964485);
     ///
     /// h.write(b"world");
-    /// assert_eq!(h.finish(), 10551505276834116893);
+    /// assert_eq!(h.finish(), 13016868308130960481);
     /// ```
     Hasher64(Hash64) -> u64
 }

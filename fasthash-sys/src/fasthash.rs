@@ -707,7 +707,14 @@ pub type t1ha0_function_t = ::std::option::Option<
 extern "C" {
     pub fn t1ha0_resolve() -> t1ha0_function_t;
 }
+pub type wyhashmap_t = u64;
 extern "C" {
+    #[doc = " @brief Obtains the xxHash version."]
+    #[doc = ""]
+    #[doc = " This is only useful when xxHash is compiled as a shared library, as it is"]
+    #[doc = " independent of the version defined in the header."]
+    #[doc = ""]
+    #[doc = " @return `XXH_VERSION_NUMBER` as of when the libray was compiled."]
     pub fn XXH_versionNumber() -> ::std::os::raw::c_uint;
 }
 pub const XXH_errorcode_XXH_OK: XXH_errorcode = 0;
@@ -715,36 +722,92 @@ pub const XXH_errorcode_XXH_ERROR: XXH_errorcode = 1;
 pub type XXH_errorcode = ::std::os::raw::c_uint;
 pub type XXH32_hash_t = u32;
 extern "C" {
-    #[doc = " XXH32():"]
-    #[doc = "  Calculate the 32-bit hash of sequence \"length\" bytes stored at memory address \"input\"."]
-    #[doc = "  The memory between input & input+length must be valid (allocated and read-accessible)."]
-    #[doc = "  \"seed\" can be used to alter the result predictably."]
-    #[doc = "  Speed on Core 2 Duo @ 3 GHz (single thread, SMHasher benchmark): 5.4 GB/s"]
+    #[doc = " @brief Calculates the 32-bit hash of @p input using xxHash32."]
     #[doc = ""]
-    #[doc = " Note: XXH3 provides competitive speed for both 32-bit and 64-bit systems,"]
-    #[doc = " and offers true 64/128 bit hash results. It provides a superior level of"]
-    #[doc = " dispersion, and greatly reduces the risks of collisions."]
+    #[doc = " Speed on Core 2 Duo @ 3 GHz (single thread, SMHasher benchmark): 5.4 GB/s"]
+    #[doc = ""]
+    #[doc = " @param input The block of data to be hashed, at least @p length bytes in size."]
+    #[doc = " @param length The length of @p input, in bytes."]
+    #[doc = " @param seed The 32-bit seed to alter the hash's output predictably."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "   The memory between @p input and @p input + @p length must be valid,"]
+    #[doc = "   readable, contiguous memory. However, if @p length is `0`, @p input may be"]
+    #[doc = "   `NULL`. In C++, this also must be *TriviallyCopyable*."]
+    #[doc = ""]
+    #[doc = " @return The calculated 32-bit hash value."]
+    #[doc = ""]
+    #[doc = " @see"]
+    #[doc = "    XXH64(), XXH3_64bits_withSeed(), XXH3_128bits_withSeed(), XXH128():"]
+    #[doc = "    Direct equivalents for the other variants of xxHash."]
+    #[doc = " @see"]
+    #[doc = "    XXH32_createState(), XXH32_update(), XXH32_digest(): Streaming version."]
     pub fn XXH32(
         input: *const ::std::os::raw::c_void,
         length: usize,
         seed: XXH32_hash_t,
     ) -> XXH32_hash_t;
 }
-#[doc = "   Streaming"]
+#[doc = " @typedef struct XXH32_state_s XXH32_state_t"]
+#[doc = " @brief The opaque state struct for the XXH32 streaming API."]
+#[doc = ""]
+#[doc = " @see XXH32_state_s for details."]
 pub type XXH32_state_t = XXH32_state_s;
 extern "C" {
+    #[doc = " @brief Allocates an @ref XXH32_state_t."]
+    #[doc = ""]
+    #[doc = " Must be freed with XXH32_freeState()."]
+    #[doc = " @return An allocated XXH32_state_t on success, `NULL` on failure."]
     pub fn XXH32_createState() -> *mut XXH32_state_t;
 }
 extern "C" {
+    #[doc = " @brief Frees an @ref XXH32_state_t."]
+    #[doc = ""]
+    #[doc = " Must be allocated with XXH32_createState()."]
+    #[doc = " @param statePtr A pointer to an @ref XXH32_state_t allocated with @ref XXH32_createState()."]
+    #[doc = " @return XXH_OK."]
     pub fn XXH32_freeState(statePtr: *mut XXH32_state_t) -> XXH_errorcode;
 }
 extern "C" {
+    #[doc = " @brief Copies one @ref XXH32_state_t to another."]
+    #[doc = ""]
+    #[doc = " @param dst_state The state to copy to."]
+    #[doc = " @param src_state The state to copy from."]
+    #[doc = " @pre"]
+    #[doc = "   @p dst_state and @p src_state must not be `NULL` and must not overlap."]
     pub fn XXH32_copyState(dst_state: *mut XXH32_state_t, src_state: *const XXH32_state_t);
 }
 extern "C" {
+    #[doc = " @brief Resets an @ref XXH32_state_t to begin a new hash."]
+    #[doc = ""]
+    #[doc = " This function resets and seeds a state. Call it before @ref XXH32_update()."]
+    #[doc = ""]
+    #[doc = " @param statePtr The state struct to reset."]
+    #[doc = " @param seed The 32-bit seed to alter the hash result predictably."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "   @p statePtr must not be `NULL`."]
+    #[doc = ""]
+    #[doc = " @return @ref XXH_OK on success, @ref XXH_ERROR on failure."]
     pub fn XXH32_reset(statePtr: *mut XXH32_state_t, seed: XXH32_hash_t) -> XXH_errorcode;
 }
 extern "C" {
+    #[doc = " @brief Consumes a block of @p input to an @ref XXH32_state_t."]
+    #[doc = ""]
+    #[doc = " Call this to incrementally consume blocks of data."]
+    #[doc = ""]
+    #[doc = " @param statePtr The state struct to update."]
+    #[doc = " @param input The block of data to be hashed, at least @p length bytes in size."]
+    #[doc = " @param length The length of @p input, in bytes."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "   @p statePtr must not be `NULL`."]
+    #[doc = " @pre"]
+    #[doc = "   The memory between @p input and @p input + @p length must be valid,"]
+    #[doc = "   readable, contiguous memory. However, if @p length is `0`, @p input may be"]
+    #[doc = "   `NULL`. In C++, this also must be *TriviallyCopyable*."]
+    #[doc = ""]
+    #[doc = " @return @ref XXH_OK on success, @ref XXH_ERROR on failure."]
     pub fn XXH32_update(
         statePtr: *mut XXH32_state_t,
         input: *const ::std::os::raw::c_void,
@@ -752,12 +815,25 @@ extern "C" {
     ) -> XXH_errorcode;
 }
 extern "C" {
+    #[doc = " @brief Returns the calculated hash value from an @ref XXH32_state_t."]
+    #[doc = ""]
+    #[doc = " @note"]
+    #[doc = "   Calling XXH32_digest() will not affect @p statePtr, so you can update,"]
+    #[doc = "   digest, and update again."]
+    #[doc = ""]
+    #[doc = " @param statePtr The state struct to calculate the hash from."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "  @p statePtr must not be `NULL`."]
+    #[doc = ""]
+    #[doc = " @return The calculated xxHash32 value from that state."]
     pub fn XXH32_digest(statePtr: *const XXH32_state_t) -> XXH32_hash_t;
 }
-#[doc = "   Canonical representation"]
+#[doc = " @brief Canonical (big endian) representation of @ref XXH32_hash_t."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH32_canonical_t {
+    #[doc = "< Hash bytes, big endian"]
     pub digest: [::std::os::raw::c_uchar; 4usize],
 }
 #[test]
@@ -784,31 +860,59 @@ fn bindgen_test_layout_XXH32_canonical_t() {
     );
 }
 extern "C" {
+    #[doc = " @brief Converts an @ref XXH32_hash_t to a big endian @ref XXH32_canonical_t."]
+    #[doc = ""]
+    #[doc = " @param dst The @ref XXH32_canonical_t pointer to be stored to."]
+    #[doc = " @param hash The @ref XXH32_hash_t to be converted."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "   @p dst must not be `NULL`."]
     pub fn XXH32_canonicalFromHash(dst: *mut XXH32_canonical_t, hash: XXH32_hash_t);
 }
 extern "C" {
+    #[doc = " @brief Converts an @ref XXH32_canonical_t to a native @ref XXH32_hash_t."]
+    #[doc = ""]
+    #[doc = " @param src The @ref XXH32_canonical_t to convert."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "   @p src must not be `NULL`."]
+    #[doc = ""]
+    #[doc = " @return The converted hash."]
     pub fn XXH32_hashFromCanonical(src: *const XXH32_canonical_t) -> XXH32_hash_t;
 }
 pub type XXH64_hash_t = u64;
 extern "C" {
-    #[doc = " XXH64():"]
-    #[doc = " Returns the 64-bit hash of sequence of length @length stored at memory"]
-    #[doc = " address @input."]
-    #[doc = " @seed can be used to alter the result predictably."]
+    #[doc = " @brief Calculates the 64-bit hash of @p input using xxHash64."]
     #[doc = ""]
     #[doc = " This function usually runs faster on 64-bit systems, but slower on 32-bit"]
     #[doc = " systems (see benchmark)."]
     #[doc = ""]
-    #[doc = " Note: XXH3 provides competitive speed for both 32-bit and 64-bit systems,"]
-    #[doc = " and offers true 64/128 bit hash results. It provides a superior level of"]
-    #[doc = " dispersion, and greatly reduces the risks of collisions."]
+    #[doc = " @param input The block of data to be hashed, at least @p length bytes in size."]
+    #[doc = " @param length The length of @p input, in bytes."]
+    #[doc = " @param seed The 64-bit seed to alter the hash's output predictably."]
+    #[doc = ""]
+    #[doc = " @pre"]
+    #[doc = "   The memory between @p input and @p input + @p length must be valid,"]
+    #[doc = "   readable, contiguous memory. However, if @p length is `0`, @p input may be"]
+    #[doc = "   `NULL`. In C++, this also must be *TriviallyCopyable*."]
+    #[doc = ""]
+    #[doc = " @return The calculated 64-bit hash."]
+    #[doc = ""]
+    #[doc = " @see"]
+    #[doc = "    XXH32(), XXH3_64bits_withSeed(), XXH3_128bits_withSeed(), XXH128():"]
+    #[doc = "    Direct equivalents for the other variants of xxHash."]
+    #[doc = " @see"]
+    #[doc = "    XXH64_createState(), XXH64_update(), XXH64_digest(): Streaming version."]
     pub fn XXH64(
         input: *const ::std::os::raw::c_void,
         length: usize,
         seed: XXH64_hash_t,
     ) -> XXH64_hash_t;
 }
-#[doc = "   Streaming"]
+#[doc = "   Streaming   *******/"]
+#[doc = " @brief The opaque state struct for the XXH64 streaming API."]
+#[doc = ""]
+#[doc = " @see XXH64_state_s for details."]
 pub type XXH64_state_t = XXH64_state_s;
 extern "C" {
     pub fn XXH64_createState() -> *mut XXH64_state_t;
@@ -867,17 +971,278 @@ extern "C" {
 extern "C" {
     pub fn XXH64_hashFromCanonical(src: *const XXH64_canonical_t) -> XXH64_hash_t;
 }
+extern "C" {
+    #[doc = " @}"]
+    #[doc = " ************************************************************************"]
+    #[doc = " @defgroup xxh3_family XXH3 family"]
+    #[doc = " @ingroup public"]
+    #[doc = " @{"]
+    #[doc = ""]
+    #[doc = " XXH3 is a more recent hash algorithm featuring:"]
+    #[doc = "  - Improved speed for both small and large inputs"]
+    #[doc = "  - True 64-bit and 128-bit outputs"]
+    #[doc = "  - SIMD acceleration"]
+    #[doc = "  - Improved 32-bit viability"]
+    #[doc = ""]
+    #[doc = " Speed analysis methodology is explained here:"]
+    #[doc = ""]
+    #[doc = "    https://fastcompression.blogspot.com/2019/03/presenting-xxh3.html"]
+    #[doc = ""]
+    #[doc = " Compared to XXH64, expect XXH3 to run approximately"]
+    #[doc = " ~2x faster on large inputs and >3x faster on small ones,"]
+    #[doc = " exact differences vary depending on platform."]
+    #[doc = ""]
+    #[doc = " XXH3's speed benefits greatly from SIMD and 64-bit arithmetic,"]
+    #[doc = " but does not require it."]
+    #[doc = " Any 32-bit and 64-bit targets that can run XXH32 smoothly"]
+    #[doc = " can run XXH3 at competitive speeds, even without vector support."]
+    #[doc = " Further details are explained in the implementation."]
+    #[doc = ""]
+    #[doc = " Optimized implementations are provided for AVX512, AVX2, SSE2, NEON, POWER8,"]
+    #[doc = " ZVector and scalar targets. This can be controlled via the XXH_VECTOR macro."]
+    #[doc = ""]
+    #[doc = " XXH3 implementation is portable:"]
+    #[doc = " it has a generic C90 formulation that can be compiled on any platform,"]
+    #[doc = " all implementations generage exactly the same hash value on all platforms."]
+    #[doc = " Starting from v0.8.0, it's also labelled \"stable\", meaning that"]
+    #[doc = " any future version will also generate the same hash value."]
+    #[doc = ""]
+    #[doc = " XXH3 offers 2 variants, _64bits and _128bits."]
+    #[doc = ""]
+    #[doc = " When only 64 bits are needed, prefer invoking the _64bits variant, as it"]
+    #[doc = " reduces the amount of mixing, resulting in faster speed on small inputs."]
+    #[doc = " It's also generally simpler to manipulate a scalar return type than a struct."]
+    #[doc = ""]
+    #[doc = " The API supports one-shot hashing, streaming mode, and custom secrets."]
+    pub fn XXH3_64bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH64_hash_t;
+}
+extern "C" {
+    pub fn XXH3_64bits_withSeed(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        seed: XXH64_hash_t,
+    ) -> XXH64_hash_t;
+}
+extern "C" {
+    pub fn XXH3_64bits_withSecret(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH64_hash_t;
+}
+#[doc = " @brief The state struct for the XXH3 streaming API."]
+#[doc = ""]
+#[doc = " @see XXH3_state_s for details."]
+pub type XXH3_state_t = XXH3_state_s;
+extern "C" {
+    pub fn XXH3_createState() -> *mut XXH3_state_t;
+}
+extern "C" {
+    pub fn XXH3_freeState(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_copyState(dst_state: *mut XXH3_state_t, src_state: *const XXH3_state_t);
+}
+extern "C" {
+    pub fn XXH3_64bits_reset(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_reset_withSeed(
+        statePtr: *mut XXH3_state_t,
+        seed: XXH64_hash_t,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_reset_withSecret(
+        statePtr: *mut XXH3_state_t,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_update(
+        statePtr: *mut XXH3_state_t,
+        input: *const ::std::os::raw::c_void,
+        length: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_64bits_digest(statePtr: *const XXH3_state_t) -> XXH64_hash_t;
+}
+#[doc = " @brief The return value from 128-bit hashes."]
+#[doc = ""]
+#[doc = " Stored in little endian order, although the fields themselves are in native"]
+#[doc = " endianness."]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH128_hash_t {
+    #[doc = "< `value & 0xFFFFFFFFFFFFFFFF`"]
+    pub low64: XXH64_hash_t,
+    #[doc = "< `value >> 64`"]
+    pub high64: XXH64_hash_t,
+}
+#[test]
+fn bindgen_test_layout_XXH128_hash_t() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH128_hash_t>(),
+        16usize,
+        concat!("Size of: ", stringify!(XXH128_hash_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH128_hash_t>(),
+        8usize,
+        concat!("Alignment of ", stringify!(XXH128_hash_t))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH128_hash_t>())).low64 as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH128_hash_t),
+            "::",
+            stringify!(low64)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH128_hash_t>())).high64 as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH128_hash_t),
+            "::",
+            stringify!(high64)
+        )
+    );
+}
+extern "C" {
+    pub fn XXH3_128bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH128_hash_t;
+}
+extern "C" {
+    pub fn XXH3_128bits_withSeed(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        seed: XXH64_hash_t,
+    ) -> XXH128_hash_t;
+}
+extern "C" {
+    pub fn XXH3_128bits_withSecret(
+        data: *const ::std::os::raw::c_void,
+        len: usize,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH128_hash_t;
+}
+extern "C" {
+    #[doc = "   Streaming"]
+    pub fn XXH3_128bits_reset(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_reset_withSeed(
+        statePtr: *mut XXH3_state_t,
+        seed: XXH64_hash_t,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_reset_withSecret(
+        statePtr: *mut XXH3_state_t,
+        secret: *const ::std::os::raw::c_void,
+        secretSize: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_update(
+        statePtr: *mut XXH3_state_t,
+        input: *const ::std::os::raw::c_void,
+        length: usize,
+    ) -> XXH_errorcode;
+}
+extern "C" {
+    pub fn XXH3_128bits_digest(statePtr: *const XXH3_state_t) -> XXH128_hash_t;
+}
+extern "C" {
+    #[doc = " XXH128_isEqual():"]
+    #[doc = " Return: 1 if `h1` and `h2` are equal, 0 if they are not."]
+    pub fn XXH128_isEqual(h1: XXH128_hash_t, h2: XXH128_hash_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " XXH128_cmp():"]
+    #[doc = ""]
+    #[doc = " This comparator is compatible with stdlib's `qsort()`/`bsearch()`."]
+    #[doc = ""]
+    #[doc = " return: >0 if *h128_1  > *h128_2"]
+    #[doc = "         =0 if *h128_1 == *h128_2"]
+    #[doc = "         <0 if *h128_1  < *h128_2"]
+    pub fn XXH128_cmp(
+        h128_1: *const ::std::os::raw::c_void,
+        h128_2: *const ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+#[doc = "   Canonical representation"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct XXH128_canonical_t {
+    pub digest: [::std::os::raw::c_uchar; 16usize],
+}
+#[test]
+fn bindgen_test_layout_XXH128_canonical_t() {
+    assert_eq!(
+        ::std::mem::size_of::<XXH128_canonical_t>(),
+        16usize,
+        concat!("Size of: ", stringify!(XXH128_canonical_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<XXH128_canonical_t>(),
+        1usize,
+        concat!("Alignment of ", stringify!(XXH128_canonical_t))
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH128_canonical_t>())).digest as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH128_canonical_t),
+            "::",
+            stringify!(digest)
+        )
+    );
+}
+extern "C" {
+    pub fn XXH128_canonicalFromHash(dst: *mut XXH128_canonical_t, hash: XXH128_hash_t);
+}
+extern "C" {
+    pub fn XXH128_hashFromCanonical(src: *const XXH128_canonical_t) -> XXH128_hash_t;
+}
+#[doc = " @internal"]
+#[doc = " @brief Structure for XXH32 streaming API."]
+#[doc = ""]
+#[doc = " @note This is only defined when @ref XXH_STATIC_LINKING_ONLY,"]
+#[doc = " @ref XXH_INLINE_ALL, or @ref XXH_IMPLEMENTATION is defined. Otherwise it is"]
+#[doc = " an opaque type. This allows fields to safely be changed."]
+#[doc = ""]
+#[doc = " Typedef'd to @ref XXH32_state_t."]
+#[doc = " Do not access the members of this struct directly."]
+#[doc = " @see XXH64_state_s, XXH3_state_s"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH32_state_s {
+    #[doc = "< Total length hashed, modulo 2^32"]
     pub total_len_32: XXH32_hash_t,
+    #[doc = "< Whether the hash is >= 16 (handles @ref total_len_32 overflow)"]
     pub large_len: XXH32_hash_t,
+    #[doc = "< First accumulator lane"]
     pub v1: XXH32_hash_t,
+    #[doc = "< Second accumulator lane"]
     pub v2: XXH32_hash_t,
+    #[doc = "< Third accumulator lane"]
     pub v3: XXH32_hash_t,
+    #[doc = "< Fourth accumulator lane"]
     pub v4: XXH32_hash_t,
+    #[doc = "< Internal buffer for partial reads. Treated as unsigned char[16]."]
     pub mem32: [XXH32_hash_t; 4usize],
+    #[doc = "< Amount of data in @ref mem32"]
     pub memsize: XXH32_hash_t,
+    #[doc = "< Reserved field. Do not read or write to it, it may be removed."]
     pub reserved: XXH32_hash_t,
 }
 #[test]
@@ -983,17 +1348,36 @@ fn bindgen_test_layout_XXH32_state_s() {
         )
     );
 }
+#[doc = " @internal"]
+#[doc = " @brief Structure for XXH64 streaming API."]
+#[doc = ""]
+#[doc = " @note This is only defined when @ref XXH_STATIC_LINKING_ONLY,"]
+#[doc = " @ref XXH_INLINE_ALL, or @ref XXH_IMPLEMENTATION is defined. Otherwise it is"]
+#[doc = " an opaque type. This allows fields to safely be changed."]
+#[doc = ""]
+#[doc = " Typedef'd to @ref XXH64_state_t."]
+#[doc = " Do not access the members of this struct directly."]
+#[doc = " @see XXH32_state_s, XXH3_state_s"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XXH64_state_s {
+    #[doc = "< Total length hashed. This is always 64-bit."]
     pub total_len: XXH64_hash_t,
+    #[doc = "< First accumulator lane"]
     pub v1: XXH64_hash_t,
+    #[doc = "< Second accumulator lane"]
     pub v2: XXH64_hash_t,
+    #[doc = "< Third accumulator lane"]
     pub v3: XXH64_hash_t,
+    #[doc = "< Fourth accumulator lane"]
     pub v4: XXH64_hash_t,
+    #[doc = "< Internal buffer for partial reads. Treated as unsigned char[32]."]
     pub mem64: [XXH64_hash_t; 4usize],
+    #[doc = "< Amount of data in @ref mem64"]
     pub memsize: XXH32_hash_t,
+    #[doc = "< Reserved field, needed for padding anyways"]
     pub reserved32: XXH32_hash_t,
+    #[doc = "< Reserved field. Do not read or write to it, it may be removed."]
     pub reserved64: XXH64_hash_t,
 }
 #[test]
@@ -1099,25 +1483,26 @@ fn bindgen_test_layout_XXH64_state_s() {
         )
     );
 }
-extern "C" {
-    pub fn XXH3_64bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH64_hash_t;
-}
-extern "C" {
-    pub fn XXH3_64bits_withSeed(
-        data: *const ::std::os::raw::c_void,
-        len: usize,
-        seed: XXH64_hash_t,
-    ) -> XXH64_hash_t;
-}
-extern "C" {
-    pub fn XXH3_64bits_withSecret(
-        data: *const ::std::os::raw::c_void,
-        len: usize,
-        secret: *const ::std::os::raw::c_void,
-        secretSize: usize,
-    ) -> XXH64_hash_t;
-}
-pub type XXH3_state_t = XXH3_state_s;
+#[doc = " @internal"]
+#[doc = " @brief Structure for XXH3 streaming API."]
+#[doc = ""]
+#[doc = " @note This is only defined when @ref XXH_STATIC_LINKING_ONLY,"]
+#[doc = " @ref XXH_INLINE_ALL, or @ref XXH_IMPLEMENTATION is defined."]
+#[doc = " Otherwise it is an opaque type."]
+#[doc = " Never use this definition in combination with dynamic library."]
+#[doc = " This allows fields to safely be changed in the future."]
+#[doc = ""]
+#[doc = " @note ** This structure has a strict alignment requirement of 64 bytes!! **"]
+#[doc = " Do not allocate this with `malloc()` or `new`,"]
+#[doc = " it will not be sufficiently aligned."]
+#[doc = " Use @ref XXH3_createState() and @ref XXH3_freeState(), or stack allocation."]
+#[doc = ""]
+#[doc = " Typedef'd to @ref XXH3_state_t."]
+#[doc = " Do never access the members of this struct directly."]
+#[doc = ""]
+#[doc = " @see XXH3_INITSTATE() for stack initialization."]
+#[doc = " @see XXH3_createState(), XXH3_freeState()."]
+#[doc = " @see XXH32_state_s, XXH64_state_s"]
 #[repr(C)]
 #[repr(align(64))]
 #[derive(Debug, Copy, Clone)]
@@ -1127,10 +1512,10 @@ pub struct XXH3_state_s {
     pub buffer: [::std::os::raw::c_uchar; 256usize],
     pub bufferedSize: XXH32_hash_t,
     pub reserved32: XXH32_hash_t,
-    pub nbStripesPerBlock: usize,
     pub nbStripesSoFar: usize,
-    pub secretLimit: usize,
     pub totalLen: XXH64_hash_t,
+    pub nbStripesPerBlock: usize,
+    pub secretLimit: usize,
     pub seed: XXH64_hash_t,
     pub reserved64: XXH64_hash_t,
     pub extSecret: *const ::std::os::raw::c_uchar,
@@ -1198,18 +1583,8 @@ fn bindgen_test_layout_XXH3_state_s() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesPerBlock as *const _ as usize },
-        520usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH3_state_s),
-            "::",
-            stringify!(nbStripesPerBlock)
-        )
-    );
-    assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesSoFar as *const _ as usize },
-        528usize,
+        520usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
@@ -1218,23 +1593,33 @@ fn bindgen_test_layout_XXH3_state_s() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secretLimit as *const _ as usize },
-        536usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH3_state_s),
-            "::",
-            stringify!(secretLimit)
-        )
-    );
-    assert_eq!(
         unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).totalLen as *const _ as usize },
-        544usize,
+        528usize,
         concat!(
             "Offset of field: ",
             stringify!(XXH3_state_s),
             "::",
             stringify!(totalLen)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).nbStripesPerBlock as *const _ as usize },
+        536usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(nbStripesPerBlock)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<XXH3_state_s>())).secretLimit as *const _ as usize },
+        544usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(XXH3_state_s),
+            "::",
+            stringify!(secretLimit)
         )
     );
     assert_eq!(
@@ -1269,77 +1654,10 @@ fn bindgen_test_layout_XXH3_state_s() {
     );
 }
 extern "C" {
-    pub fn XXH3_createState() -> *mut XXH3_state_t;
-}
-extern "C" {
-    pub fn XXH3_freeState(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_copyState(dst_state: *mut XXH3_state_t, src_state: *const XXH3_state_t);
-}
-extern "C" {
-    pub fn XXH3_64bits_reset(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_64bits_reset_withSeed(
-        statePtr: *mut XXH3_state_t,
-        seed: XXH64_hash_t,
-    ) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_64bits_reset_withSecret(
-        statePtr: *mut XXH3_state_t,
-        secret: *const ::std::os::raw::c_void,
-        secretSize: usize,
-    ) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_64bits_update(
-        statePtr: *mut XXH3_state_t,
-        input: *const ::std::os::raw::c_void,
-        length: usize,
-    ) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_64bits_digest(statePtr: *const XXH3_state_t) -> XXH64_hash_t;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct XXH128_hash_t {
-    pub low64: XXH64_hash_t,
-    pub high64: XXH64_hash_t,
-}
-#[test]
-fn bindgen_test_layout_XXH128_hash_t() {
-    assert_eq!(
-        ::std::mem::size_of::<XXH128_hash_t>(),
-        16usize,
-        concat!("Size of: ", stringify!(XXH128_hash_t))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<XXH128_hash_t>(),
-        8usize,
-        concat!("Alignment of ", stringify!(XXH128_hash_t))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH128_hash_t>())).low64 as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH128_hash_t),
-            "::",
-            stringify!(low64)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH128_hash_t>())).high64 as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH128_hash_t),
-            "::",
-            stringify!(high64)
-        )
+    pub fn XXH3_generateSecret(
+        secretBuffer: *mut ::std::os::raw::c_void,
+        customSeed: *const ::std::os::raw::c_void,
+        customSeedSize: usize,
     );
 }
 extern "C" {
@@ -1348,110 +1666,6 @@ extern "C" {
         len: usize,
         seed: XXH64_hash_t,
     ) -> XXH128_hash_t;
-}
-extern "C" {
-    pub fn XXH3_128bits(data: *const ::std::os::raw::c_void, len: usize) -> XXH128_hash_t;
-}
-extern "C" {
-    pub fn XXH3_128bits_withSeed(
-        data: *const ::std::os::raw::c_void,
-        len: usize,
-        seed: XXH64_hash_t,
-    ) -> XXH128_hash_t;
-}
-extern "C" {
-    pub fn XXH3_128bits_withSecret(
-        data: *const ::std::os::raw::c_void,
-        len: usize,
-        secret: *const ::std::os::raw::c_void,
-        secretSize: usize,
-    ) -> XXH128_hash_t;
-}
-extern "C" {
-    pub fn XXH3_128bits_reset(statePtr: *mut XXH3_state_t) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_128bits_reset_withSeed(
-        statePtr: *mut XXH3_state_t,
-        seed: XXH64_hash_t,
-    ) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_128bits_reset_withSecret(
-        statePtr: *mut XXH3_state_t,
-        secret: *const ::std::os::raw::c_void,
-        secretSize: usize,
-    ) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_128bits_update(
-        statePtr: *mut XXH3_state_t,
-        input: *const ::std::os::raw::c_void,
-        length: usize,
-    ) -> XXH_errorcode;
-}
-extern "C" {
-    pub fn XXH3_128bits_digest(statePtr: *const XXH3_state_t) -> XXH128_hash_t;
-}
-extern "C" {
-    #[doc = " XXH128_isEqual():"]
-    #[doc = " Return: 1 if `h1` and `h2` are equal, 0 if they are not."]
-    pub fn XXH128_isEqual(h1: XXH128_hash_t, h2: XXH128_hash_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    #[doc = " XXH128_cmp():"]
-    #[doc = ""]
-    #[doc = " This comparator is compatible with stdlib's `qsort()`/`bsearch()`."]
-    #[doc = ""]
-    #[doc = " return: >0 if *h128_1  > *h128_2"]
-    #[doc = "         =0 if *h128_1 == *h128_2"]
-    #[doc = "         <0 if *h128_1  < *h128_2"]
-    pub fn XXH128_cmp(
-        h128_1: *const ::std::os::raw::c_void,
-        h128_2: *const ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-#[doc = "   Canonical representation"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct XXH128_canonical_t {
-    pub digest: [::std::os::raw::c_uchar; 16usize],
-}
-#[test]
-fn bindgen_test_layout_XXH128_canonical_t() {
-    assert_eq!(
-        ::std::mem::size_of::<XXH128_canonical_t>(),
-        16usize,
-        concat!("Size of: ", stringify!(XXH128_canonical_t))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<XXH128_canonical_t>(),
-        1usize,
-        concat!("Alignment of ", stringify!(XXH128_canonical_t))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<XXH128_canonical_t>())).digest as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(XXH128_canonical_t),
-            "::",
-            stringify!(digest)
-        )
-    );
-}
-extern "C" {
-    pub fn XXH128_canonicalFromHash(dst: *mut XXH128_canonical_t, hash: XXH128_hash_t);
-}
-extern "C" {
-    pub fn XXH128_hashFromCanonical(src: *const XXH128_canonical_t) -> XXH128_hash_t;
-}
-extern "C" {
-    pub fn XXH3_generateSecret(
-        secretBuffer: *mut ::std::os::raw::c_void,
-        customSeed: *const ::std::os::raw::c_void,
-        customSeedSize: usize,
-    );
 }
 extern "C" {
     #[link_name = "\u{1}__Z7lookup3PKcij"]

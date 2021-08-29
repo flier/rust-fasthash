@@ -81,7 +81,7 @@ assert_eq!(map[&37], "c");
   - [T1ha Hash](https://github.com/leo-yuriev/t1ha)
   - [xx Hash](https://github.com/Cyan4973/xxHash) with  **experimental** [XXH3](https://github.com/Cyan4973/xxHash#new-experimental-hash-algorithm) hash algorithm
   - [Highway Hash](https://github.com/google/highwayhash)
-  - [wyhash](https://github.com/wangyi-fudan/wyhash) **new**
+  - [wyhash](https://github.com/wangyi-fudan/wyhash) (final3) **new**
   - [Meow Hash](https://github.com/cmuratori/meow_hash) **new**
 - Compatibility
   - [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)

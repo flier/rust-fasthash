@@ -11,8 +11,8 @@
 #include "smhasher/MurmurHash2.h"
 #include "smhasher/MurmurHash3.h"
 #include "smhasher/Spooky.h"
-#include "smhasher/wyhash.h"
 #include "t1ha/t1ha.h"
+#include "wyhash/wyhash.h"
 #include "xxHash/xxhash.h"
 
 uint32_t lookup3(const char *key, int length, uint32_t initval);
