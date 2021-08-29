@@ -22,10 +22,10 @@ sse42 = ["sse41"]
 t1ha = []
 
 [dependencies]
-cfg-if = "0.1"
+cfg-if = "1.0"
 
 [build-dependencies]
 bindgen = {version = "0.59", optional = true}
 cc = "1.0"
 lazy_static = "1.4"
-raw-cpuid = "8"
+raw-cpuid = "10"
