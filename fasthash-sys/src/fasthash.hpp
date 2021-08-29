@@ -1,8 +1,6 @@
 #pragma once
 
-#include "highwayhash/highwayhash_target.h"
 #include "highwayhash/highwayhash/c_bindings.h"
-#include "highwayhash/instruction_sets.h"
 #include "smhasher/City.h"
 #include "smhasher/CityCrc.h"
 #include "smhasher/farmhash-c.h"

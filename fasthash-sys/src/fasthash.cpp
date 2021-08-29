@@ -1,5 +1,8 @@
 #include "fasthash.hpp"
 
+#include "highwayhash/highwayhash/instruction_sets.h"
+#include "highwayhash/highwayhash/highwayhash_target.h"
+
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x)
 {
     return farmhash_fingerprint_uint128_c_t(x);

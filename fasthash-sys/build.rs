@@ -229,6 +229,10 @@ fn build_highway() {
                 .flag("-mavx2")
                 .file("src/highwayhash/highwayhash/hh_avx2.cc");
         }
+    } else if cfg!(target_arch = "aarch64") {
+        build.file("src/highwayhash/highwayhash/hh_neon.cc");
+    } else if cfg!(target_arch = "powerpc64") {
+        build.file("src/highwayhash/highwayhash/hh_vsx.cc");
     }
 
     build.static_flag(true).compile("highwayhash");
