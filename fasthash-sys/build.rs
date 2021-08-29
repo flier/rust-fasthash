@@ -259,7 +259,9 @@ fn main() {
     if cfg!(feature = "t1ha") {
         build_t1();
     }
-    build_highway();
+    if cfg!(feature = "highway") {
+        build_highway();
+    }
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("fasthash.rs");

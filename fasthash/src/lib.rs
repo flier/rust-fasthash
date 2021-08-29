@@ -70,7 +70,6 @@ cfg_if! {
 mod hasher;
 pub mod city;
 pub mod farm;
-pub mod highway;
 pub mod lookup3;
 #[cfg(feature = "aes")]
 pub mod meow;
@@ -129,6 +128,14 @@ cfg_if! {
 
         pub use crate::t1ha::{t1ha0, t1ha1, t1ha2};
         pub use crate::t1ha2::{Hasher128 as T1haHasherExt, Hasher128 as T1haHasher};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "highway")] {
+        pub mod highway;
+
+        pub use crate::highway::{Hasher64 as HighwayHasher, Hasher128 as HighwayHasherExt};
     }
 }
 

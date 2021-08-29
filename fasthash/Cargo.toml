@@ -13,14 +13,17 @@ version = "0.4.1"
 [features]
 default = ["doc", "native", "t1ha", "ahash", "seahash"]
 
+doc = []
+gen = ["fasthash-sys/gen"]
+
 aes = ["fasthash-sys/aes"]
 avx = ["fasthash-sys/avx"]
 avx2 = ["fasthash-sys/avx2"]
-doc = []
-gen = ["fasthash-sys/gen"]
 native = ["fasthash-sys/native"]
 sse41 = ["fasthash-sys/sse41"]
 sse42 = ["fasthash-sys/sse42"]
+
+highway = ["fasthash-sys/highway"]
 t1ha = ["fasthash-sys/t1ha"]
 
 [dependencies]
