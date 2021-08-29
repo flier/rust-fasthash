@@ -31,6 +31,7 @@ num-traits = "0.2"
 rand = "0.7"
 seahash = "4.0"
 xoroshiro128 = {version = "0.5", features = ["rand"]}
+ahash = { version = "0.5.6", no-default-features = true }
 
 fasthash-sys = {version = "0.4", path = "../fasthash-sys"}
 

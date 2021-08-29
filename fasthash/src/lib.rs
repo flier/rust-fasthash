@@ -70,6 +70,7 @@ cfg_if! {
 
 #[macro_use]
 mod hasher;
+pub mod ahash;
 pub mod city;
 pub mod farm;
 pub mod highway;
@@ -93,6 +94,7 @@ pub use crate::hasher::{
     BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
 };
 
+pub use crate::ahash::AHasher as AHasher;
 pub use crate::farm::{Hasher128 as FarmHasherExt, Hasher64 as FarmHasher};
 pub use crate::lookup3::Hasher32 as Lookup3Hasher;
 pub use crate::mum::Hasher64 as MumHasher;
