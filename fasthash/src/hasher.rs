@@ -3,8 +3,10 @@ use core::hash::{BuildHasher, Hasher};
 use core::marker::PhantomData;
 use std::io;
 
+use derive_more::{Deref, DerefMut};
 use num_traits::PrimInt;
-use xoroshiro128::{Rng, SeedableRng, Xoroshiro128Rng};
+use rand::Rng;
+use xoroshiro128::Xoroshiro128Rng;
 
 /// Generate a good, portable, forever-fixed hash value
 pub trait Fingerprint<T: PrimInt> {
@@ -153,13 +155,13 @@ pub trait HasherExt: Hasher {
 ///
 /// city::hash128_with_seed(b"hello world", Seed::gen().into());
 /// ```
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Deref, DerefMut)]
 pub struct Seed(Xoroshiro128Rng);
 
 impl Seed {
     #[inline(always)]
     fn new() -> Seed {
-        Seed(Xoroshiro128Rng::new().expect("failed to create an OS RNG"))
+        Seed(Xoroshiro128Rng::new())
     }
 
     /// Generate a new seed
@@ -168,7 +170,7 @@ impl Seed {
         thread_local!(static SEEDS: RefCell<Seed> = RefCell::new(Seed::new()));
 
         SEEDS.with(|seeds| {
-            Seed(Xoroshiro128Rng::from_seed({
+            Seed(Xoroshiro128Rng::from_seed_u64({
                 seeds.borrow_mut().0.gen::<[u64; 2]>()
             }))
         })
@@ -438,7 +440,7 @@ macro_rules! trivial_hasher {
             #[inline(always)]
             fn with_capacity_and_seed(capacity: usize, seed: Option<Self::Seed>) -> Self {
                 $hasher {
-                    seed: seed,
+                    seed,
                     bytes: Vec::with_capacity(capacity),
                 }
             }

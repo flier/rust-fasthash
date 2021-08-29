@@ -26,7 +26,7 @@ use std::hash::{Hash, Hasher};
 use fasthash::{MetroHasher, FastHasher};
 
 fn hash<T: Hash>(t: &T) -> u64 {
-    // Or use any of the `*Hasher` struct's available as aliases from 
+    // Or use any of the `*Hasher` struct's available as aliases from
     // root or in their respective modules as Hasher32/64 and some 128.
     let mut s = MetroHasher::default();
     t.hash(&mut s);
@@ -81,6 +81,8 @@ assert_eq!(map[&37], "c");
   - [T1ha Hash](https://github.com/leo-yuriev/t1ha)
   - [xx Hash](https://github.com/Cyan4973/xxHash) with  **experimental** [XXH3](https://github.com/Cyan4973/xxHash#new-experimental-hash-algorithm) hash algorithm
   - [Highway Hash](https://github.com/google/highwayhash)
+  - [wyhash](https://github.com/wangyi-fudan/wyhash) (final3) **new**
+  - [Meow Hash](https://github.com/cmuratori/meow_hash) **new**
 - Compatibility
   - [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
   - std::collections::{[HashMap](https://doc.rust-lang.org/std/collections/struct.HashMap.html), [HashSet](https://doc.rust-lang.org/std/collections/struct.HashSet.html)} with `RandomState`

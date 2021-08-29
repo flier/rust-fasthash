@@ -92,19 +92,23 @@ fn generate_binding(out_file: &Path) {
         .clang_arg(if support_avx() { "-mavx" } else { "" })
         .clang_arg(if support_avx2() { "-mavx2" } else { "" })
         .header("src/fasthash.hpp")
+        .size_t_is_usize(true)
         .generate_inline_functions(true)
         .disable_name_namespacing()
-        .whitelist_function("^CityHash.*")
-        .whitelist_function("^farmhash.*")
-        .whitelist_function("^lookup3.*")
-        .whitelist_function("^metrohash.*")
-        .whitelist_function("^mum_hash.*")
-        .whitelist_function("^MurmurHash.*")
-        .whitelist_function("^SpookyHasher.*")
-        .whitelist_function("^t1ha.*")
-        .blacklist_function("^t1ha_selfcheck__.*")
-        .whitelist_function("^XXH.*")
-        .whitelist_function("^HighwayHash.*")
+        .allowlist_function("^CityHash.*")
+        .allowlist_function("^farmhash.*")
+        .allowlist_function("^lookup3.*")
+        .allowlist_function("^metrohash.*")
+        .allowlist_function("^mum_hash.*")
+        .allowlist_function("^MurmurHash.*")
+        .allowlist_function("^SpookyHasher.*")
+        .allowlist_function("^t1ha.*")
+        .blocklist_function("^t1ha_selfcheck__.*")
+        .allowlist_function("^XXH.*")
+        .allowlist_function("^HighwayHash.*")
+        .allowlist_function("^wyhash.*")
+        .allowlist_var("^Meow.*")
+        .allowlist_function("^Meow.*")
         .generate()
         .unwrap()
         .write_to_file(out_file)
@@ -130,8 +134,8 @@ fn build_fasthash() {
         .file("src/smhasher/farmhash-c.c")
         .file("src/smhasher/lookup3.cpp")
         .file("src/smhasher/mum.cc")
-        .file("src/smhasher/metrohash64.cpp")
-        .file("src/smhasher/metrohash128.cpp")
+        .file("src/smhasher/metrohash/metrohash64.cpp")
+        .file("src/smhasher/metrohash/metrohash128.cpp")
         .file("src/smhasher/MurmurHash1.cpp")
         .file("src/smhasher/MurmurHash2.cpp")
         .file("src/smhasher/MurmurHash3.cpp")
@@ -141,8 +145,28 @@ fn build_fasthash() {
     if support_sse42() {
         build
             .flag("-msse4.2")
-            .file("src/smhasher/metrohash64crc.cpp")
-            .file("src/smhasher/metrohash128crc.cpp");
+            .file("src/smhasher/metrohash/metrohash64crc.cpp")
+            .file("src/smhasher/metrohash/metrohash128crc.cpp");
+    }
+
+    if cfg!(feature = "native") {
+        build.flag("-march=native");
+    } else {
+        if cfg!(target_feature = "aes") {
+            build.flag("-maes");
+        }
+        if cfg!(target_feature = "sse41") {
+            build.flag("-msse41");
+        }
+        if cfg!(target_feature = "sse42") {
+            build.flag("-msse41");
+        }
+        if cfg!(target_feature = "avx") {
+            build.flag("-mavx");
+        }
+        if cfg!(target_feature = "avx2") {
+            build.flag("-mavx2");
+        }
     }
 
     build.static_flag(true).compile("fasthash");
@@ -205,6 +229,10 @@ fn build_highway() {
                 .flag("-mavx2")
                 .file("src/highwayhash/highwayhash/hh_avx2.cc");
         }
+    } else if cfg!(target_arch = "aarch64") {
+        build.file("src/highwayhash/highwayhash/hh_neon.cc");
+    } else if cfg!(target_arch = "powerpc64") {
+        build.file("src/highwayhash/highwayhash/hh_vsx.cc");
     }
 
     build.static_flag(true).compile("highwayhash");

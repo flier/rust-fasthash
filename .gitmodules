@@ -10,3 +10,6 @@
 [submodule "fasthash-sys/src/highwayhash"]
 	path = fasthash-sys/src/highwayhash
 	url = https://github.com/google/highwayhash.git
+[submodule "fasthash-sys/src/wyhash"]
+	path = fasthash-sys/src/wyhash
+	url = https://github.com/wangyi-fudan/wyhash.git

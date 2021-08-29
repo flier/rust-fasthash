@@ -1,7 +1,7 @@
 #include "fasthash.hpp"
 
-#include "highwayhash/highwayhash_target.h"
-#include "highwayhash/instruction_sets.h"
+#include "highwayhash/highwayhash/instruction_sets.h"
+#include "highwayhash/highwayhash/highwayhash_target.h"
 
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x)
 {
@@ -60,12 +60,48 @@ uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed)
     return t1ha0(data, length, seed);
 }
 
-void HighwayHash128(const HHKey key, const char* bytes, const uint64_t size, HHResult128& hash) {
+void HighwayHash128(const HHKey key, const char *bytes, const uint64_t size, HHResult128 &hash)
+{
     highwayhash::InstructionSets::Run<highwayhash::HighwayHash>(
-        *reinterpret_cast<const HHKey*>(key), bytes, size, reinterpret_cast<HHResult128*>(hash));
+        *reinterpret_cast<const HHKey *>(key), bytes, size, reinterpret_cast<HHResult128 *>(hash));
 }
 
-void HighwayHash256(const HHKey key, const char* bytes, const uint64_t size, HHResult256& hash) {
+void HighwayHash256(const HHKey key, const char *bytes, const uint64_t size, HHResult256 &hash)
+{
     highwayhash::InstructionSets::Run<highwayhash::HighwayHash>(
-        *reinterpret_cast<const HHKey*>(key), bytes, size, reinterpret_cast<HHResult256*>(hash));
+        *reinterpret_cast<const HHKey *>(key), bytes, size, reinterpret_cast<HHResult256 *>(hash));
+}
+
+uint64_t wyhash64(const void *key, uint64_t len, uint64_t seed)
+{
+    return wyhash(key, len, seed, _wyp);
+}
+
+void MeowHash128(const void *key, int len, void *seed, void *out)
+{
+    meow_u128 h = MeowHash(seed, (meow_umm)len, (void *)key);
+    ((uint64_t *)out)[0] = MeowU64From(h, 0);
+    ((uint64_t *)out)[1] = MeowU64From(h, 1);
+}
+
+void MeowHashBegin(meow_state *State, void *Seed128)
+{
+    MeowBegin(State, Seed128);
+}
+
+void MeowHashUpdate(meow_state *State, size_t Len, void *SourceInit)
+{
+    MeowAbsorb(State, Len, SourceInit);
+}
+
+void MeowHashEnd(meow_state *State, void *out)
+{
+    meow_u128 h = MeowEnd(State, NULL);
+    ((uint64_t *)out)[0] = MeowU64From(h, 0);
+    ((uint64_t *)out)[1] = MeowU64From(h, 1);
+}
+
+void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult)
+{
+    MeowExpandSeed(InputLen, Input, SeedResult);
 }

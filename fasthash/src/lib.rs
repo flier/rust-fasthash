@@ -75,15 +75,18 @@ pub mod city;
 pub mod farm;
 pub mod highway;
 pub mod lookup3;
+#[cfg(feature = "aes")]
+pub mod meow;
 pub mod metro;
 pub mod mum;
 pub mod murmur;
 pub mod murmur2;
 pub mod murmur3;
-#[cfg(feature = "t1ha")]
-pub mod t1ha;
 pub mod sea;
 pub mod spooky;
+#[cfg(feature = "t1ha")]
+pub mod t1ha;
+pub mod wy;
 pub mod xx;
 pub mod xxh3;
 
@@ -106,6 +109,7 @@ cfg_if! {
         pub use crate::t1ha2::{Hasher128 as T1haHasherExt, Hasher128 as T1haHasher};
     }
 }
+pub use crate::wy::Hasher64 as WYHasher;
 pub use crate::xx::Hasher64 as XXHasher;
 cfg_if! {
     if #[cfg(target_pointer_width = "64")] {

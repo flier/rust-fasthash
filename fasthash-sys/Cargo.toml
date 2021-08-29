@@ -1,31 +1,31 @@
 [package]
-name = "fasthash-sys"
-version = "0.4.1"
 authors = ["Flier Lu <flier.lu@gmail.com>"]
+build = "build.rs"
 description = "A suite of non-cryptographic hash functions for Rust."
+edition = "2018"
 homepage = "https://github.com/flier/rust-fasthash"
-repository = "https://github.com/flier/rust-fasthash.git"
 keywords = ["hash", "hashing"]
 license = "Apache-2.0"
-build = "build.rs"
-edition = "2018"
+name = "fasthash-sys"
+repository = "https://github.com/flier/rust-fasthash.git"
+version = "0.4.1"
 
 [features]
-default = ["native"]
-native = []
 aes = []
-sse41 = []
-sse42 = ["sse41"]
 avx = []
 avx2 = ["avx"]
+default = ["native"]
 gen = ["bindgen"]
+native = []
+sse41 = []
+sse42 = ["sse41"]
 t1ha = []
 
 [dependencies]
-cfg-if = "0.1"
+cfg-if = "1.0"
 
 [build-dependencies]
-lazy_static = "1.4"
-raw-cpuid = "6"
+bindgen = {version = "0.59", optional = true}
 cc = "1.0"
-bindgen = { version="0.51", optional=true }
+lazy_static = "1.4"
+raw-cpuid = "10"
