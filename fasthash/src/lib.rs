@@ -56,8 +56,6 @@
 
 #[macro_use]
 extern crate cfg_if;
-#[macro_use]
-extern crate lazy_static;
 extern crate fasthash_sys as ffi;
 
 cfg_if! {
@@ -70,7 +68,6 @@ cfg_if! {
 
 #[macro_use]
 mod hasher;
-pub mod ahash;
 pub mod city;
 pub mod farm;
 pub mod highway;
@@ -82,10 +79,7 @@ pub mod mum;
 pub mod murmur;
 pub mod murmur2;
 pub mod murmur3;
-pub mod sea;
 pub mod spooky;
-#[cfg(feature = "t1ha")]
-pub mod t1ha;
 pub mod wy;
 pub mod xx;
 pub mod xxh3;
@@ -94,21 +88,12 @@ pub use crate::hasher::{
     BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
 };
 
-pub use crate::ahash::AHasher as AHasher;
 pub use crate::farm::{Hasher128 as FarmHasherExt, Hasher64 as FarmHasher};
 pub use crate::lookup3::Hasher32 as Lookup3Hasher;
 pub use crate::mum::Hasher64 as MumHasher;
 pub use crate::murmur::Hasher32 as MurmurHasher;
 pub use crate::murmur3::Hasher32 as Murmur3Hasher;
-#[doc(no_inline)]
-pub use crate::sea::Hasher64 as SeaHasher;
 pub use crate::spooky::{Hasher128 as SpookyHasherExt, Hasher64 as SpookyHasher};
-cfg_if! {
-    if #[cfg(feature = "t1ha")] {
-        pub use crate::t1ha::{t1ha0, t1ha1, t1ha2};
-        pub use crate::t1ha2::{Hasher128 as T1haHasherExt, Hasher128 as T1haHasher};
-    }
-}
 pub use crate::wy::Hasher64 as WYHasher;
 pub use crate::xx::Hasher64 as XXHasher;
 cfg_if! {
@@ -127,5 +112,31 @@ cfg_if! {
     } else {
         pub use city::{Hasher128 as CityHasherExt, Hasher64 as CityHasher};
         pub use metro::{Hasher128_1 as MetroHasherExt, Hasher64_1 as MetroHasher};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "ahash")] {
+        pub mod ahash;
+
+        pub use crate::ahash::{AHasher, Hash64};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "t1ha")] {
+        pub mod t1ha;
+
+        pub use crate::t1ha::{t1ha0, t1ha1, t1ha2};
+        pub use crate::t1ha2::{Hasher128 as T1haHasherExt, Hasher128 as T1haHasher};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "seahash")] {
+        pub mod sea;
+
+        #[doc(no_inline)]
+        pub use crate::sea::Hasher64 as SeaHasher;
     }
 }

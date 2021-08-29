@@ -196,6 +196,7 @@ impl_from_seed!((u64, u64));
 impl_from_seed!((u64, u64, u64, u64));
 impl_from_seed!([u64; 2]);
 impl_from_seed!([u64; 4]);
+impl_from_seed!((u128, u128));
 
 impl From<Seed> for u128 {
     #[inline(always)]
@@ -566,8 +567,10 @@ mod tests {
             murmur2::Hash64_x86
         ];
         test_hashmap_with_hashers![murmur3::Hash32, murmur3::Hash128_x86, murmur3::Hash128_x64];
+        #[cfg(feature = "seahash")]
         test_hashmap_with_hashers![sea::Hash64];
         test_hashmap_with_hashers![spooky::Hash32, spooky::Hash64, spooky::Hash128];
+
         #[cfg(feature = "t1ha")]
         test_hashmap_with_hashers![
             t1ha0::Hash64,
@@ -578,5 +581,8 @@ mod tests {
         ];
 
         test_hashmap_with_hashers![xx::Hash32, xx::Hash64];
+
+        #[cfg(feature = "ahash")]
+        test_hashmap_with_hashers![ahash::Hash64]
     }
 }

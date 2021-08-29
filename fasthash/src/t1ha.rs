@@ -374,7 +374,7 @@ pub mod t1ha1 {
 pub mod t1ha0 {
     use crate::hasher::FastHash;
 
-    lazy_static! {
+    lazy_static::lazy_static! {
         static ref T1HA0: ffi::t1ha0_function_t = unsafe { ffi::t1ha0_resolve() };
     }
 

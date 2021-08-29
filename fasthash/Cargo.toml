@@ -11,10 +11,11 @@ repository = "https://github.com/flier/rust-fasthash.git"
 version = "0.4.1"
 
 [features]
+default = ["doc", "native", "t1ha", "ahash", "seahash"]
+
 aes = ["fasthash-sys/aes"]
 avx = ["fasthash-sys/avx"]
 avx2 = ["fasthash-sys/avx2"]
-default = ["doc", "native", "t1ha"]
 doc = []
 gen = ["fasthash-sys/gen"]
 native = ["fasthash-sys/native"]
@@ -25,13 +26,14 @@ t1ha = ["fasthash-sys/t1ha"]
 [dependencies]
 cfg-if = "1.0"
 derive_more = "0.99"
-digest = {version = "0.9", optional = true}
 lazy_static = "1.3"
 num-traits = "0.2"
 rand = "0.7"
-seahash = "4.0"
+
+ahash = {version = "0.7", optional = true}
+digest = {version = "0.9", optional = true}
+seahash = {version = "4.1", optional = true}
 xoroshiro128 = {version = "0.5", features = ["rand"]}
-ahash = { version = "0.5.6", no-default-features = true }
 
 fasthash-sys = {version = "0.4", path = "../fasthash-sys"}
 
