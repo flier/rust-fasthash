@@ -1,15 +1,21 @@
+#pragma once
+
+#include "highwayhash/highwayhash_target.h"
+#include "highwayhash/highwayhash/c_bindings.h"
+#include "highwayhash/instruction_sets.h"
 #include "smhasher/City.h"
 #include "smhasher/CityCrc.h"
 #include "smhasher/farmhash-c.h"
+#include "smhasher/meow_hash_x64_aesni.h"
 #include "smhasher/metrohash/metrohash.h"
 #include "smhasher/mum.h"
 #include "smhasher/MurmurHash1.h"
 #include "smhasher/MurmurHash2.h"
 #include "smhasher/MurmurHash3.h"
 #include "smhasher/Spooky.h"
+#include "smhasher/wyhash.h"
 #include "t1ha/t1ha.h"
 #include "xxHash/xxhash.h"
-#include "highwayhash/highwayhash/c_bindings.h"
 
 uint32_t lookup3(const char *key, int length, uint32_t initval);
 
@@ -51,3 +57,15 @@ void HighwayHash128(const HHKey key, const char *bytes, const uint64_t size, HHR
 void HighwayHash256(const HHKey key, const char *bytes, const uint64_t size, HHResult256 &hash);
 
 uint64_t wyhash64(const void *key, uint64_t len, uint64_t seed);
+
+void MeowHash128(const void *key, int len, void *seed, void *out);
+
+typedef struct meow_state;
+
+void MeowHashBegin(meow_state *State, void *Seed128);
+
+void MeowHashUpdate(meow_state *State, size_t Len, void *SourceInit);
+
+void MeowHashEnd(meow_state *State, void *out);
+
+void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult);

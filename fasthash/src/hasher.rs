@@ -3,6 +3,7 @@ use core::hash::{BuildHasher, Hasher};
 use core::marker::PhantomData;
 use std::io;
 
+use derive_more::{Deref, DerefMut};
 use num_traits::PrimInt;
 use rand::Rng;
 use xoroshiro128::Xoroshiro128Rng;
@@ -154,7 +155,7 @@ pub trait HasherExt: Hasher {
 ///
 /// city::hash128_with_seed(b"hello world", Seed::gen().into());
 /// ```
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Deref, DerefMut)]
 pub struct Seed(Xoroshiro128Rng);
 
 impl Seed {

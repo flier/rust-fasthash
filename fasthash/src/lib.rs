@@ -74,6 +74,8 @@ pub mod city;
 pub mod farm;
 pub mod highway;
 pub mod lookup3;
+#[cfg(feature = "aes")]
+pub mod meow;
 pub mod metro;
 pub mod mum;
 pub mod murmur;

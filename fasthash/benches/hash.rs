@@ -224,6 +224,12 @@ fn bench_hash128(c: &mut Criterion) {
             });
     }
 
+    if cfg!(any(feature = "aes", target_feature = "aes")) {
+        bench = bench.with_function("meow::hash128 with default seed", move |b, &&size| {
+            b.iter(|| meow::hash128(&DATA[..size]));
+        });
+    }
+
     c.bench(
         "hash128",
         bench.throughput(|&&size| Throughput::Bytes(size as u64)),

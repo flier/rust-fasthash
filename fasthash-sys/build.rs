@@ -107,6 +107,8 @@ fn generate_binding(out_file: &Path) {
         .whitelist_function("^XXH.*")
         .whitelist_function("^HighwayHash.*")
         .whitelist_function("^wyhash.*")
+        .whitelist_var("^Meow.*")
+        .whitelist_function("^Meow.*")
         .generate()
         .unwrap()
         .write_to_file(out_file)
@@ -145,6 +147,26 @@ fn build_fasthash() {
             .flag("-msse4.2")
             .file("src/smhasher/metrohash/metrohash64crc.cpp")
             .file("src/smhasher/metrohash/metrohash128crc.cpp");
+    }
+
+    if cfg!(feature = "native") {
+        build.flag("-march=native");
+    } else {
+        if cfg!(target_feature = "aes") {
+            build.flag("-maes");
+        }
+        if cfg!(target_feature = "sse41") {
+            build.flag("-msse41");
+        }
+        if cfg!(target_feature = "sse42") {
+            build.flag("-msse41");
+        }
+        if cfg!(target_feature = "avx") {
+            build.flag("-mavx");
+        }
+        if cfg!(target_feature = "avx2") {
+            build.flag("-mavx2");
+        }
     }
 
     build.static_flag(true).compile("fasthash");
