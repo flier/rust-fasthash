@@ -150,7 +150,7 @@ pub trait HasherExt: Hasher {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
 /// use fasthash::{Seed, city};
 ///
 /// city::hash128_with_seed(b"hello world", Seed::gen().into());
@@ -215,7 +215,7 @@ impl From<Seed> for u128 {
 /// [`Hasher`], but the hashers created by two different `RandomState`
 /// instances are unlikely to produce the same result for the same values.
 ///
-/// ```rust
+/// ```
 /// use std::collections::HashMap;
 ///
 /// use fasthash::RandomState;
@@ -537,17 +537,27 @@ mod tests {
 
     #[test]
     fn test_hashmap_with_hashers() {
+        #[cfg(feature = "city")]
         test_hashmap_with_hashers![city::Hash32, city::Hash64, city::Hash128];
-        #[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
+
+        #[cfg(all(feature = "city", any(feature = "sse42", target_feature = "sse4.2")))]
         test_hashmap_with_hashers![city::crc::Hash128];
+
+        #[cfg(feature = "farm")]
         test_hashmap_with_hashers![farm::Hash32, farm::Hash64, farm::Hash128];
+
+        #[cfg(feature = "lookup")]
         test_hashmap_with_hashers![lookup3::Hash32];
+
+        #[cfg(feature = "metro")]
         test_hashmap_with_hashers![
             metro::Hash64_1,
             metro::Hash64_2,
             metro::Hash128_1,
             metro::Hash128_2
         ];
+
+        #[cfg(feature = "metro")]
         #[cfg(any(feature = "sse42", target_feature = "sse4.2"))]
         test_hashmap_with_hashers![
             metro::crc::Hash64_1,
@@ -556,19 +566,28 @@ mod tests {
             metro::crc::Hash128_2
         ];
 
+        #[cfg(feature = "mum")]
         test_hashmap_with_hashers![mum::Hash64];
-        test_hashmap_with_hashers![murmur::Hash32, murmur::Hash32Aligned];
+
+        #[cfg(feature = "murmur")]
         test_hashmap_with_hashers![
+            murmur::Hash32,
+            murmur::Hash32Aligned,
             murmur2::Hash32,
             murmur2::Hash32A,
             murmur2::Hash32Neutral,
             murmur2::Hash32Aligned,
             murmur2::Hash64_x64,
-            murmur2::Hash64_x86
+            murmur2::Hash64_x86,
+            murmur3::Hash32,
+            murmur3::Hash128_x86,
+            murmur3::Hash128_x64
         ];
-        test_hashmap_with_hashers![murmur3::Hash32, murmur3::Hash128_x86, murmur3::Hash128_x64];
+
         #[cfg(feature = "seahash")]
         test_hashmap_with_hashers![sea::Hash64];
+
+        #[cfg(feature = "spooky")]
         test_hashmap_with_hashers![spooky::Hash32, spooky::Hash64, spooky::Hash128];
 
         #[cfg(feature = "t1ha")]
@@ -580,6 +599,7 @@ mod tests {
             t1ha2::Hash128AtOnce
         ];
 
+        #[cfg(feature = "xx")]
         test_hashmap_with_hashers![xx::Hash32, xx::Hash64];
 
         #[cfg(feature = "ahash")]

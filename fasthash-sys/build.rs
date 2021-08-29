@@ -83,14 +83,84 @@ fn generate_binding(out_file: &Path) {
         } else {
             &[][..]
         })
-        .clang_arg(if cfg!(feature = "native") {
-            "-march=native"
-        } else {
-            ""
-        })
-        .clang_arg(if support_sse42() { "-msse4.2" } else { "" })
-        .clang_arg(if support_avx() { "-mavx" } else { "" })
-        .clang_arg(if support_avx2() { "-mavx2" } else { "" })
+        .clang_args(
+            vec![
+                if cfg!(feature = "native") {
+                    Some("-march=native")
+                } else {
+                    None
+                },
+                if support_sse42() {
+                    Some("-msse4.2")
+                } else {
+                    None
+                },
+                if support_avx() { Some("-mavx") } else { None },
+                if support_avx2() { Some("-mavx2") } else { None },
+                if cfg!(feature = "city") {
+                    Some("-DCITY_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "farm") {
+                    Some("-DFARM_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "highway") {
+                    Some("-DHIGHWAY_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "lookup3") {
+                    Some("-DLOOKUP3=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "meow") {
+                    Some("-DMEOW_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "metro") {
+                    Some("-DMETRO_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "mum") {
+                    Some("-DMUM_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "murmur") {
+                    Some("-DMURMUR_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "spooky") {
+                    Some("-DSPOOKY_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "t1ha") {
+                    Some("-DT1_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "wy") {
+                    Some("-DWY_HASH=1")
+                } else {
+                    None
+                },
+                if cfg!(feature = "xx") {
+                    Some("-DXX_HASH=1")
+                } else {
+                    None
+                },
+            ]
+            .into_iter()
+            .flatten(),
+        )
         .header("src/fasthash.hpp")
         .size_t_is_usize(true)
         .generate_inline_functions(true)
@@ -126,27 +196,74 @@ fn build_fasthash() {
     build
         .cpp(true)
         .flag("-std=c++11")
+        .include("src/highwayhash")
         .flag("-Wno-implicit-fallthrough")
         .flag("-Wno-unknown-attributes")
-        .include("src/highwayhash")
-        .file("src/fasthash.cpp")
-        .file("src/smhasher/City.cpp")
-        .file("src/smhasher/farmhash-c.c")
-        .file("src/smhasher/lookup3.cpp")
-        .file("src/smhasher/mum.cc")
-        .file("src/smhasher/metrohash/metrohash64.cpp")
-        .file("src/smhasher/metrohash/metrohash128.cpp")
-        .file("src/smhasher/MurmurHash1.cpp")
-        .file("src/smhasher/MurmurHash2.cpp")
-        .file("src/smhasher/MurmurHash3.cpp")
-        .file("src/smhasher/Spooky.cpp")
-        .file("src/xxHash/xxhash.c");
+        .file("src/fasthash.cpp");
 
-    if support_sse42() {
+    if cfg!(feature = "city") {
+        build.flag("-DCITY_HASH=1").file("src/smhasher/City.cpp");
+    }
+
+    if cfg!(feature = "farm") {
         build
-            .flag("-msse4.2")
-            .file("src/smhasher/metrohash/metrohash64crc.cpp")
-            .file("src/smhasher/metrohash/metrohash128crc.cpp");
+            .flag("-DFARM_HASH=1")
+            .file("src/smhasher/farmhash-c.c");
+    }
+
+    if cfg!(feature = "highway") {
+        build.flag("-DHIGHWAY_HASH=1");
+    }
+
+    if cfg!(feature = "lookup3") {
+        build.flag("-DLOOKUP3=1").file("src/smhasher/lookup3.cpp");
+    }
+
+    if cfg!(feature = "meow") {
+        build.flag("-DMEOW_HASH=1");
+    }
+
+    if cfg!(feature = "t1ha") {
+        build.flag("-DT1_HASH=1");
+    }
+
+    if cfg!(feature = "metro") {
+        build
+            .flag("-DMETRO_HASH=1")
+            .file("src/smhasher/metrohash/metrohash64.cpp")
+            .file("src/smhasher/metrohash/metrohash128.cpp");
+
+        if support_sse42() {
+            build
+                .file("src/smhasher/metrohash/metrohash64crc.cpp")
+                .file("src/smhasher/metrohash/metrohash128crc.cpp");
+        }
+    }
+
+    if cfg!(feature = "mum") {
+        build.flag("-DMUM_HASH=1").file("src/smhasher/mum.cc");
+    }
+
+    if cfg!(feature = "murmur") {
+        build
+            .flag("-DMURMUR_HASH=1")
+            .file("src/smhasher/MurmurHash1.cpp")
+            .file("src/smhasher/MurmurHash2.cpp")
+            .file("src/smhasher/MurmurHash3.cpp");
+    }
+
+    if cfg!(feature = "spooky") {
+        build
+            .flag("-DSPOOKY_HASH=1")
+            .file("src/smhasher/Spooky.cpp");
+    }
+
+    if cfg!(feature = "wy") {
+        build.flag("-DWY_HASH=1");
+    }
+
+    if cfg!(feature = "xx") {
+        build.flag("-DXX_HASH=1").file("src/xxHash/xxhash.c");
     }
 
     if cfg!(feature = "native") {
@@ -159,7 +276,7 @@ fn build_fasthash() {
             build.flag("-msse41");
         }
         if cfg!(target_feature = "sse42") {
-            build.flag("-msse41");
+            build.flag("-msse4.2");
         }
         if cfg!(target_feature = "avx") {
             build.flag("-mavx");

@@ -2,7 +2,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use std::hash::{Hash, Hasher};
 //!
 //! use fasthash::{metro, MetroHasher};
@@ -26,7 +26,7 @@
 //!
 //! It also cowork with `HashMap` or `HashSet`, act as a hash function
 //!
-//! ```rust
+//! ```
 //! use std::collections::HashSet;
 //!
 //! use fasthash::spooky::Hash128;
@@ -37,7 +37,7 @@
 //!
 //! Or use `RandomState<CityHash64>` with a random seed.
 //!
-//! ```rust
+//! ```
 //! use std::collections::HashMap;
 //!
 //! use fasthash::{city, RandomState};
@@ -68,49 +68,95 @@ cfg_if! {
 
 #[macro_use]
 mod hasher;
-pub mod city;
-pub mod farm;
-pub mod lookup3;
-#[cfg(feature = "aes")]
-pub mod meow;
-pub mod metro;
-pub mod mum;
-pub mod murmur;
-pub mod murmur2;
-pub mod murmur3;
-pub mod spooky;
-pub mod wy;
-pub mod xx;
-pub mod xxh3;
 
 pub use crate::hasher::{
     BufHasher, FastHash, FastHasher, Fingerprint, HasherExt, RandomState, Seed, StreamHasher,
 };
 
-pub use crate::farm::{Hasher128 as FarmHasherExt, Hasher64 as FarmHasher};
-pub use crate::lookup3::Hasher32 as Lookup3Hasher;
-pub use crate::mum::Hasher64 as MumHasher;
-pub use crate::murmur::Hasher32 as MurmurHasher;
-pub use crate::murmur3::Hasher32 as Murmur3Hasher;
-pub use crate::spooky::{Hasher128 as SpookyHasherExt, Hasher64 as SpookyHasher};
-pub use crate::wy::Hasher64 as WYHasher;
-pub use crate::xx::Hasher64 as XXHasher;
 cfg_if! {
-    if #[cfg(target_pointer_width = "64")] {
-        pub use crate::murmur2::Hasher64_x64 as Murmur2Hasher;
-        pub use crate::murmur3::Hasher128_x64 as Murmur3HasherExt;
-    } else {
-        pub use murmur2::Hasher64_x86 as Murmur2Hasher;
-        pub use murmur3::Hasher128_x86 as Murmur3HasherExt;
+    if #[cfg(feature = "city")] {
+        pub mod city;
+
+        cfg_if! {
+            if #[cfg(any(feature = "sse42", target_feature = "sse4.2"))] {
+                pub use crate::city::{Hasher64 as CityHasher, crc::Hasher128 as CityHasherExt};
+            } else {
+                pub use city::{Hasher128 as CityHasherExt, Hasher64 as CityHasher};
+            }
+        }
     }
 }
+
 cfg_if! {
-    if #[cfg(any(feature = "sse42", target_feature = "sse4.2"))] {
-        pub use crate::city::{Hasher64 as CityHasher, crc::Hasher128 as CityHasherExt};
-        pub use crate::metro::{crc::Hasher128_1 as MetroHasherExt, crc::Hasher64_1 as MetroHasher};
-    } else {
-        pub use city::{Hasher128 as CityHasherExt, Hasher64 as CityHasher};
-        pub use metro::{Hasher128_1 as MetroHasherExt, Hasher64_1 as MetroHasher};
+    if #[cfg(feature = "farm")] {
+        pub mod farm;
+
+        pub use crate::farm::{Hasher128 as FarmHasherExt, Hasher64 as FarmHasher};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "lookup3")] {
+        pub mod lookup3;
+
+        pub use crate::lookup3::Hasher32 as Lookup3Hasher;
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "metro", feature = "aes"))] {
+        pub mod meow;
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "metro")] {
+        pub mod metro;
+
+        cfg_if! {
+            if #[cfg(any(feature = "sse42", target_feature = "sse4.2"))] {
+                pub use crate::metro::{crc::Hasher128_1 as MetroHasherExt, crc::Hasher64_1 as MetroHasher};
+            } else {
+                pub use metro::{Hasher128_1 as MetroHasherExt, Hasher64_1 as MetroHasher};
+            }
+        }
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "mum")] {
+        pub mod mum;
+
+        pub use crate::mum::Hasher64 as MumHasher;
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "murmur")] {
+        pub mod murmur;
+        pub mod murmur2;
+        pub mod murmur3;
+
+        pub use crate::murmur::Hasher32 as MurmurHasher;
+        pub use crate::murmur3::Hasher32 as Murmur3Hasher;
+
+        cfg_if! {
+            if #[cfg(target_pointer_width = "64")] {
+                pub use crate::murmur2::Hasher64_x64 as Murmur2Hasher;
+                pub use crate::murmur3::Hasher128_x64 as Murmur3HasherExt;
+            } else {
+                pub use murmur2::Hasher64_x86 as Murmur2Hasher;
+                pub use murmur3::Hasher128_x86 as Murmur3HasherExt;
+            }
+        }
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "spooky")] {
+        pub mod spooky;
+
+        pub use crate::spooky::{Hasher128 as SpookyHasherExt, Hasher64 as SpookyHasher};
     }
 }
 
@@ -145,5 +191,22 @@ cfg_if! {
 
         #[doc(no_inline)]
         pub use crate::sea::Hasher64 as SeaHasher;
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "wy")] {
+        pub mod wy;
+
+        pub use crate::wy::Hasher64 as WYHasher;
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "xx")] {
+        pub mod xx;
+        pub mod xxh3;
+
+        pub use crate::xx::Hasher64 as XXHasher;
     }
 }

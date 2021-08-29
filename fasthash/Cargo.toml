@@ -11,7 +11,7 @@ repository = "https://github.com/flier/rust-fasthash.git"
 version = "0.4.1"
 
 [features]
-default = ["doc", "native", "t1ha", "ahash", "seahash"]
+default = ["doc", "native", "all"]
 
 doc = []
 gen = ["fasthash-sys/gen"]
@@ -23,8 +23,35 @@ native = ["fasthash-sys/native"]
 sse41 = ["fasthash-sys/sse41"]
 sse42 = ["fasthash-sys/sse42"]
 
+all = [
+  "fasthash-sys/all",
+  "ahash",
+  "city",
+  "farm",
+  "highway",
+  "lookup3",
+  "meow",
+  "metro",
+  "mum",
+  "murmur",
+  "seahash",
+  "spooky",
+  "t1ha",
+  "wy",
+  "xx",
+]
+city = ["fasthash-sys/city"]
+farm = ["fasthash-sys/farm"]
 highway = ["fasthash-sys/highway"]
+lookup3 = ["fasthash-sys/lookup3"]
+meow = ["fasthash-sys/meow"]
+metro = ["fasthash-sys/metro"]
+mum = ["fasthash-sys/mum"]
+murmur = ["fasthash-sys/murmur"]
+spooky = ["fasthash-sys/spooky"]
 t1ha = ["fasthash-sys/t1ha"]
+wy = ["fasthash-sys/wy"]
+xx = ["fasthash-sys/xx"]
 
 [dependencies]
 cfg-if = "1.0"
@@ -38,7 +65,10 @@ digest = {version = "0.9", optional = true}
 seahash = {version = "4.1", optional = true}
 xoroshiro128 = {version = "0.5", features = ["rand"]}
 
-fasthash-sys = {version = "0.4", path = "../fasthash-sys"}
+[dependencies.fasthash-sys]
+default-features = false
+path = "../fasthash-sys"
+version = "0.4"
 
 [dev-dependencies]
 criterion = "0.3"

@@ -1,7 +1,6 @@
 #include "fasthash.hpp"
 
-#include "highwayhash/highwayhash/instruction_sets.h"
-#include "highwayhash/highwayhash/highwayhash_target.h"
+#ifdef FARM_HASH
 
 uint64_t farmhash_fingerprint_uint128(uint128_c_t x)
 {
@@ -13,10 +12,18 @@ uint64_t farmhash_fingerprint_uint64(uint64_t x)
     return farmhash_fingerprint_uint64_t(x);
 }
 
+#endif
+
+#ifdef MUM_HASH
+
 uint64_t mum_hash_(const void *key, size_t len, uint64_t seed)
 {
     return mum_hash(key, len, seed);
 }
+
+#endif
+
+#ifdef SPOOKY_HASH
 
 void SpookyHasherHash(
     const void *message, // message to hash
@@ -55,10 +62,21 @@ void SpookyHasherFinal(
     ((SpookyHash *)h)->Final(hash1, hash2);
 }
 
+#endif
+
+#ifdef T1_HASH
+
 uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed)
 {
     return t1ha0(data, length, seed);
 }
+
+#endif
+
+#ifdef HIGHWAY_HASH
+
+#include "highwayhash/highwayhash/instruction_sets.h"
+#include "highwayhash/highwayhash/highwayhash_target.h"
 
 void HighwayHash128(const HHKey key, const char *bytes, const uint64_t size, HHResult128 &hash)
 {
@@ -72,10 +90,18 @@ void HighwayHash256(const HHKey key, const char *bytes, const uint64_t size, HHR
         *reinterpret_cast<const HHKey *>(key), bytes, size, reinterpret_cast<HHResult256 *>(hash));
 }
 
+#endif
+
+#ifdef WY_HASH
+
 uint64_t wyhash64(const void *key, uint64_t len, uint64_t seed)
 {
     return wyhash(key, len, seed, _wyp);
 }
+
+#endif
+
+#ifdef MEOW_HASH
 
 void MeowHash128(const void *key, int len, void *seed, void *out)
 {
@@ -105,3 +131,5 @@ void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult)
 {
     MeowExpandSeed(InputLen, Input, SeedResult);
 }
+
+#endif

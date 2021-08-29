@@ -11,16 +11,30 @@ repository = "https://github.com/flier/rust-fasthash.git"
 version = "0.4.1"
 
 [features]
+default = ["native", "all"]
+
+gen = ["bindgen"]
+
 aes = []
 avx = []
 avx2 = ["avx"]
-default = ["native"]
-gen = ["bindgen"]
-highway = []
 native = []
 sse41 = []
 sse42 = ["sse41"]
+
+all = ["city", "farm", "highway", "lookup3", "meow", "metro", "mum", "murmur", "spooky", "t1ha", "wy", "xx"]
+city = []
+farm = []
+highway = []
+lookup3 = []
+meow = []
+metro = []
+mum = []
+murmur = []
+spooky = []
 t1ha = []
+wy = []
+xx = []
 
 [dependencies]
 cfg-if = "1.0"
