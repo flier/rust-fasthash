@@ -71,7 +71,7 @@ path = "../fasthash-sys"
 version = "0.4"
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = {version = "0.3", features = ["html_reports"]}
 
 [build-dependencies]
 raw-cpuid = "10"
