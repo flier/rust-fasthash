@@ -17,7 +17,7 @@
 //! (10% as fast). A third-party ARM implementation is referenced below.
 //!
 //! Statistical analyses and preliminary cryptanalysis are given in
-//! https://arxiv.org/abs/1612.06257.
+//! <https://arxiv.org/abs/1612.06257>.
 use crate::FastHash;
 
 /// 256-bit secret key that should remain unknown to attackers.

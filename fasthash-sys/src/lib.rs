@@ -2,7 +2,8 @@
     non_camel_case_types,
     non_snake_case,
     non_upper_case_globals,
-    deref_nullptr
+    deref_nullptr,
+    rustdoc::broken_intra_doc_links
 )]
 
 use cfg_if::cfg_if;

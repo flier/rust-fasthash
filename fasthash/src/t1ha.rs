@@ -2,7 +2,7 @@
 //!
 //! by Positive Technologies.
 //!
-//! https://github.com/leo-yuriev/t1ha
+//! <https://github.com/leo-yuriev/t1ha>
 //!
 //! Briefly, it is a 64-bit Hash Function:
 //!
@@ -239,7 +239,7 @@ pub mod t1ha2 {
 ///    - Portable and stable, returns same 64-bit result
 ///      on all architectures and CPUs.
 ///    - Unfortunately it fails the "strict avalanche criteria",
-///      see test results at https://github.com/demerphq/smhasher.
+///      see test results at <https://github.com/demerphq/smhasher>.
 ///
 ///      This flaw is insignificant for the t1ha1() purposes and imperceptible
 ///      from a practical point of view.

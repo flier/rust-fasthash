@@ -2,7 +2,7 @@
 //!
 //! by Austin Appleby (aappleby (AT) gmail)
 //!
-//! https://sites.google.com/site/murmurhash/
+//! <https://sites.google.com/site/murmurhash/>
 //!
 //! Extremely simple - compiles down to ~52 instructions on x86.
 //!

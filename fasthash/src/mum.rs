@@ -2,7 +2,7 @@
 //!
 //! by Vladimir Makarov <vmakarov@gcc.gnu.org>
 //!
-//! https://github.com/vnmakarov/mum-hash
+//! <https://github.com/vnmakarov/mum-hash>
 //!
 //! * MUM hash is a **fast non-cryptographic hash function**
 //!   suitable for different hash table implementations

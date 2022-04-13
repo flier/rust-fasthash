@@ -2,7 +2,7 @@
 //!
 //! by Bob Jekins
 //!
-//! http://burtleburtle.net/bob/c/lookup3.c
+//! <http://burtleburtle.net/bob/c/lookup3.c>
 //!
 //!
 //! # Example

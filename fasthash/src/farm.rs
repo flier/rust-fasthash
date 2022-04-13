@@ -2,7 +2,7 @@
 //!
 //! by Geoff Pike
 //!
-//! https://github.com/google/farmhash
+//! <https://github.com/google/farmhash>
 //!
 //! Introduction
 //! ============

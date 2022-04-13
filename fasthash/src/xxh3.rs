@@ -1,4 +1,6 @@
 //! XXH3 is a new hash algorithm, featuring vastly improved speed performance for both small and large inputs.
+//!
+//! <https://github.com/Cyan4973/xxHash>
 use std::hash::Hasher;
 use std::mem;
 use std::ptr::NonNull;

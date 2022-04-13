@@ -2,7 +2,7 @@
 //!
 //! by Yann Collet
 //!
-//! http://cyan4973.github.io/xxHash/
+//! <http://cyan4973.github.io/xxHash/>
 //!
 //! xxHash is an Extremely fast Hash algorithm, running at RAM speed limits.
 //! It successfully completes the `SMHasher` test suite which evaluates collision,

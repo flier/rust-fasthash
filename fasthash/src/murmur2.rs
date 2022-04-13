@@ -2,7 +2,7 @@
 //!
 //! by Austin Appleby (aappleby (AT) gmail)
 //!
-//! https://sites.google.com/site/murmurhash/
+//! <https://sites.google.com/site/murmurhash/>
 //!
 //! Extremely simple - compiles down to ~52 instructions on x86.
 //!
@@ -38,8 +38,7 @@
 //! `MurmurHash` was a recommended hash function for hash table implementations.
 //! Jean-Philippe Aumasson and Daniel J. Bernstein were able to show
 //! that even randomized implementations of `MurmurHash`
-//! are vulnerable to so-called [`HashDoS` attacks]
-//! (https://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/).
+//! are vulnerable to so-called [`HashDoS` attacks](https://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/).
 //! With the use of differential cryptanalysis they were able to generate inputs
 //! that would lead to a hash collision.
 //! This can be abused to cause very slow operations of a hash table implementation.

@@ -2,7 +2,7 @@
 //!
 //! by Geoff Pike and Jyrki Alakuijala
 //!
-//! https://github.com/google/cityhash
+//! <https://github.com/google/cityhash>
 //!
 //! Introduction
 //! ============

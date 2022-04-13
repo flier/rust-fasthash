@@ -2,7 +2,7 @@
 //!
 //! by J. Andrew Rogers
 //!
-//! https://github.com/jandrewrogers/metrohash
+//! <https://github.com/jandrewrogers/metrohash>
 //!
 //! `MetroHash` is a set of state-of-the-art hash functions for non-cryptographic use cases.
 //! They are notable for being algorithmically generated in addition to their exceptional

@@ -1,8 +1,8 @@
 //! `Meow` - A Fast Non-cryptographic Hash
 //!
-//! (C) Copyright 2018-2019 by Molly Rocket, Inc. (https://mollyrocket.com)
+//! (C) Copyright 2018-2019 by Molly Rocket, Inc. <https://mollyrocket.com>
 //!
-//! See https://mollyrocket.com/meowhash for details.
+//! See <https://mollyrocket.com/meowhash> for details.
 //!
 //! # Example
 //!

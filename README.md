@@ -72,6 +72,7 @@ assert_eq!(map[&37], "c");
 - Modern Hash Functions
   - [City Hash](https://github.com/google/cityhash)
   - [Farm Hash](https://github.com/google/farmhash)
+  - [Komi Hash](https://github.com/avaneev/komihash) **new**
   - [Metro Hash](https://github.com/jandrewrogers/MetroHash)
   - [Mum Hash](https://github.com/vnmakarov/mum-hash)
   - [Murmur Hash](https://sites.google.com/site/murmurhash/)

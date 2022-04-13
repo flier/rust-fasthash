@@ -2,7 +2,7 @@
 //!
 //! by Bob Jenkins
 //!
-//! http://www.burtleburtle.net/bob/hash/spooky.html
+//! <http://www.burtleburtle.net/bob/hash/spooky.html>
 //!
 //!  - Oct 31 2010: alpha, framework + `SpookyHash`::Mix appears right
 //!  - Oct 31 2011: alpha again, Mix only good to 2^^69 but rest appears right

@@ -2,7 +2,7 @@
 //!
 //! by Wang Yi <godspeed_china@yeah.net>
 //!
-//! https://github.com/wangyi-fudan/wyhash
+//! <https://github.com/wangyi-fudan/wyhash>
 //!
 //! - solid: wyhash passed SMHasher, wyrand passed BigCrush, practrand.
 //! - portable: 64-bit/32-bit system, big/little endian.

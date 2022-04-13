@@ -1,6 +1,8 @@
-//! KOMIHASH - version 4.3
+//! `KOMIHASH` - Very Fast Hash Function
 //!
-//! Description is available at https://github.com/avaneev/komihash
+//! version 4.3
+//!
+//! <https://github.com/avaneev/komihash>
 //!
 //! The komihash() function available in the komihash.h file implements a very fast 64-bit hash function,
 //! mainly designed for hash-table and hash-map uses; produces identical hashes on both big- and little-endian systems.
