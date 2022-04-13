@@ -41,8 +41,6 @@ uint64_t farmhash_fingerprint_uint64(uint64_t x);
 
 void MeowHash128(const void *key, int len, void *seed, void *out);
 
-typedef struct meow_state;
-
 void MeowHashBegin(meow_state *State, void *Seed128);
 
 void MeowHashUpdate(meow_state *State, size_t Len, void *SourceInit);
