@@ -32,6 +32,8 @@ uint64_t komirand64(uint64_t *const Seed1, uint64_t *const Seed2)
 
 #ifdef MUM_HASH
 
+#include "smhasher/mum.h"
+
 uint64_t mum_hash_(const void *key, size_t len, uint64_t seed)
 {
     return mum_hash(key, len, seed);
@@ -146,6 +148,51 @@ void MeowHashEnd(meow_state *State, void *out)
 void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult)
 {
     MeowExpandSeed(InputLen, Input, SeedResult);
+}
+
+#endif
+
+#ifdef PRV_HASH
+
+void prvhash16_(const void *const Msg0, const size_t MsgLen,
+                void *const Hash0, const size_t HashLen, const uint32_t UseSeed)
+{
+    return prvhash16(Msg0, MsgLen, Hash0, HashLen, UseSeed);
+}
+
+void prvhash64_(const void *const Msg0, const size_t MsgLen,
+                void *const Hash0, const size_t HashLen, const PRH64_T UseSeed,
+                const void *const InitVec0)
+{
+    return prvhash64(Msg0, MsgLen, Hash0, HashLen, UseSeed, InitVec0);
+}
+
+uint64_t prvhash64_64m_(const void *const Msg0,
+                        const size_t MsgLen, const PRH64_T UseSeed)
+{
+    return prvhash64_64m(Msg0, MsgLen, UseSeed);
+}
+
+void prvhash64s_init_(PRVHASH64S_CTX *const ctx,
+                      void *const Hash0, const size_t HashLen,
+                      const PRH64S_T UseSeeds[PRH64S_PAR], const void *const InitVec0)
+{
+    return prvhash64s_init(ctx, Hash0, HashLen, UseSeeds, InitVec0);
+}
+
+void prvhash64s_update_(PRVHASH64S_CTX *const ctx, const void *const Msg0, size_t MsgLen)
+{
+    return prvhash64s_update(ctx, Msg0, MsgLen);
+}
+
+void prvhash64s_final_(PRVHASH64S_CTX *const ctx)
+{
+    return prvhash64s_final(ctx);
+}
+
+void prvhash64s_oneshot_(const void *const Msg, const size_t MsgLen, void *const Hash, const size_t HashLen)
+{
+    return prvhash64s_oneshot(Msg, MsgLen, Hash, HashLen);
 }
 
 #endif

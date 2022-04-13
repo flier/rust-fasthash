@@ -142,6 +142,11 @@ fn generate_binding(out_file: &Path) {
                 } else {
                     None
                 },
+                if cfg!(feature = "prv") {
+                    Some("-DPRV_HASH=1")
+                } else {
+                    None
+                },
                 if cfg!(feature = "spooky") {
                     Some("-DSPOOKY_HASH=1")
                 } else {
@@ -178,13 +183,15 @@ fn generate_binding(out_file: &Path) {
         .allowlist_function("^metrohash.*")
         .allowlist_function("^mum_hash.*")
         .allowlist_function("^MurmurHash.*")
+        .allowlist_function("^prvhash.*")
         .allowlist_function("^SpookyHasher.*")
         .allowlist_function("^t1ha.*")
         .allowlist_function("^wyhash.*")
         .allowlist_function("^XXH.*")
+        .allowlist_function("^Meow.*")
         .blocklist_function("^t1ha_selfcheck__.*")
         .allowlist_var("^Meow.*")
-        .allowlist_function("^Meow.*")
+        .allowlist_var("^PRH64S_.*")
         .generate()
         .unwrap()
         .write_to_file(out_file)
@@ -232,6 +239,10 @@ fn build_fasthash() {
 
     if cfg!(feature = "meow") {
         build.flag("-DMEOW_HASH=1");
+    }
+
+    if cfg!(feature = "prv") {
+        build.flag("-DPRV_HASH=1");
     }
 
     if cfg!(feature = "t1ha") {

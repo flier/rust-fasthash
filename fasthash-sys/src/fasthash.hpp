@@ -61,9 +61,36 @@ void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult);
 
 #ifdef MUM_HASH
 
-#include "smhasher/mum.h"
-
 uint64_t mum_hash_(const void *key, size_t len, uint64_t seed);
+
+#endif
+
+#ifdef PRV_HASH
+
+#include "prvhash/prvhash16.h"
+#include "prvhash/prvhash64.h"
+#include "prvhash/prvhash64s.h"
+#include "prvhash/prvrng.h"
+
+void prvhash16_(const void *const Msg0, const size_t MsgLen,
+                void *const Hash0, const size_t HashLen, const uint32_t UseSeed);
+
+void prvhash64_(const void *const Msg0, const size_t MsgLen,
+                void *const Hash0, const size_t HashLen, const PRH64_T UseSeed,
+                const void *const InitVec0);
+
+uint64_t prvhash64_64m_(const void *const Msg0,
+                        const size_t MsgLen, const PRH64_T UseSeed);
+
+void prvhash64s_init_(PRVHASH64S_CTX *const ctx,
+                      void *const Hash0, const size_t HashLen,
+                      const PRH64S_T UseSeeds[PRH64S_PAR], const void *const InitVec0);
+
+void prvhash64s_update_(PRVHASH64S_CTX *const ctx, const void *const Msg0, size_t MsgLen);
+
+void prvhash64s_final_(PRVHASH64S_CTX *const ctx);
+
+void prvhash64s_oneshot_(const void *const Msg, const size_t MsgLen, void *const Hash, const size_t HashLen);
 
 #endif
 

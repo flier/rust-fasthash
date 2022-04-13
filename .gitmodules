@@ -16,3 +16,6 @@
 [submodule "fasthash-sys/src/komihash"]
 	path = fasthash-sys/src/komihash
 	url = https://github.com/avaneev/komihash.git
+[submodule "fasthash-sys/src/prvhash"]
+	path = fasthash-sys/src/prvhash
+	url = https://github.com/avaneev/prvhash.git

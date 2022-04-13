@@ -77,6 +77,7 @@ assert_eq!(map[&37], "c");
   - [Mum Hash](https://github.com/vnmakarov/mum-hash)
   - [Murmur Hash](https://sites.google.com/site/murmurhash/)
   - [Lookup3](https://en.wikipedia.org/wiki/Jenkins_hash_function)
+  - [PrvHash](https://github.com/avaneev/prvhash)
   - [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
   - [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
   - [T1ha Hash](https://github.com/leo-yuriev/t1ha)
