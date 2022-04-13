@@ -61,7 +61,7 @@ num-traits = "0.2"
 rand = "0.7"
 
 ahash = {version = "0.7", optional = true}
-digest = {version = "0.9", optional = true}
+digest = {version = "0.10", optional = true}
 seahash = {version = "4.1", optional = true}
 xoroshiro128 = {version = "0.5", features = ["rand"]}
 
