@@ -195,10 +195,11 @@ fn build_fasthash() {
 
     build
         .cpp(true)
-        .flag("-std=c++11")
         .include("src/highwayhash")
-        .flag("-Wno-implicit-fallthrough")
-        .flag("-Wno-unknown-attributes")
+        .flag("-std=c++11")
+        .flag_if_supported("-Wno-implicit-fallthrough")
+        .flag_if_supported("-Wno-unknown-attributes")
+        .flag_if_supported("-Wno-sign-compare")
         .file("src/fasthash.cpp");
 
     if cfg!(feature = "city") {
@@ -328,6 +329,7 @@ fn build_highway() {
     build
         .cpp(true)
         .flag("-std=c++11")
+        .flag_if_supported("-Wno-sign-compare")
         .include("src/highwayhash")
         .file("src/highwayhash/highwayhash/arch_specific.cc")
         .file("src/highwayhash/highwayhash/instruction_sets.cc")
