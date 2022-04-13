@@ -1399,6 +1399,14 @@ extern "C" {
     #[link_name = "\u{1}__Z27farmhash_fingerprint_uint64y"]
     pub fn farmhash_fingerprint_uint64(x: u64) -> u64;
 }
+extern "C" {
+    #[link_name = "\u{1}__Z10komihash64PKvmy"]
+    pub fn komihash64(Msg0: *const ::std::os::raw::c_void, MsgLen: usize, UseSeed: u64) -> u64;
+}
+extern "C" {
+    #[link_name = "\u{1}__Z10komirand64PyS_"]
+    pub fn komirand64(Seed1: *mut u64, Seed2: *mut u64) -> u64;
+}
 pub type __m128i = [::std::os::raw::c_longlong; 2usize];
 extern "C" {
     #[link_name = "\u{1}__ZL15MeowShiftAdjust"]

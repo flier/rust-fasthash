@@ -22,10 +22,25 @@ native = []
 sse41 = []
 sse42 = ["sse41"]
 
-all = ["city", "farm", "highway", "lookup3", "meow", "metro", "mum", "murmur", "spooky", "t1ha", "wy", "xx"]
+all = [
+  "city",
+  "farm",
+  "highway",
+  "komi",
+  "lookup3",
+  "meow",
+  "metro",
+  "mum",
+  "murmur",
+  "spooky",
+  "t1ha",
+  "wy",
+  "xx",
+]
 city = []
 farm = []
 highway = []
+komi = []
 lookup3 = []
 meow = []
 metro = []

@@ -112,6 +112,11 @@ fn generate_binding(out_file: &Path) {
                 } else {
                     None
                 },
+                if cfg!(feature = "komi") {
+                    Some("-DKOMI_HASH=1")
+                } else {
+                    None
+                },
                 if cfg!(feature = "lookup3") {
                     Some("-DLOOKUP3=1")
                 } else {
@@ -167,16 +172,17 @@ fn generate_binding(out_file: &Path) {
         .disable_name_namespacing()
         .allowlist_function("^CityHash.*")
         .allowlist_function("^farmhash.*")
+        .allowlist_function("^HighwayHash.*")
+        .allowlist_function("^komi.*")
         .allowlist_function("^lookup3.*")
         .allowlist_function("^metrohash.*")
         .allowlist_function("^mum_hash.*")
         .allowlist_function("^MurmurHash.*")
         .allowlist_function("^SpookyHasher.*")
         .allowlist_function("^t1ha.*")
-        .blocklist_function("^t1ha_selfcheck__.*")
-        .allowlist_function("^XXH.*")
-        .allowlist_function("^HighwayHash.*")
         .allowlist_function("^wyhash.*")
+        .allowlist_function("^XXH.*")
+        .blocklist_function("^t1ha_selfcheck__.*")
         .allowlist_var("^Meow.*")
         .allowlist_function("^Meow.*")
         .generate()
@@ -210,6 +216,10 @@ fn build_fasthash() {
         build
             .flag("-DFARM_HASH=1")
             .file("src/smhasher/farmhash-c.c");
+    }
+
+    if cfg!(feature = "komi") {
+        build.flag("-DKOMI_HASH=1");
     }
 
     if cfg!(feature = "highway") {

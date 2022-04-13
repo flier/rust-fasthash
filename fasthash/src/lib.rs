@@ -103,6 +103,9 @@ cfg_if! {
     }
 }
 
+#[cfg(feature = "komi")]
+pub mod komi;
+
 cfg_if! {
     if #[cfg(all(feature = "metro", feature = "aes"))] {
         pub mod meow;

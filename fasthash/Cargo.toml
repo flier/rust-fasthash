@@ -29,6 +29,7 @@ all = [
   "city",
   "farm",
   "highway",
+  "komi",
   "lookup3",
   "meow",
   "metro",
@@ -43,6 +44,7 @@ all = [
 city = ["fasthash-sys/city"]
 farm = ["fasthash-sys/farm"]
 highway = ["fasthash-sys/highway"]
+komi = ["fasthash-sys/komi"]
 lookup3 = ["fasthash-sys/lookup3"]
 meow = ["fasthash-sys/meow"]
 metro = ["fasthash-sys/metro"]

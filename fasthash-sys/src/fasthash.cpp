@@ -14,6 +14,22 @@ uint64_t farmhash_fingerprint_uint64(uint64_t x)
 
 #endif
 
+#ifdef KOMI_HASH
+
+#include "komihash/komihash.h"
+
+uint64_t komihash64(const void *const Msg0, size_t MsgLen, const uint64_t UseSeed)
+{
+    return komihash(Msg0, MsgLen, UseSeed);
+}
+
+uint64_t komirand64(uint64_t *const Seed1, uint64_t *const Seed2)
+{
+    return komirand(Seed1, Seed2);
+}
+
+#endif
+
 #ifdef MUM_HASH
 
 uint64_t mum_hash_(const void *key, size_t len, uint64_t seed)

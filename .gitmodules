@@ -13,3 +13,6 @@
 [submodule "fasthash-sys/src/wyhash"]
 	path = fasthash-sys/src/wyhash
 	url = https://github.com/wangyi-fudan/wyhash.git
+[submodule "fasthash-sys/src/komihash"]
+	path = fasthash-sys/src/komihash
+	url = https://github.com/avaneev/komihash.git

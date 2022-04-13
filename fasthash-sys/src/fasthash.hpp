@@ -35,6 +35,14 @@ uint64_t farmhash_fingerprint_uint64(uint64_t x);
 
 #endif
 
+#ifdef KOMI_HASH
+
+uint64_t komihash64(const void *const Msg0, size_t MsgLen, const uint64_t UseSeed);
+
+uint64_t komirand64(uint64_t *const Seed1, uint64_t *const Seed2);
+
+#endif
+
 #ifdef MEOW_HASH
 
 #include "smhasher/meow_hash_x64_aesni.h"
