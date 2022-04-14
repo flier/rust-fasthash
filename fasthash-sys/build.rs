@@ -142,6 +142,11 @@ fn generate_binding(out_file: &Path) {
                 } else {
                     None
                 },
+                if cfg!(feature = "nm") {
+                    Some("-DNM_HASH=1")
+                } else {
+                    None
+                },
                 if cfg!(feature = "prv") {
                     Some("-DPRV_HASH=1")
                 } else {
@@ -183,6 +188,7 @@ fn generate_binding(out_file: &Path) {
         .allowlist_function("^metrohash.*")
         .allowlist_function("^mum_hash.*")
         .allowlist_function("^MurmurHash.*")
+        .allowlist_function("^NMHASH.*")
         .allowlist_function("^prvhash.*")
         .allowlist_function("^SpookyHasher.*")
         .allowlist_function("^t1ha.*")
@@ -239,6 +245,10 @@ fn build_fasthash() {
 
     if cfg!(feature = "meow") {
         build.flag("-DMEOW_HASH=1");
+    }
+
+    if cfg!(feature = "nm") {
+        build.flag("-DNM_HASH=1");
     }
 
     if cfg!(feature = "prv") {

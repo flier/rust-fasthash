@@ -103,15 +103,27 @@ cfg_if! {
     }
 }
 
-#[cfg(feature = "komi")]
-pub mod komi;
+cfg_if! {
+    if #[cfg(feature = "komi")] {
+        pub mod komi;
 
-#[cfg(feature = "prv")]
-pub mod prv;
+        pub use crate::komi::{Hasher64 as KomiHasher};
+    }
+}
 
 cfg_if! {
-    if #[cfg(all(feature = "metro", feature = "aes"))] {
+    if #[cfg(feature = "prv")] {
+        pub mod prv;
+
+        pub use crate::prv::{Hasher64 as PrvHasher, Hasher128 as PrvHasherExt};
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "meow", feature = "aes"))] {
         pub mod meow;
+
+        pub use crate::meow::{Hasher as MeowHasher, Hasher as MeowHasherExt};
     }
 }
 
@@ -134,6 +146,14 @@ cfg_if! {
         pub mod mum;
 
         pub use crate::mum::Hasher64 as MumHasher;
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "nm")] {
+        pub mod nm;
+
+        pub use crate::nm::Hasher32 as NmHasher;
     }
 }
 

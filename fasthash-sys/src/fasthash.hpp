@@ -65,6 +65,18 @@ uint64_t mum_hash_(const void *key, size_t len, uint64_t seed);
 
 #endif
 
+#ifdef NM_HASH
+
+#include "nmhash/nmhash.h"
+
+uint32_t
+NMHASH32_(const void *const NMH_RESTRICT input, size_t const len, uint32_t seed);
+
+uint32_t
+NMHASH32X_(const void *const NMH_RESTRICT input, size_t const len, uint32_t seed);
+
+#endif
+
 #ifdef PRV_HASH
 
 #include "prvhash/prvhash16.h"

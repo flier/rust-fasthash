@@ -41,6 +41,21 @@ uint64_t mum_hash_(const void *key, size_t len, uint64_t seed)
 
 #endif
 
+#ifdef NM_HASH
+uint32_t
+NMHASH32_(const void *const NMH_RESTRICT input, size_t const len, uint32_t seed)
+{
+    return NMHASH32(input, len, seed);
+}
+
+uint32_t
+NMHASH32X_(const void *const NMH_RESTRICT input, size_t const len, uint32_t seed)
+{
+    return NMHASH32X(input, len, seed);
+}
+
+#endif
+
 #ifdef SPOOKY_HASH
 
 void SpookyHasherHash(

@@ -69,22 +69,25 @@ assert_eq!(map[&37], "c");
 
 ## Hash Functions
 
+
+
 - Modern Hash Functions
   - [City Hash](https://github.com/google/cityhash)
   - [Farm Hash](https://github.com/google/farmhash)
+  - [Highway Hash](https://github.com/google/highwayhash)
   - [Komi Hash](https://github.com/avaneev/komihash) **new**
+  - [Lookup3](https://en.wikipedia.org/wiki/Jenkins_hash_function)
+  - [Meow Hash](https://github.com/cmuratori/meow_hash) **new**
   - [Metro Hash](https://github.com/jandrewrogers/MetroHash)
   - [Mum Hash](https://github.com/vnmakarov/mum-hash)
   - [Murmur Hash](https://sites.google.com/site/murmurhash/)
-  - [Lookup3](https://en.wikipedia.org/wiki/Jenkins_hash_function)
-  - [PrvHash](https://github.com/avaneev/prvhash)
+  - [NmHash](https://github.com/gzm55/hash-garage) **new**
+  - [PrvHash](https://github.com/avaneev/prvhash) **new**
   - [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
   - [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
   - [T1ha Hash](https://github.com/leo-yuriev/t1ha)
+  - [wyhash](https://github.com/wangyi-fudan/wyhash) (final3)
   - [xx Hash](https://github.com/Cyan4973/xxHash) with  **experimental** [XXH3](https://github.com/Cyan4973/xxHash#new-experimental-hash-algorithm) hash algorithm
-  - [Highway Hash](https://github.com/google/highwayhash)
-  - [wyhash](https://github.com/wangyi-fudan/wyhash) (final3) **new**
-  - [Meow Hash](https://github.com/cmuratori/meow_hash) **new**
 - Compatibility
   - [Hasher](https://doc.rust-lang.org/std/hash/trait.Hasher.html)
   - std::collections::{[HashMap](https://doc.rust-lang.org/std/collections/struct.HashMap.html), [HashSet](https://doc.rust-lang.org/std/collections/struct.HashSet.html)} with `RandomState`

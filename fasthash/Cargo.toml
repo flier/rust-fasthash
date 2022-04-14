@@ -35,6 +35,7 @@ all = [
   "metro",
   "mum",
   "murmur",
+  "nm",
   "prv",
   "seahash",
   "spooky",
@@ -51,6 +52,7 @@ meow = ["fasthash-sys/meow"]
 metro = ["fasthash-sys/metro"]
 mum = ["fasthash-sys/mum"]
 murmur = ["fasthash-sys/murmur"]
+nm = ["fasthash-sys/nm"]
 prv = ["fasthash-sys/prv"]
 spooky = ["fasthash-sys/spooky"]
 t1ha = ["fasthash-sys/t1ha"]

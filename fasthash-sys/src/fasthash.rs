@@ -1609,6 +1609,14 @@ extern "C" {
     #[link_name = "\u{1}__Z9mum_hash_PKvmy"]
     pub fn mum_hash_(key: *const ::std::os::raw::c_void, len: usize, seed: u64) -> u64;
 }
+extern "C" {
+    #[link_name = "\u{1}__Z9NMHASH32_PKvmj"]
+    pub fn NMHASH32_(input: *const ::std::os::raw::c_void, len: usize, seed: u32) -> u32;
+}
+extern "C" {
+    #[link_name = "\u{1}__Z10NMHASH32X_PKvmj"]
+    pub fn NMHASH32X_(input: *const ::std::os::raw::c_void, len: usize, seed: u32) -> u32;
+}
 #[doc = " The context structure of the \"prvhash64s_X\" functions. On systems where"]
 #[doc = " this is relevant, this structure should be aligned to PRH64S_S bytes."]
 #[doc = " This structure, being small, can be placed on stack."]

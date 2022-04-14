@@ -19,3 +19,6 @@
 [submodule "fasthash-sys/src/prvhash"]
 	path = fasthash-sys/src/prvhash
 	url = https://github.com/avaneev/prvhash.git
+[submodule "fasthash-sys/src/nmhash"]
+	path = fasthash-sys/src/nmhash
+	url = https://github.com/gzm55/hash-garage
