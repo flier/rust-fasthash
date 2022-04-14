@@ -63,7 +63,6 @@
 //! ```
 //!
 #![allow(non_camel_case_types)]
-use std::os::raw::c_void;
 
 use crate::ffi;
 
@@ -91,7 +90,7 @@ impl FastHash for Hash32 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHash2(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )
@@ -140,7 +139,7 @@ impl FastHash for Hash32A {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHash2A(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )
@@ -189,7 +188,7 @@ impl FastHash for Hash32Neutral {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHashNeutral2(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )
@@ -238,7 +237,7 @@ impl FastHash for Hash32Aligned {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHashAligned2(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )
@@ -290,7 +289,7 @@ impl FastHash for Hash64_x64 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::MurmurHash64A(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )
@@ -342,7 +341,7 @@ impl FastHash for Hash64_x86 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::MurmurHash64B(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )

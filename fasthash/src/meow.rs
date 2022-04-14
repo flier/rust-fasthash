@@ -23,7 +23,6 @@
 //! ```
 //!
 use std::mem;
-use std::os::raw::c_void;
 
 use derive_more::{Deref, From, Into};
 use rand::Rng;
@@ -115,7 +114,7 @@ impl FastHash for Hash128 {
             ffi::MeowHash128(
                 bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
-                seed.as_ptr() as *mut c_void,
+                seed.as_ptr() as *mut _,
                 (&mut hash) as *mut _ as *mut _,
             )
         }

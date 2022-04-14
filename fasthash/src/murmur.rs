@@ -40,8 +40,6 @@
 //! assert_eq!(h, hash(&"hello world") as u32);
 //! ```
 //!
-use std::os::raw::c_void;
-
 use crate::ffi;
 
 use crate::hasher::FastHash;
@@ -68,7 +66,7 @@ impl FastHash for Hash32 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHash1(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )
@@ -117,7 +115,7 @@ impl FastHash for Hash32Aligned {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::MurmurHash1Aligned(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
             )

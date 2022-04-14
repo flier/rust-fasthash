@@ -77,7 +77,7 @@ impl FastHash for Hash32 {
 
         unsafe {
             ffi::SpookyHasherHash(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 &mut hash1,
                 &mut hash2,
@@ -132,7 +132,7 @@ impl FastHash for Hash64 {
 
         unsafe {
             ffi::SpookyHasherHash(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 &mut hash1,
                 &mut hash2,
@@ -196,7 +196,7 @@ impl FastHash for Hash128 {
 
         unsafe {
             ffi::SpookyHasherHash(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 &mut hi,
                 &mut lo,
@@ -251,7 +251,7 @@ impl Hasher for Hasher128 {
         unsafe {
             ffi::SpookyHasherUpdate(
                 self.0.as_ptr(),
-                bytes.as_ptr() as *const c_void,
+                bytes.as_ptr() as *const _,
                 bytes.len(),
             )
         }

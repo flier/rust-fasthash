@@ -17,9 +17,6 @@
 //! For best security, a random seed should be supplied to the hash function, but this is not a requirement.
 //! In practice, the InitVec (instead of UseSeed), and initial hash, can both be randomly seeded
 //! (see the suggestions in prvhash64.h), adding useful initial entropy (InitVec plus Hash total bits of entropy).
-#![allow(non_camel_case_types)]
-use std::os::raw::c_void;
-
 use std::hash;
 use std::mem;
 use std::ptr;
@@ -48,7 +45,7 @@ impl FastHash for Hash64 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::prvhash64_64m_(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed,
             )
@@ -195,7 +192,7 @@ macro_rules! impl_hasher {
 
                     ffi::prvhash64s_init_(
                         ctx.as_ptr(),
-                        hash.as_ptr() as *mut c_void,
+                        hash.as_ptr() as *mut _,
                         mem::size_of::<$ty>(),
                         &seed[0],
                         ptr::null_mut(),

@@ -29,7 +29,6 @@
 //! ```
 //!
 use std::hash::Hasher;
-use std::os::raw::c_void;
 use std::ptr::NonNull;
 
 use crate::ffi;
@@ -58,7 +57,7 @@ impl FastHash for Hash32 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::XXH32(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed,
             )
@@ -88,7 +87,7 @@ impl FastHash for Hash64 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::XXH64(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed,
             )
@@ -181,11 +180,7 @@ impl Hasher for Hasher32 {
     #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::XXH32_update(
-                self.0.as_ptr(),
-                bytes.as_ptr() as *const c_void,
-                bytes.len(),
-            );
+            ffi::XXH32_update(self.0.as_ptr(), bytes.as_ptr() as *const _, bytes.len());
         }
     }
 }
@@ -268,11 +263,7 @@ impl Hasher for Hasher64 {
     #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
         unsafe {
-            ffi::XXH64_update(
-                self.0.as_ptr(),
-                bytes.as_ptr() as *const c_void,
-                bytes.len(),
-            );
+            ffi::XXH64_update(self.0.as_ptr(), bytes.as_ptr() as *const _, bytes.len());
         }
     }
 }

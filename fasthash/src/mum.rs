@@ -52,9 +52,6 @@
 //! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
-#![allow(non_camel_case_types)]
-use std::os::raw::c_void;
-
 use crate::ffi;
 
 use crate::hasher::FastHash;
@@ -81,7 +78,7 @@ impl FastHash for Hash64 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::mum_hash_(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed,
             )

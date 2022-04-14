@@ -30,7 +30,6 @@
 //! ```
 //!
 #![allow(non_camel_case_types)]
-use std::os::raw::c_void;
 
 use crate::ffi;
 
@@ -60,10 +59,10 @@ impl FastHash for Hash32 {
             let mut hash = 0_u32;
 
             ffi::MurmurHash3_x86_32(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
-                &mut hash as *mut u32 as *mut c_void,
+                &mut hash as *mut u32 as *mut _,
             );
 
             hash
@@ -123,10 +122,10 @@ impl FastHash for Hash128_x86 {
             let mut hash = 0;
 
             ffi::MurmurHash3_x86_128(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
-                &mut hash as *mut u128 as *mut c_void,
+                &mut hash as *mut u128 as *mut _,
             );
 
             hash
@@ -186,10 +185,10 @@ impl FastHash for Hash128_x64 {
             let mut hash = 0;
 
             ffi::MurmurHash3_x64_128(
-                bytes.as_ref().as_ptr() as *const c_void,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len() as i32,
                 seed,
-                &mut hash as *mut u128 as *mut c_void,
+                &mut hash as *mut u128 as *mut _,
             );
 
             hash
