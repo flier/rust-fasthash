@@ -33,7 +33,9 @@ jobs:
               g++-powerpc-linux-gnu   \
               g++-powerpc64-linux-gnu \
               libc6-dev-powerpc-cross \
-              libc6-dev-ppc64-cross
+              libc6-dev-powerpc-ppc64-cross \
+              libc6-dev-ppc64-cross \
+              libc6-dev-ppc64-powerpc-cross
     steps:
       - name: Install dependencies
         run: |
