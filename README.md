@@ -97,6 +97,14 @@ assert_eq!(map[&37], "c");
 
 ## Benchmark
 
+First install cargo-criterion:
+
 ```bash
-$ cargo bench
+$ cargo install cargo-criterion
+```
+
+Then you can use it to run `Criterion-rs` benchmarks:
+
+```bash
+$ cargo criterion
 ```

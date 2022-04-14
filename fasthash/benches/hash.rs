@@ -44,46 +44,49 @@ fn bench_hash32(c: &mut Criterion) {
     c.bench(
         "hash32",
         ParameterizedBenchmark::new(
-            "city::hash32",
+            "city",
             move |b, &&size| {
                 b.iter(|| city::hash32_with_seed(&DATA.as_slice()[..size], SEED as u32));
             },
             &PARAMS,
         )
-        .with_function("farm::hash32", move |b, &&size| {
+        .with_function("farm", move |b, &&size| {
             b.iter(|| farm::hash32_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("farm::finterprint32", move |b, &&size| {
+        .with_function("farm_finterprint", move |b, &&size| {
             b.iter(|| farm::fingerprint32(&DATA[..size]));
         })
-        .with_function("lookup3::hash32", move |b, &&size| {
+        .with_function("lookup3", move |b, &&size| {
             b.iter(|| lookup3::hash32_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur::hash32", move |b, &&size| {
+        .with_function("murmur", move |b, &&size| {
             b.iter(|| murmur::hash32_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur::hash32_aligned", move |b, &&size| {
+        .with_function("murmur_aligned", move |b, &&size| {
             b.iter(|| murmur::hash32_aligned_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur2::hash32", move |b, &&size| {
+        .with_function("murmur2", move |b, &&size| {
             b.iter(|| murmur2::Hash32::hash_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur2::hash32_a", move |b, &&size| {
+        .with_function("murmur2_a", move |b, &&size| {
             b.iter(|| murmur2::Hash32A::hash_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur2::hash32_neutral", move |b, &&size| {
+        .with_function("murmur2_neutral", move |b, &&size| {
             b.iter(|| murmur2::Hash32Neutral::hash_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur2::hash32_aligned", move |b, &&size| {
+        .with_function("murmur2_aligned", move |b, &&size| {
             b.iter(|| murmur2::Hash32Aligned::hash_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("murmur3::hash32", move |b, &&size| {
+        .with_function("murmur3", move |b, &&size| {
             b.iter(|| murmur3::hash32_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("spooky::hash32", move |b, &&size| {
+        .with_function("nm", move |b, &&size| {
+            b.iter(|| nm::hash32_with_seed(&DATA[..size], SEED as u32));
+        })
+        .with_function("spooky", move |b, &&size| {
             b.iter(|| spooky::hash32_with_seed(&DATA[..size], SEED as u32));
         })
-        .with_function("xx::hash32", move |b, &&size| {
+        .with_function("xx", move |b, &&size| {
             b.iter(|| xx::hash32_with_seed(&DATA[..size], SEED as u32));
         })
         .throughput(|&&size| Throughput::Bytes(size as u64)),
@@ -92,75 +95,87 @@ fn bench_hash32(c: &mut Criterion) {
 
 fn bench_hash64(c: &mut Criterion) {
     let mut bench = ParameterizedBenchmark::new(
-        "city::hash64",
+        "city",
         move |b, &&size| {
             b.iter(|| city::hash64_with_seed(&DATA.as_slice()[..size], SEED));
         },
         &PARAMS,
     )
-    .with_function("farm::hash64", move |b, &&size| {
-        b.iter(|| farm::hash64_with_seed(&DATA[..size], SEED));
-    })
-    .with_function("farm::finterprint64", move |b, &&size| {
-        b.iter(|| farm::fingerprint32(&DATA[..size]));
-    })
-    .with_function("metro::hash64_1", move |b, &&size| {
-        b.iter(|| metro::Hash64_1::hash_with_seed(&DATA[..size], SEED as u32));
-    })
-    .with_function("metro::hash64_2", move |b, &&size| {
-        b.iter(|| metro::Hash64_2::hash_with_seed(&DATA[..size], SEED as u32));
-    })
-    .with_function("mum::hash64", move |b, &&size| {
-        b.iter(|| mum::hash64_with_seed(&DATA[..size], SEED));
-    })
-    .with_function("murmur2::hash64_x64", move |b, &&size| {
-        b.iter(|| murmur2::Hash64_x64::hash_with_seed(&DATA[..size], SEED));
-    })
-    .with_function("murmur2::hash64_x86", move |b, &&size| {
-        b.iter(|| murmur2::Hash64_x86::hash_with_seed(&DATA[..size], SEED));
-    })
-    .with_function("ahash::hash64", move |b, &&size| {
+    .with_function("ahash", move |b, &&size| {
         b.iter(|| ahash::hash64_with_seed(&DATA[..size], (SEED as u128, SEED as u128)))
     })
-    .with_function("sea::hash64", move |b, &&size| {
+    .with_function("farm", move |b, &&size| {
+        b.iter(|| farm::hash64_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("farm_finterprint", move |b, &&size| {
+        b.iter(|| farm::fingerprint32(&DATA[..size]));
+    })
+    .with_function("komi", move |b, &&size| {
+        b.iter(|| komi::hash64_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("metro_1", move |b, &&size| {
+        b.iter(|| metro::Hash64_1::hash_with_seed(&DATA[..size], SEED as u32));
+    })
+    .with_function("metro_2", move |b, &&size| {
+        b.iter(|| metro::Hash64_2::hash_with_seed(&DATA[..size], SEED as u32));
+    })
+    .with_function("mum", move |b, &&size| {
+        b.iter(|| mum::hash64_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("murmur2_x64", move |b, &&size| {
+        b.iter(|| murmur2::Hash64_x64::hash_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("murmur2_x86", move |b, &&size| {
+        b.iter(|| murmur2::Hash64_x86::hash_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("mx3", move |b, &&size| {
+        b.iter(|| mx3::hash64_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("pengy", move |b, &&size| {
+        b.iter(|| pengy::hash64_with_seed(&DATA[..size], SEED as _));
+    })
+    .with_function("prv", move |b, &&size| {
+        b.iter(|| prv::hash64_with_seed(&DATA[..size], SEED));
+    })
+    .with_function("sea", move |b, &&size| {
         b.iter(|| sea::hash64_with_seeds(&DATA[..size], SEED, SEED, SEED, SEED));
     })
-    .with_function("spooky::hash64", move |b, &&size| {
+    .with_function("spooky", move |b, &&size| {
         b.iter(|| spooky::hash64_with_seed(&DATA[..size], SEED));
     })
-    .with_function("xx::hash64", move |b, &&size| {
+    .with_function("xx", move |b, &&size| {
         b.iter(|| xx::hash64_with_seed(&DATA[..size], SEED));
     })
-    .with_function("xxh3::hash64", move |b, &&size| {
+    .with_function("xxh3", move |b, &&size| {
         b.iter(|| xxh3::hash64_with_seed(&DATA[..size], SEED));
     })
-    .with_function("highway::hash64", move |b, &&size| {
+    .with_function("highway", move |b, &&size| {
         b.iter(|| highway::hash64_with_seed(&DATA[..size], [SEED, SEED, SEED, SEED]));
     })
-    .with_function("wy::hash64", move |b, &&size| {
+    .with_function("wy", move |b, &&size| {
         b.iter(|| wy::hash64_with_seed(&DATA[..size], SEED));
     });
 
     #[cfg(feature = "t1ha")]
     {
         bench = bench
-            .with_function("t1ha0::hash64", move |b, &&size| {
+            .with_function("t1ha0", move |b, &&size| {
                 b.iter(|| t1ha0::Hash64::hash_with_seed(&DATA[..size], SEED));
             })
-            .with_function("t1ha1::hash64", move |b, &&size| {
+            .with_function("t1ha1", move |b, &&size| {
                 b.iter(|| t1ha1::Hash64::hash_with_seed(&DATA[..size], SEED));
             })
-            .with_function("t1ha2::hash64_atonce", move |b, &&size| {
+            .with_function("t1ha2_atonce", move |b, &&size| {
                 b.iter(|| t1ha2::Hash64AtOnce::hash_with_seed(&DATA[..size], SEED));
             });
     }
 
     if cfg!(any(feature = "sse4.2", target_feature = "sse4.2")) {
         bench = bench
-            .with_function("metro::crc::hash64_1", move |b, &&size| {
+            .with_function("metro_crc_1", move |b, &&size| {
                 b.iter(|| metro::crc::Hash64_1::hash_with_seed(&DATA[..size], SEED as u32));
             })
-            .with_function("metro::crc::hash64_2", move |b, &&size| {
+            .with_function("metro_crc_2", move |b, &&size| {
                 b.iter(|| metro::crc::Hash64_2::hash_with_seed(&DATA[..size], SEED as u32));
             });
     }
@@ -173,62 +188,62 @@ fn bench_hash64(c: &mut Criterion) {
 
 fn bench_hash128(c: &mut Criterion) {
     let mut bench = ParameterizedBenchmark::new(
-        "city::hash128",
+        "city",
         move |b, &&size| {
             b.iter(|| city::Hash128::hash_with_seed(&DATA[..size], SEED as u128));
         },
         &PARAMS,
     )
-    .with_function("farm::hash128", move |b, &&size| {
+    .with_function("farm", move |b, &&size| {
         b.iter(|| farm::hash128_with_seed(&DATA[..size], SEED as u128));
     })
-    .with_function("farm::fingerprint128", move |b, &&size| {
+    .with_function("farm_fingerprint", move |b, &&size| {
         b.iter(|| farm::fingerprint128(&DATA[..size]));
     })
-    .with_function("metro::Hash128_1", move |b, &&size| {
+    .with_function("metro_1", move |b, &&size| {
         b.iter(|| metro::Hash128_1::hash_with_seed(&DATA[..size], SEED as u32));
     })
-    .with_function("metro::Hash128_2", move |b, &&size| {
+    .with_function("metro_2", move |b, &&size| {
         b.iter(|| metro::Hash128_2::hash_with_seed(&DATA[..size], SEED as u32));
     })
-    .with_function("murmur3::hash128_x64", move |b, &&size| {
+    .with_function("murmur3_x64", move |b, &&size| {
         b.iter(|| murmur3::Hash128_x64::hash_with_seed(&DATA[..size], SEED as u32));
     })
-    .with_function("murmur3::hash128_x86", move |b, &&size| {
+    .with_function("murmur3_x86", move |b, &&size| {
         b.iter(|| murmur3::Hash128_x86::hash_with_seed(&DATA[..size], SEED as u32));
     })
-    .with_function("spooky::hash128", move |b, &&size| {
+    .with_function("spooky", move |b, &&size| {
         b.iter(|| spooky::hash128_with_seed(&DATA[..size], SEED as u128));
     })
-    .with_function("xxh3::hash128", move |b, &&size| {
+    .with_function("xxh3", move |b, &&size| {
         b.iter(|| xxh3::hash128_with_seed(&DATA[..size], SEED));
     })
-    .with_function("highway::hash128", move |b, &&size| {
+    .with_function("highway", move |b, &&size| {
         b.iter(|| highway::hash128_with_seed(&DATA[..size], [SEED, SEED, SEED, SEED]));
     });
 
     #[cfg(feature = "t1ha")]
     {
-        bench = bench.with_function("t1ha2::hash128_atonce", move |b, &&size| {
+        bench = bench.with_function("t1ha2_atonce", move |b, &&size| {
             b.iter(|| t1ha2::Hash128AtOnce::hash_with_seed(&DATA[..size], SEED));
         });
     }
 
     if cfg!(any(feature = "sse4.2", target_feature = "sse4.2")) {
         bench = bench
-            .with_function("city::crc::hash128", move |b, &&size| {
+            .with_function("city_crc", move |b, &&size| {
                 b.iter(|| city::crc::Hash128::hash_with_seed(&DATA[..size], SEED as u128));
             })
-            .with_function("metro::crc::hash128_1", move |b, &&size| {
+            .with_function("metro_crc_1", move |b, &&size| {
                 b.iter(|| metro::crc::Hash128_1::hash_with_seed(&DATA[..size], SEED as u32));
             })
-            .with_function("metro::crc::hash128_2", move |b, &&size| {
+            .with_function("metro_crc_2", move |b, &&size| {
                 b.iter(|| metro::crc::Hash128_2::hash_with_seed(&DATA[..size], SEED as u32));
             });
     }
 
     if cfg!(any(feature = "aes", target_feature = "aes")) {
-        bench = bench.with_function("meow::hash128 with default seed", move |b, &&size| {
+        bench = bench.with_function("meow", move |b, &&size| {
             b.iter(|| meow::hash128(&DATA[..size]));
         });
     }
