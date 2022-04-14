@@ -7,8 +7,9 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install nightly toolchain with clippy available
         uses: actions-rs/toolchain@v1
@@ -29,8 +30,9 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install nightly toolchain with rustfmt available
         uses: actions-rs/toolchain@v1
@@ -51,8 +53,9 @@ jobs:
     name: Clippy + rustfmt
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install nightly toolchain
         uses: actions-rs/toolchain@v1
