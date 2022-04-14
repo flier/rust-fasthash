@@ -1,4 +1,4 @@
-## rust-fasthash [![travis build](https://travis-ci.org/flier/rust-fasthash.svg?branch=master)](https://travis-ci.org/flier/rust-fasthash) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash) [![docs](https://docs.rs/fasthash/badge.svg)](https://docs.rs/crate/fasthash/)
+## rust-fasthash [![Continuous integration](https://github.com/flier/rust-fasthash/actions/workflows/ci.yml/badge.svg)](https://github.com/flier/rust-fasthash/actions/workflows/ci.yml) [![crate](https://img.shields.io/crates/v/fasthash.svg)](https://crates.io/crates/fasthash) [![docs](https://docs.rs/fasthash/badge.svg)](https://docs.rs/crate/fasthash/)
 A suite of non-cryptographic hash functions for Rust, binding the [smhasher](https://github.com/rurban/smhasher/).
 
 ## Usage
