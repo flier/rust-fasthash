@@ -2,7 +2,7 @@ name: Security audit
 
 on:
   schedule:
-    - cron: "0 0 0 * *"
+    - cron: "0 0 * * 0"
   push:
     paths:
       - "**/Cargo.toml"
@@ -17,6 +17,6 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: actions-rs/audit-check@issue-104
+      - uses: actions-rs/audit-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
