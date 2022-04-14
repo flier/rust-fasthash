@@ -425,6 +425,7 @@ fn build_highway() {
         "powerpc64" => {
             build
                 .flag("-mvsx")
+                .flag("-mpower8-vector")
                 .file("src/highwayhash/highwayhash/hh_vsx.cc");
         }
         _ => {}
