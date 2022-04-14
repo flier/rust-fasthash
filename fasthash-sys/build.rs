@@ -2,66 +2,79 @@ use std::env;
 use std::path::Path;
 
 use lazy_static::lazy_static;
-use raw_cpuid::CpuId;
+use raw_cpuid::{CpuId, ExtendedFeatures, FeatureInfo};
 
 lazy_static! {
-    static ref CPUID: CpuId = CpuId::new();
+    static ref CPU_ID: CpuId = CpuId::new();
+    static ref CPU_FEATURES: Option<FeatureInfo> = CPU_ID.get_feature_info();
+    static ref CPU_EXTENDED_FEATURES: Option<ExtendedFeatures> = CPU_ID.get_extended_feature_info();
+    static ref TARGET_FEATURES: Vec<String> = env::var("CARGO_CFG_TARGET_FEATURE")
+        .unwrap()
+        .split(",")
+        .map(|s| s.to_owned())
+        .collect();
+    static ref TARGET_ARCH: String = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    static ref TARGET_ENV: String = env::var("CARGO_CFG_TARGET_ENV").unwrap();
+}
+
+fn has_target_feature(feature: &str) -> bool {
+    TARGET_FEATURES.iter().any(|name| name == feature)
 }
 
 fn has_aesni() -> bool {
     cfg!(feature = "native")
-        && CPUID
-            .get_feature_info()
+        && CPU_FEATURES
+            .as_ref()
             .map_or(false, |features| features.has_aesni())
 }
 
 fn has_sse41() -> bool {
     cfg!(feature = "native")
-        && CPUID
-            .get_feature_info()
+        && CPU_FEATURES
+            .as_ref()
             .map_or(false, |features| features.has_sse41())
 }
 
 fn has_sse42() -> bool {
     cfg!(feature = "native")
-        && CPUID
-            .get_feature_info()
+        && CPU_FEATURES
+            .as_ref()
             .map_or(false, |features| features.has_sse42())
 }
 
 fn has_avx() -> bool {
     cfg!(feature = "native")
-        && CPUID
-            .get_feature_info()
+        && CPU_FEATURES
+            .as_ref()
             .map_or(false, |features| features.has_avx())
 }
 
 fn has_avx2() -> bool {
     cfg!(feature = "native")
-        && CPUID
-            .get_extended_feature_info()
+        && CPU_EXTENDED_FEATURES
+            .as_ref()
             .map_or(false, |features| features.has_avx2())
 }
 
 fn support_aesni() -> bool {
-    cfg!(any(feature = "aes", target_feature = "aes")) || has_aesni()
+    cfg!(feature = "aes") || has_target_feature("aes") || has_aesni()
 }
 
 #[allow(dead_code)]
 fn support_sse41() -> bool {
-    cfg!(any(feature = "sse41", target_feature = "sse41")) || has_sse41()
+    cfg!(feature = "sse41") || has_target_feature("sse41") || has_sse41()
 }
 
 fn support_sse42() -> bool {
-    cfg!(any(feature = "sse42", target_feature = "sse42")) || has_sse42()
+    cfg!(feature = "sse42") || has_target_feature("sse42") || has_sse42()
 }
 
 fn support_avx() -> bool {
-    cfg!(any(feature = "avx", target_feature = "avx")) || has_avx()
+    cfg!(feature = "avx") || has_target_feature("avx") || has_avx()
 }
 
 fn support_avx2() -> bool {
-    cfg!(any(feature = "avx2", target_feature = "avx2")) || has_avx2()
+    cfg!(feature = "avx2") || has_target_feature("avx2") || has_avx2()
 }
 
 #[cfg(all(not(feature = "gen"), any(target_os = "macos", target_os = "linux")))]
@@ -133,10 +146,7 @@ fn generate_binding(out_file: &Path) {
                 } else {
                     None
                 },
-                if cfg!(all(
-                    feature = "meow",
-                    any(target_arch = "x86", target_arch = "x86_64")
-                )) {
+                if cfg!(feature = "meow") && matches!(TARGET_ARCH.as_str(), "x86" | "x86_64") {
                     Some("-DMEOW_HASH=1")
                 } else {
                     None
@@ -266,10 +276,7 @@ fn build_fasthash() {
         build.flag("-DLOOKUP3=1").file("src/smhasher/lookup3.cpp");
     }
 
-    if cfg!(all(
-        feature = "meow",
-        any(target_arch = "x86", target_arch = "x86_64")
-    )) {
+    if cfg!(feature = "meow") && matches!(TARGET_ARCH.as_str(), "x86" | "x86_64") {
         build.flag("-DMEOW_HASH=1");
     }
 
@@ -337,19 +344,19 @@ fn build_fasthash() {
     if cfg!(feature = "native") {
         build.flag("-march=native");
     } else {
-        if cfg!(target_feature = "aes") {
+        if has_target_feature("aes") {
             build.flag("-maes");
         }
-        if cfg!(target_feature = "sse41") {
+        if has_target_feature("sse41") {
             build.flag("-msse41");
         }
-        if cfg!(target_feature = "sse42") {
+        if has_target_feature("sse42") {
             build.flag("-msse4.2");
         }
-        if cfg!(target_feature = "avx") {
+        if has_target_feature("avx") {
             build.flag("-mavx");
         }
-        if cfg!(target_feature = "avx2") {
+        if has_target_feature("avx2") {
             build.flag("-mavx2");
         }
     }
@@ -366,8 +373,9 @@ fn build_t1() {
         .file("src/t1ha/src/t1ha2.c");
 
     // indirect functions are not supported on all targets (e.g. x86_64-unknown-linux-musl)
-    #[cfg(target_env = "musl")]
-    build.define("T1HA_USE_INDIRECT_FUNCTIONS", Some("0"));
+    if TARGET_ENV.as_str() == "musl" {
+        build.define("T1HA_USE_INDIRECT_FUNCTIONS", Some("0"));
+    }
 
     if support_aesni() {
         build
@@ -404,18 +412,25 @@ fn build_highway() {
         .file("src/highwayhash/highwayhash/hh_portable.cc")
         .file("src/highwayhash/highwayhash/c_bindings.cc");
 
-    if cfg!(any(target_arch = "x86", target_arch = "x86_64")) {
-        build
-            .flag("-msse4.1")
-            .flag("-mavx2")
-            .file("src/highwayhash/highwayhash/hh_sse41.cc")
-            .file("src/highwayhash/highwayhash/hh_avx2.cc");
-    } else if cfg!(target_arch = "aarch64") {
-        build.file("src/highwayhash/highwayhash/hh_neon.cc");
-    } else if cfg!(target_arch = "powerpc64") {
-        build
-            .flag("-mvsx")
-            .file("src/highwayhash/highwayhash/hh_vsx.cc");
+    match TARGET_ARCH.as_str() {
+        "x86" | "x86_64" => {
+            build
+                .flag("-msse4.1")
+                .flag("-mavx2")
+                .file("src/highwayhash/highwayhash/hh_sse41.cc")
+                .file("src/highwayhash/highwayhash/hh_avx2.cc");
+        }
+
+        "aarch64" => {
+            build.file("src/highwayhash/highwayhash/hh_neon.cc");
+        }
+
+        "powerpc64" => {
+            build
+                .flag("-mvsx")
+                .file("src/highwayhash/highwayhash/hh_vsx.cc");
+        }
+        _ => {}
     }
 
     build.static_flag(true).compile("highwayhash");
