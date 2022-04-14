@@ -26,13 +26,13 @@ jobs:
             package: g++-arm-linux-gnueabihf
           - target: powerpc-unknown-linux-gnu
             packages: |
-              g++-powerpc-linux-gnu
+              g++-powerpc-linux-gnu   \
               libc6-dev-powerpc-cross
           - target: powerpc64-unknown-linux-gnu
             packages: |
-              g++-powerpc-linux-gnu
-              g++-powerpc64-linux-gnu
-              libc6-dev-powerpc-cross
+              g++-powerpc-linux-gnu   \
+              g++-powerpc64-linux-gnu \
+              libc6-dev-powerpc-cross \
               libc6-dev-ppc64-cross
     steps:
       - name: Install dependencies
