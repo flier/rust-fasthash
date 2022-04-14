@@ -37,6 +37,7 @@ all = [
   "murmur",
   "mx3",
   "nm",
+  "pengy",
   "prv",
   "seahash",
   "spooky",
@@ -55,6 +56,7 @@ mum = ["fasthash-sys/mum"]
 murmur = ["fasthash-sys/murmur"]
 mx3 = ["fasthash-sys/mx3"]
 nm = ["fasthash-sys/nm"]
+pengy = ["fasthash-sys/pengy"]
 prv = ["fasthash-sys/prv"]
 spooky = ["fasthash-sys/spooky"]
 t1ha = ["fasthash-sys/t1ha"]

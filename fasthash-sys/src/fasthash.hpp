@@ -83,6 +83,12 @@ NMHASH32X_(const void *const NMH_RESTRICT input, size_t const len, uint32_t seed
 
 #endif
 
+#ifdef PENGY_HASH
+
+#include "pengyhash/pengyhash.h"
+
+#endif
+
 #ifdef PRV_HASH
 
 #include "prvhash/prvhash16.h"

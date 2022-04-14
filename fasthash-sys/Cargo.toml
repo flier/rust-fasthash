@@ -34,6 +34,7 @@ all = [
   "murmur",
   "mx3",
   "nm",
+  "pengy",
   "prv",
   "spooky",
   "t1ha",
@@ -51,6 +52,7 @@ mum = []
 murmur = []
 mx3 = []
 nm = []
+pengy = []
 prv = []
 spooky = []
 t1ha = []

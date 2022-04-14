@@ -152,6 +152,11 @@ fn generate_binding(out_file: &Path) {
                 } else {
                     None
                 },
+                if cfg!(feature = "pengy") {
+                    Some("-DPENGY_HASH=1")
+                } else {
+                    None
+                },
                 if cfg!(feature = "prv") {
                     Some("-DPRV_HASH=1")
                 } else {
@@ -195,6 +200,7 @@ fn generate_binding(out_file: &Path) {
         .allowlist_function("^MurmurHash.*")
         .allowlist_function("^mx3hash.*")
         .allowlist_function("^NMHASH.*")
+        .allowlist_function("^pengy.*")
         .allowlist_function("^prvhash.*")
         .allowlist_function("^SpookyHasher.*")
         .allowlist_function("^t1ha.*")
@@ -259,6 +265,12 @@ fn build_fasthash() {
 
     if cfg!(feature = "nm") {
         build.flag("-DNM_HASH=1");
+    }
+
+    if cfg!(feature = "pengy") {
+        build
+            .flag("-DPENGY_HASH=1")
+            .file("src/pengyhash/pengyhash.c");
     }
 
     if cfg!(feature = "prv") {

@@ -83,6 +83,7 @@ assert_eq!(map[&37], "c");
   - [Murmur Hash](https://sites.google.com/site/murmurhash/)
   - [mx3 Hash](https://github.com/jonmaiga/mx3) **new**
   - [NmHash](https://github.com/gzm55/hash-garage) **new**
+  - [PengyHash](https://github.com/tinypeng/pengyhash) **new**
   - [PrvHash](https://github.com/avaneev/prvhash) **new**
   - [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
   - [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)

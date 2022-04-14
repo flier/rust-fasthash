@@ -112,14 +112,6 @@ cfg_if! {
 }
 
 cfg_if! {
-    if #[cfg(feature = "prv")] {
-        pub mod prv;
-
-        pub use crate::prv::{Hasher64 as PrvHasher, Hasher128 as PrvHasherExt};
-    }
-}
-
-cfg_if! {
     if #[cfg(all(feature = "meow", feature = "aes"))] {
         pub mod meow;
 
@@ -216,6 +208,22 @@ cfg_if! {
         pub mod highway;
 
         pub use crate::highway::{Hasher64 as HighwayHasher, Hasher128 as HighwayHasherExt};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "pengy")] {
+        pub mod pengy;
+
+        pub use crate::pengy::{Hasher64 as PengyHasher};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "prv")] {
+        pub mod prv;
+
+        pub use crate::prv::{Hasher64 as PrvHasher, Hasher128 as PrvHasherExt};
     }
 }
 

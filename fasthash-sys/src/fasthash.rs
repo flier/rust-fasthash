@@ -1621,6 +1621,10 @@ extern "C" {
     #[link_name = "\u{1}__Z10NMHASH32X_PKvmj"]
     pub fn NMHASH32X_(input: *const ::std::os::raw::c_void, len: usize, seed: u32) -> u32;
 }
+extern "C" {
+    #[link_name = "\u{1}__Z9pengyhashPKvmj"]
+    pub fn pengyhash(p: *const ::std::os::raw::c_void, size: usize, seed: u32) -> u64;
+}
 #[doc = " The context structure of the \"prvhash64s_X\" functions. On systems where"]
 #[doc = " this is relevant, this structure should be aligned to PRH64S_S bytes."]
 #[doc = " This structure, being small, can be placed on stack."]

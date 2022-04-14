@@ -25,3 +25,6 @@
 [submodule "fasthash-sys/src/mx3"]
 	path = fasthash-sys/src/mx3
 	url = https://github.com/jonmaiga/mx3.git
+[submodule "fasthash-sys/src/pengyhash"]
+	path = fasthash-sys/src/pengyhash
+	url = https://github.com/tinypeng/pengyhash.git
