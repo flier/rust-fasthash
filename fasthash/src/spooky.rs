@@ -248,13 +248,7 @@ impl Hasher for Hasher128 {
 
     #[inline(always)]
     fn write(&mut self, bytes: &[u8]) {
-        unsafe {
-            ffi::SpookyHasherUpdate(
-                self.0.as_ptr(),
-                bytes.as_ptr() as *const _,
-                bytes.len(),
-            )
-        }
+        unsafe { ffi::SpookyHasherUpdate(self.0.as_ptr(), bytes.as_ptr() as *const _, bytes.len()) }
     }
 }
 
