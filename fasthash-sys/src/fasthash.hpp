@@ -45,6 +45,8 @@ uint64_t komirand64(uint64_t *const Seed1, uint64_t *const Seed2);
 
 #ifdef MEOW_HASH
 
+#if defined(__x86_64__) || defined(_M_AMD64) || defined(__i386__) || defined(_M_IX86)
+
 #include "smhasher/meow_hash_x64_aesni.h"
 
 void MeowHash128(const void *key, int len, void *seed, void *out);
@@ -56,6 +58,8 @@ void MeowHashUpdate(meow_state *State, size_t Len, void *SourceInit);
 void MeowHashEnd(meow_state *State, void *out);
 
 void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult);
+
+#endif
 
 #endif
 

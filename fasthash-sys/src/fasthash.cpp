@@ -147,6 +147,8 @@ uint64_t wyhash64(const void *key, uint64_t len, uint64_t seed)
 
 #ifdef MEOW_HASH
 
+#if defined(__x86_64__) || defined(_M_AMD64) || defined(__i386__) || defined(_M_IX86)
+
 void MeowHash128(const void *key, int len, void *seed, void *out)
 {
     meow_u128 h = MeowHash(seed, (meow_umm)len, (void *)key);
@@ -175,6 +177,8 @@ void MeowHashExpandSeed(meow_umm InputLen, void *Input, meow_u8 *SeedResult)
 {
     MeowExpandSeed(InputLen, Input, SeedResult);
 }
+
+#endif
 
 #endif
 

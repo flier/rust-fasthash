@@ -127,7 +127,7 @@ cfg_if::cfg_if! {
                         } else {
                             None
                         },
-                        if cfg!(feature = "meow") {
+                        if cfg!(all(feature = "meow", any(target_arch = "x86", target_arch = "x86_64"))) {
                             Some("-DMEOW_HASH=1")
                         } else {
                             None
@@ -259,7 +259,10 @@ fn build_fasthash() {
         build.flag("-DLOOKUP3=1").file("src/smhasher/lookup3.cpp");
     }
 
-    if cfg!(feature = "meow") {
+    if cfg!(all(
+        feature = "meow",
+        any(target_arch = "x86", target_arch = "x86_64")
+    )) {
         build.flag("-DMEOW_HASH=1");
     }
 
