@@ -9,7 +9,7 @@ lazy_static! {
     static ref CPU_FEATURES: Option<FeatureInfo> = CPU_ID.get_feature_info();
     static ref CPU_EXTENDED_FEATURES: Option<ExtendedFeatures> = CPU_ID.get_extended_feature_info();
     static ref TARGET_FEATURES: Vec<String> = env::var("CARGO_CFG_TARGET_FEATURE")
-        .map_or_else(|_| vec![], |s| s.split(",").map(|s| s.to_owned()).collect());
+        .map_or_else(|_| vec![], |s| s.split(',').map(|s| s.to_owned()).collect());
     static ref TARGET_ARCH: String = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     static ref TARGET_ENV: String = env::var("CARGO_CFG_TARGET_ENV").unwrap();
 }
