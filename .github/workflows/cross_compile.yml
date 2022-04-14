@@ -38,4 +38,4 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --release --target=${{ matrix.target }} --no-default-features --features
+          args: --release --target=${{ matrix.target }} --no-default-features --features all
