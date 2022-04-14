@@ -81,6 +81,7 @@ assert_eq!(map[&37], "c");
   - [Metro Hash](https://github.com/jandrewrogers/MetroHash)
   - [Mum Hash](https://github.com/vnmakarov/mum-hash)
   - [Murmur Hash](https://sites.google.com/site/murmurhash/)
+  - [mx3 Hash](https://github.com/jonmaiga/mx3) **new**
   - [NmHash](https://github.com/gzm55/hash-garage) **new**
   - [PrvHash](https://github.com/avaneev/prvhash) **new**
   - [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)

@@ -65,6 +65,12 @@ uint64_t mum_hash_(const void *key, size_t len, uint64_t seed);
 
 #endif
 
+#ifdef MX3_HASH
+
+uint64_t mx3hash(const uint8_t *buf, size_t len, uint64_t seed);
+
+#endif
+
 #ifdef NM_HASH
 
 #include "nmhash/nmhash.h"

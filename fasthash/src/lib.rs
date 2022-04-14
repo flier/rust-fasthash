@@ -150,6 +150,14 @@ cfg_if! {
 }
 
 cfg_if! {
+    if #[cfg(feature = "mx3")] {
+        pub mod mx3;
+
+        pub use crate::mx3::Hasher64 as Mx3Hasher;
+    }
+}
+
+cfg_if! {
     if #[cfg(feature = "nm")] {
         pub mod nm;
 

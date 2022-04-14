@@ -1610,6 +1610,10 @@ extern "C" {
     pub fn mum_hash_(key: *const ::std::os::raw::c_void, len: usize, seed: u64) -> u64;
 }
 extern "C" {
+    #[link_name = "\u{1}__Z7mx3hashPKhmy"]
+    pub fn mx3hash(buf: *const u8, len: usize, seed: u64) -> u64;
+}
+extern "C" {
     #[link_name = "\u{1}__Z9NMHASH32_PKvmj"]
     pub fn NMHASH32_(input: *const ::std::os::raw::c_void, len: usize, seed: u32) -> u32;
 }
