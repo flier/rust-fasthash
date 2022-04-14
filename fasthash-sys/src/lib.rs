@@ -11,7 +11,13 @@ use cfg_if::cfg_if;
 cfg_if! {
     if #[cfg(feature = "gen")] {
         include!(concat!(env!("OUT_DIR"), "/fasthash.rs"));
-    } else {
+    } else if #[cfg(target_os = "macos")] {
+        #[path = "fasthash_macos.rs"]
+        mod fasthash;
+
+        pub use self::fasthash::*;
+    } else if #[cfg(target_os = "linux")] {
+        #[path = "fasthash_linux.rs"]
         mod fasthash;
 
         pub use self::fasthash::*;

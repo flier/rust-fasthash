@@ -64,6 +64,8 @@ cfg-if = "1.0"
 
 [build-dependencies]
 bindgen = {version = "0.59", optional = true}
+cargo-emit = "0.2"
 cc = "1.0"
+cfg-if = "1.0"
 lazy_static = "1.4"
 raw-cpuid = "10"

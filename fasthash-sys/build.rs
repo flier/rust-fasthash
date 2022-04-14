@@ -63,162 +63,166 @@ fn support_avx2() -> bool {
     cfg!(any(feature = "avx2", target_feature = "avx2")) || has_avx2()
 }
 
-#[cfg(feature = "gen")]
-fn generate_binding(out_file: &Path) {
-    println!("generate binding file @ {:?}.", out_file);
+cfg_if::cfg_if! {
+    if #[cfg(all(not(feature = "gen"), any(target_os = "macos", target_os = "linux")))] {
+        fn generate_binding(_out_file: &Path) {
+            cargo_emit::warning!("pregenerated binding file.");
+        }
+    } else {
+        fn generate_binding(out_file: &Path) {
+            cargo_emit::warning!("generate binding file @ {:?}.", out_file);
 
-    let _ = bindgen::builder()
-        .clang_args(&["-x", "c++", "-std=c++11"])
-        .clang_args(&[
-            "-Dt1ha_EXPORTS",
-            "-DXXH_STATIC_LINKING_ONLY",
-            "-Isrc/highwayhash",
-        ])
-        .clang_args(if support_aesni() {
-            &[
-                "-maes",
-                "-DT1HA0_RUNTIME_SELECT=1",
-                "-DT1HA0_AESNI_AVAILABLE=1",
-            ][..]
-        } else {
-            &[][..]
-        })
-        .clang_args(
-            vec![
-                if cfg!(feature = "native") {
-                    Some("-march=native")
+            let _ = bindgen::builder()
+                .clang_args(&["-x", "c++", "-std=c++11"])
+                .clang_args(&[
+                    "-Dt1ha_EXPORTS",
+                    "-DXXH_STATIC_LINKING_ONLY",
+                    "-Isrc/highwayhash",
+                ])
+                .clang_args(if support_aesni() {
+                    &[
+                        "-maes",
+                        "-DT1HA0_RUNTIME_SELECT=1",
+                        "-DT1HA0_AESNI_AVAILABLE=1",
+                    ][..]
                 } else {
-                    None
-                },
-                if support_sse42() {
-                    Some("-msse4.2")
-                } else {
-                    None
-                },
-                if support_avx() { Some("-mavx") } else { None },
-                if support_avx2() { Some("-mavx2") } else { None },
-                if cfg!(feature = "city") {
-                    Some("-DCITY_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "farm") {
-                    Some("-DFARM_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "highway") {
-                    Some("-DHIGHWAY_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "komi") {
-                    Some("-DKOMI_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "lookup3") {
-                    Some("-DLOOKUP3=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "meow") {
-                    Some("-DMEOW_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "metro") {
-                    Some("-DMETRO_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "mum") {
-                    Some("-DMUM_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "murmur") {
-                    Some("-DMURMUR_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "mx3") {
-                    Some("-DMX3_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "nm") {
-                    Some("-DNM_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "pengy") {
-                    Some("-DPENGY_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "prv") {
-                    Some("-DPRV_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "spooky") {
-                    Some("-DSPOOKY_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "t1ha") {
-                    Some("-DT1_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "wy") {
-                    Some("-DWY_HASH=1")
-                } else {
-                    None
-                },
-                if cfg!(feature = "xx") {
-                    Some("-DXX_HASH=1")
-                } else {
-                    None
-                },
-            ]
-            .into_iter()
-            .flatten(),
-        )
-        .header("src/fasthash.hpp")
-        .size_t_is_usize(true)
-        .generate_inline_functions(true)
-        .disable_name_namespacing()
-        .allowlist_function("^CityHash.*")
-        .allowlist_function("^farmhash.*")
-        .allowlist_function("^HighwayHash.*")
-        .allowlist_function("^komi.*")
-        .allowlist_function("^lookup3.*")
-        .allowlist_function("^metrohash.*")
-        .allowlist_function("^mum_hash.*")
-        .allowlist_function("^MurmurHash.*")
-        .allowlist_function("^mx3hash.*")
-        .allowlist_function("^NMHASH.*")
-        .allowlist_function("^pengy.*")
-        .allowlist_function("^prvhash.*")
-        .allowlist_function("^SpookyHasher.*")
-        .allowlist_function("^t1ha.*")
-        .allowlist_function("^wyhash.*")
-        .allowlist_function("^XXH.*")
-        .allowlist_function("^Meow.*")
-        .blocklist_function("^t1ha_selfcheck__.*")
-        .allowlist_var("^Meow.*")
-        .allowlist_var("^PRH64S_.*")
-        .generate()
-        .unwrap()
-        .write_to_file(out_file)
-        .expect("fail to write bindings");
-}
+                    &[][..]
+                })
+                .clang_args(
+                    vec![
+                        if cfg!(feature = "native") {
+                            Some("-march=native")
+                        } else {
+                            None
+                        },
+                        if support_sse42() {
+                            Some("-msse4.2")
+                        } else {
+                            None
+                        },
+                        if support_avx() { Some("-mavx") } else { None },
+                        if support_avx2() { Some("-mavx2") } else { None },
+                        if cfg!(feature = "city") {
+                            Some("-DCITY_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "farm") {
+                            Some("-DFARM_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "highway") {
+                            Some("-DHIGHWAY_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "komi") {
+                            Some("-DKOMI_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "lookup3") {
+                            Some("-DLOOKUP3=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "meow") {
+                            Some("-DMEOW_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "metro") {
+                            Some("-DMETRO_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "mum") {
+                            Some("-DMUM_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "murmur") {
+                            Some("-DMURMUR_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "mx3") {
+                            Some("-DMX3_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "nm") {
+                            Some("-DNM_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "pengy") {
+                            Some("-DPENGY_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "prv") {
+                            Some("-DPRV_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "spooky") {
+                            Some("-DSPOOKY_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "t1ha") {
+                            Some("-DT1_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "wy") {
+                            Some("-DWY_HASH=1")
+                        } else {
+                            None
+                        },
+                        if cfg!(feature = "xx") {
+                            Some("-DXX_HASH=1")
+                        } else {
+                            None
+                        },
+                    ]
+                    .into_iter()
+                    .flatten(),
+                )
+                .header("src/fasthash.hpp")
+                .size_t_is_usize(true)
+                .generate_inline_functions(true)
+                .disable_name_namespacing()
+                .allowlist_function("^CityHash.*")
+                .allowlist_function("^farmhash.*")
+                .allowlist_function("^HighwayHash.*")
+                .allowlist_function("^komi.*")
+                .allowlist_function("^lookup3.*")
+                .allowlist_function("^metrohash.*")
+                .allowlist_function("^mum_hash.*")
+                .allowlist_function("^MurmurHash.*")
+                .allowlist_function("^mx3hash.*")
+                .allowlist_function("^NMHASH.*")
+                .allowlist_function("^pengy.*")
+                .allowlist_function("^prvhash.*")
+                .allowlist_function("^SpookyHasher.*")
+                .allowlist_function("^t1ha.*")
+                .allowlist_function("^wyhash.*")
+                .allowlist_function("^XXH.*")
+                .allowlist_function("^Meow.*")
+                .blocklist_function("^t1ha_selfcheck__.*")
+                .allowlist_var("^Meow.*")
+                .allowlist_var("^PRH64S_.*")
+                .generate()
+                .unwrap()
+                .write_to_file(out_file)
+                .expect("fail to write bindings");
 
-#[cfg(not(feature = "gen"))]
-fn generate_binding(_out_file: &Path) {
-    println!("direct include pregenerated binding file.");
+            cargo_emit::warning!("generate binding file @ {:?}.", out_file);
+        }
+    }
 }
 
 fn build_fasthash() {
@@ -413,19 +417,19 @@ fn build_highway() {
 
 fn main() {
     if has_aesni() {
-        println!(r#"cargo:rustc-cfg=feature="aes""#);
+        cargo_emit::rustc_cfg!("aes");
     }
     if has_sse41() {
-        println!(r#"cargo:rustc-cfg=feature="sse41""#);
+        cargo_emit::rustc_cfg!("sse41");
     }
     if has_sse42() {
-        println!(r#"cargo:rustc-cfg=feature="sse42""#);
+        cargo_emit::rustc_cfg!("sse42");
     }
     if has_avx() {
-        println!(r#"cargo:rustc-cfg=feature="avx""#);
+        cargo_emit::rustc_cfg!("avx");
     }
     if has_avx2() {
-        println!(r#"cargo:rustc-cfg=feature="avx2""#);
+        cargo_emit::rustc_cfg!("avx2");
     }
 
     build_fasthash();
@@ -439,8 +443,8 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_file = Path::new(&out_dir).join("fasthash.rs");
 
-    println!("cargo:rerun-if-changed=src/fasthash.hpp");
-    println!("cargo:rerun-if-changed=src/fasthash.cpp");
+    cargo_emit::rerun_if_changed!("src/fasthash.hpp");
+    cargo_emit::rerun_if_changed!("src/fasthash.cpp");
 
     generate_binding(&out_file);
 }
