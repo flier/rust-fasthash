@@ -95,6 +95,11 @@ cfg_if::cfg_if! {
                         } else {
                             None
                         },
+                        if support_sse41() {
+                            Some("-msse4.1")
+                        } else {
+                            None
+                        },
                         if support_sse42() {
                             Some("-msse4.2")
                         } else {
@@ -398,17 +403,11 @@ fn build_highway() {
         .file("src/highwayhash/highwayhash/c_bindings.cc");
 
     if cfg!(any(target_arch = "x86", target_arch = "x86_64")) {
-        if support_sse41() {
-            build
-                .flag("-msse4.1")
-                .file("src/highwayhash/highwayhash/hh_sse41.cc");
-        }
-
-        if support_avx2() {
-            build
-                .flag("-mavx2")
-                .file("src/highwayhash/highwayhash/hh_avx2.cc");
-        }
+        build
+            .flag("-msse4.1")
+            .flag("-mavx2")
+            .file("src/highwayhash/highwayhash/hh_sse41.cc")
+            .file("src/highwayhash/highwayhash/hh_avx2.cc");
     } else if cfg!(target_arch = "aarch64") {
         build.file("src/highwayhash/highwayhash/hh_neon.cc");
     } else if cfg!(target_arch = "powerpc64") {
