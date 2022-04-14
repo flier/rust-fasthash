@@ -144,14 +144,14 @@ impl FastHash for Hash32 {
 
     #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u32 {
-        unsafe { ffi::farmhash32(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
+        unsafe { ffi::farmhash32(bytes.as_ref().as_ptr() as *const _, bytes.as_ref().len()) }
     }
 
     #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u32) -> u32 {
         unsafe {
             ffi::farmhash32_with_seed(
-                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed,
             )
@@ -206,7 +206,7 @@ impl Hash64 {
     pub fn hash_with_seeds<T: AsRef<[u8]>>(bytes: T, seed0: u64, seed1: u64) -> u64 {
         unsafe {
             ffi::farmhash64_with_seeds(
-                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed0,
                 seed1,
@@ -221,14 +221,14 @@ impl FastHash for Hash64 {
 
     #[inline(always)]
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u64 {
-        unsafe { ffi::farmhash64(bytes.as_ref().as_ptr() as *const i8, bytes.as_ref().len()) }
+        unsafe { ffi::farmhash64(bytes.as_ref().as_ptr() as *const _, bytes.as_ref().len()) }
     }
 
     #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u64) -> u64 {
         unsafe {
             ffi::farmhash64_with_seed(
-                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 seed,
             )
@@ -286,7 +286,7 @@ impl FastHash for Hash128 {
     fn hash<T: AsRef<[u8]>>(bytes: T) -> u128 {
         unsafe {
             mem::transmute(ffi::farmhash128(
-                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
             ))
         }
@@ -296,7 +296,7 @@ impl FastHash for Hash128 {
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
         unsafe {
             mem::transmute(ffi::farmhash128_with_seed(
-                bytes.as_ref().as_ptr() as *const i8,
+                bytes.as_ref().as_ptr() as *const _,
                 bytes.as_ref().len(),
                 mem::transmute(seed),
             ))
@@ -399,7 +399,7 @@ pub fn hash128_with_seed<T: AsRef<[u8]>>(v: T, seed: u128) -> u128 {
 /// ```
 #[inline(always)]
 pub fn fingerprint32<T: AsRef<[u8]>>(v: T) -> u32 {
-    unsafe { ffi::farmhash_fingerprint32(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
+    unsafe { ffi::farmhash_fingerprint32(v.as_ref().as_ptr() as *const _, v.as_ref().len()) }
 }
 
 /// `FarmHash` 64-bit fingerprint function for a byte array.
@@ -413,7 +413,7 @@ pub fn fingerprint32<T: AsRef<[u8]>>(v: T) -> u32 {
 /// ```
 #[inline(always)]
 pub fn fingerprint64<T: AsRef<[u8]>>(v: T) -> u64 {
-    unsafe { ffi::farmhash_fingerprint64(v.as_ref().as_ptr() as *const i8, v.as_ref().len()) }
+    unsafe { ffi::farmhash_fingerprint64(v.as_ref().as_ptr() as *const _, v.as_ref().len()) }
 }
 
 /// `FarmHash` 128-bit fingerprint function for a byte array.
@@ -429,7 +429,7 @@ pub fn fingerprint64<T: AsRef<[u8]>>(v: T) -> u64 {
 pub fn fingerprint128<T: AsRef<[u8]>>(v: T) -> u128 {
     unsafe {
         mem::transmute(ffi::farmhash_fingerprint128(
-            v.as_ref().as_ptr() as *const i8,
+            v.as_ref().as_ptr() as *const _,
             v.as_ref().len(),
         ))
     }

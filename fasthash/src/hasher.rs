@@ -406,7 +406,7 @@ macro_rules! trivial_hasher {
             fn finish(&self) -> u64 {
                 use crate::hasher::TrivialHasher;
 
-                self.finalize() as u64
+                self.finalize() as _
             }
 
             #[inline(always)]
@@ -469,8 +469,8 @@ mod tests {
         assert!(u0 != 0);
         assert!(u1 != 0);
         assert!(u2 != 0);
-        assert_eq!(u0, u1 as u32);
-        assert_eq!(u1, (u2 >> 64) as u64);
+        assert_eq!(u0, u1 as _);
+        assert_eq!(u1, (u2 >> 64) as _);
 
         s = Seed::gen();
 
@@ -483,9 +483,9 @@ mod tests {
         assert!(u0 != 0);
         assert!(u1 != 0);
         assert!(u2 != 0);
-        assert!(u0 as u64 != u1);
-        assert!(u1 != u2 as u64);
-        assert!(u1 != (u2 >> 64) as u64);
+        assert!(u1 != u0 as _);
+        assert!(u1 != u2 as _);
+        assert!(u1 != (u2 >> 64) as _);
 
         u0 = Seed::gen().into();
         u1 = Seed::gen().into();
@@ -494,9 +494,9 @@ mod tests {
         assert!(u0 != 0);
         assert!(u1 != 0);
         assert!(u2 != 0);
-        assert!(u0 as u64 != u1);
-        assert!(u1 != u2 as u64);
-        assert!(u1 != (u2 >> 64) as u64);
+        assert!(u1 != u0 as _);
+        assert!(u1 != u2 as _);
+        assert!(u1 != (u2 >> 64) as _);
     }
 
     macro_rules! test_hashmap_with_fixed_state {

@@ -37,7 +37,7 @@
 //!
 //! let h = murmur::hash32(b"hello world\xff");
 //!
-//! assert_eq!(h, hash(&"hello world") as u32);
+//! assert_eq!(h, hash(&"hello world") as _);
 //! ```
 //!
 use crate::ffi;
@@ -67,7 +67,7 @@ impl FastHash for Hash32 {
         unsafe {
             ffi::MurmurHash1(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }
@@ -116,7 +116,7 @@ impl FastHash for Hash32Aligned {
         unsafe {
             ffi::MurmurHash1Aligned(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }

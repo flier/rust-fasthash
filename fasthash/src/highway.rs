@@ -123,7 +123,7 @@ impl FastHash for Hash64 {
             ffi::HighwayHash64(
                 seed.as_ptr() as *mut _,
                 bytes.as_ptr() as *const _,
-                bytes.len() as u64,
+                bytes.len() as _,
             )
         }
     }
@@ -176,7 +176,7 @@ impl FastHash for Hash128 {
             ffi::HighwayHash128(
                 seed.as_ptr() as *mut _,
                 bytes.as_ptr() as *const _,
-                bytes.len() as u64,
+                bytes.len() as _,
                 &mut hash,
             )
         }

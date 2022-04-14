@@ -41,7 +41,7 @@
 //!
 //! let h = spooky::hash64(b"hello world\xff");
 //!
-//! assert_eq!(h as u64, hash(&"hello world"));
+//! assert_eq!(h, hash(&"hello world"));
 //! ```
 //!
 use std::hash::Hasher;
@@ -84,7 +84,7 @@ impl FastHash for Hash32 {
             );
         }
 
-        hash1 as u32
+        hash1 as _
     }
 }
 
@@ -191,8 +191,8 @@ impl FastHash for Hash128 {
 
     #[inline(always)]
     fn hash_with_seed<T: AsRef<[u8]>>(bytes: T, seed: u128) -> u128 {
-        let mut hi = (seed >> 64) as u64;
-        let mut lo = seed as u64;
+        let mut hi = (seed >> 64) as _;
+        let mut lo = seed as _;
 
         unsafe {
             ffi::SpookyHasherHash(
@@ -243,7 +243,7 @@ impl Drop for Hasher128 {
 impl Hasher for Hasher128 {
     #[inline(always)]
     fn finish(&self) -> u64 {
-        self.finish_ext() as u64
+        self.finish_ext() as _
     }
 
     #[inline(always)]

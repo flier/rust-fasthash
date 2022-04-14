@@ -26,7 +26,7 @@
 //!
 //! let h = murmur3::hash128(b"hello world\xff");
 //!
-//! assert_eq!(h as u64, hash(&"hello world"));
+//! assert_eq!(hash(&"hello world"), h as _);
 //! ```
 //!
 #![allow(non_camel_case_types)]
@@ -60,9 +60,9 @@ impl FastHash for Hash32 {
 
             ffi::MurmurHash3_x86_32(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u32 as *mut _,
+                &mut hash as *mut _ as *mut _,
             );
 
             hash
@@ -123,9 +123,9 @@ impl FastHash for Hash128_x86 {
 
             ffi::MurmurHash3_x86_128(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u128 as *mut _,
+                &mut hash as *mut _ as *mut _,
             );
 
             hash
@@ -186,9 +186,9 @@ impl FastHash for Hash128_x64 {
 
             ffi::MurmurHash3_x64_128(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u128 as *mut _,
+                &mut hash as *mut _ as *mut _,
             );
 
             hash

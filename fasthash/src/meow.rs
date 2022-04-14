@@ -57,7 +57,7 @@ impl From<u64> for Seed {
         let mut b = [0; 128];
         unsafe {
             ffi::MeowHashExpandSeed(
-                mem::size_of::<u64>() as u64,
+                mem::size_of::<u64>() as _,
                 &seed as *const _ as *mut _,
                 b.as_mut_ptr(),
             );
@@ -71,7 +71,7 @@ impl From<u128> for Seed {
         let mut b = [0; 128];
         unsafe {
             ffi::MeowHashExpandSeed(
-                mem::size_of::<u128>() as u64,
+                mem::size_of::<u128>() as _,
                 &seed as *const _ as *mut _,
                 b.as_mut_ptr(),
             );
@@ -113,7 +113,7 @@ impl FastHash for Hash128 {
         unsafe {
             ffi::MeowHash128(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed.as_ptr() as *mut _,
                 (&mut hash) as *mut _ as *mut _,
             )

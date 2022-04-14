@@ -91,7 +91,7 @@ impl FastHash for Hash32 {
         unsafe {
             ffi::MurmurHash2(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }
@@ -140,7 +140,7 @@ impl FastHash for Hash32A {
         unsafe {
             ffi::MurmurHash2A(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }
@@ -189,7 +189,7 @@ impl FastHash for Hash32Neutral {
         unsafe {
             ffi::MurmurHashNeutral2(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }
@@ -238,7 +238,7 @@ impl FastHash for Hash32Aligned {
         unsafe {
             ffi::MurmurHashAligned2(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }
@@ -290,7 +290,7 @@ impl FastHash for Hash64_x64 {
         unsafe {
             ffi::MurmurHash64A(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }
@@ -342,7 +342,7 @@ impl FastHash for Hash64_x86 {
         unsafe {
             ffi::MurmurHash64B(
                 bytes.as_ref().as_ptr() as *const _,
-                bytes.as_ref().len() as i32,
+                bytes.as_ref().len() as _,
                 seed,
             )
         }

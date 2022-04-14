@@ -69,10 +69,10 @@ impl FastHash for Hash64_1 {
 
         unsafe {
             ffi::metrohash64_1(
-                bytes.as_ref().as_ptr() as *const u8,
-                bytes.as_ref().len() as u64,
+                bytes.as_ref().as_ptr() as *const _,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u64 as *mut u8,
+                &mut hash as *mut _ as *mut _,
             );
         }
 
@@ -123,10 +123,10 @@ impl FastHash for Hash64_2 {
 
         unsafe {
             ffi::metrohash64_2(
-                bytes.as_ref().as_ptr() as *const u8,
-                bytes.as_ref().len() as u64,
+                bytes.as_ref().as_ptr() as *const _,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u64 as *mut u8,
+                &mut hash as *mut _ as *mut _,
             );
         }
 
@@ -186,10 +186,10 @@ impl FastHash for Hash128_1 {
 
         unsafe {
             ffi::metrohash128_1(
-                bytes.as_ref().as_ptr() as *const u8,
-                bytes.as_ref().len() as u64,
+                bytes.as_ref().as_ptr() as *const _,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u128 as *mut u8,
+                &mut hash as *mut _ as *mut _,
             );
         }
 
@@ -249,10 +249,10 @@ impl FastHash for Hash128_2 {
 
         unsafe {
             ffi::metrohash128_2(
-                bytes.as_ref().as_ptr() as *const u8,
-                bytes.as_ref().len() as u64,
+                bytes.as_ref().as_ptr() as *const _,
+                bytes.as_ref().len() as _,
                 seed,
-                &mut hash as *mut u128 as *mut u8,
+                &mut hash as *mut _ as *mut _,
             );
         }
 
@@ -311,10 +311,10 @@ pub mod crc {
 
             unsafe {
                 ffi::metrohash64crc_1(
-                    bytes.as_ref().as_ptr() as *const u8,
-                    bytes.as_ref().len() as u64,
+                    bytes.as_ref().as_ptr() as *const _,
+                    bytes.as_ref().len() as _,
                     seed,
-                    &mut hash as *mut u64 as *mut u8,
+                    &mut hash as *mut _ as *mut _,
                 );
             }
 
@@ -368,10 +368,10 @@ pub mod crc {
 
             unsafe {
                 ffi::metrohash64crc_2(
-                    bytes.as_ref().as_ptr() as *const u8,
-                    bytes.as_ref().len() as u64,
+                    bytes.as_ref().as_ptr() as *const _,
+                    bytes.as_ref().len() as _,
                     seed,
-                    &mut hash as *mut u64 as *mut u8,
+                    &mut hash as *mut _ as *mut _,
                 );
             }
 
@@ -431,10 +431,10 @@ pub mod crc {
 
             unsafe {
                 ffi::metrohash128crc_1(
-                    bytes.as_ref().as_ptr() as *const u8,
-                    bytes.as_ref().len() as u64,
+                    bytes.as_ref().as_ptr() as *const _,
+                    bytes.as_ref().len() as _,
                     seed,
-                    &mut hash as *mut u128 as *mut u8,
+                    &mut hash as *mut _ as *mut _,
                 );
             }
 
@@ -494,10 +494,10 @@ pub mod crc {
 
             unsafe {
                 ffi::metrohash128crc_2(
-                    bytes.as_ref().as_ptr() as *const u8,
-                    bytes.as_ref().len() as u64,
+                    bytes.as_ref().as_ptr() as *const _,
+                    bytes.as_ref().len() as _,
                     seed,
-                    &mut hash as *mut u128 as *mut u8,
+                    &mut hash as *mut _ as *mut _,
                 );
             }
 
