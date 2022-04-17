@@ -410,7 +410,6 @@ fn build_umash() {
     }
 
     build
-        .define("UMASH_LONG_INPUTS", "1")
         .file("src/smhasher/umash.c")
         .static_flag(true)
         .compile("umash");
