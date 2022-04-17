@@ -155,7 +155,7 @@ void SpookyHasherFinal(
 
 #ifdef T1_HASH
 
-#include "t1ha/t1ha.h"
+#include "smhasher/t1ha.h"
 
 uint64_t t1ha0_64(const void *data, size_t length, uint64_t seed);
 

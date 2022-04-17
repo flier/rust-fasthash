@@ -372,9 +372,9 @@ fn build_t1() {
     let mut build = cc::Build::new();
 
     build
-        .file("src/t1ha/src/t1ha0.c")
-        .file("src/t1ha/src/t1ha1.c")
-        .file("src/t1ha/src/t1ha2.c");
+        .file("src/smhasher/t1ha/t1ha0.c")
+        .file("src/smhasher/t1ha/t1ha1.c")
+        .file("src/smhasher/t1ha/t1ha2.c");
 
     // indirect functions are not supported on all targets (e.g. x86_64-unknown-linux-musl)
     if TARGET_ENV.as_str() == "musl" {
@@ -386,9 +386,9 @@ fn build_t1() {
             .define("T1HA0_RUNTIME_SELECT", Some("1"))
             .define("T1HA0_AESNI_AVAILABLE", Some("1"))
             .flag("-maes")
-            .file("src/t1ha/src/t1ha0_ia32aes_noavx.c")
-            .file("src/t1ha/src/t1ha0_ia32aes_avx.c")
-            .file("src/t1ha/src/t1ha0_ia32aes_avx2.c");
+            .file("src/smhasher/t1ha/t1ha0_ia32aes_noavx.c")
+            .file("src/smhasher/t1ha/t1ha0_ia32aes_avx.c")
+            .file("src/smhasher/t1ha/t1ha0_ia32aes_avx2.c");
 
         if support_avx() {
             build.flag("-mavx");
