@@ -81,8 +81,6 @@ fn generate_binding(_out_file: &Path) {
 
 #[cfg(any(feature = "gen", not(any(target_os = "macos", target_os = "linux"))))]
 fn generate_binding(out_file: &Path) {
-    cargo_emit::warning!("generate binding file @ {:?}.", out_file);
-
     let _ = bindgen::builder()
         .clang_args(&["-x", "c++", "-std=c++11"])
         .clang_args(&[
@@ -193,6 +191,13 @@ fn generate_binding(out_file: &Path) {
                 } else {
                     None
                 },
+                if cfg!(feature = "umash")
+                    && matches!(TARGET_ARCH.as_str(), "x86" | "x86_64" | "aarch64")
+                {
+                    Some("-DUMASH=1")
+                } else {
+                    None
+                },
                 if cfg!(feature = "wy") {
                     Some("-DWY_HASH=1")
                 } else {
@@ -225,12 +230,14 @@ fn generate_binding(out_file: &Path) {
         .allowlist_function("^prvhash.*")
         .allowlist_function("^SpookyHasher.*")
         .allowlist_function("^t1ha.*")
+        .allowlist_function("^umash.*")
         .allowlist_function("^wyhash.*")
         .allowlist_function("^XXH.*")
         .allowlist_function("^Meow.*")
         .blocklist_function("^t1ha_selfcheck__.*")
         .allowlist_var("^Meow.*")
         .allowlist_var("^PRH64S_.*")
+        .allowlist_var("^umash_.*")
         .generate()
         .unwrap()
         .write_to_file(out_file)
@@ -395,6 +402,20 @@ fn build_t1() {
     build.static_flag(true).compile("t1ha");
 }
 
+fn build_umash() {
+    let mut build = cc::Build::new();
+
+    if cfg!(feature = "native") {
+        build.flag("-march=native");
+    }
+
+    build
+        .define("UMASH_LONG_INPUTS", "1")
+        .file("src/smhasher/umash.c")
+        .static_flag(true)
+        .compile("umash");
+}
+
 fn build_highway() {
     let mut build = cc::Build::new();
 
@@ -457,6 +478,9 @@ fn main() {
     }
     if cfg!(feature = "highway") {
         build_highway();
+    }
+    if cfg!(feature = "umash") && matches!(TARGET_ARCH.as_str(), "x86" | "x86_64" | "aarch64") {
+        build_umash();
     }
 
     let out_dir = env::var("OUT_DIR").unwrap();

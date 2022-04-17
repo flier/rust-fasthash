@@ -38,6 +38,7 @@ all = [
   "prv",
   "spooky",
   "t1ha",
+  "umash",
   "wy",
   "xx",
 ]
@@ -56,6 +57,7 @@ pengy = []
 prv = []
 spooky = []
 t1ha = []
+umash = []
 wy = []
 xx = []
 

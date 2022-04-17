@@ -31,7 +31,7 @@ fn bench_memory(c: &mut Criterion) {
                 };
 
                 b.iter(|| {
-                    black_box(s.iter().fold(0u64, |acc, &x| acc + x as _));
+                    black_box(s.iter().fold(0u64, |acc, &x| acc + x as u64));
                 })
             },
             &PARAMS,
@@ -152,6 +152,9 @@ fn bench_hash64(c: &mut Criterion) {
     .with_function("highway", move |b, &&size| {
         b.iter(|| highway::hash64_with_seed(&DATA[..size], [SEED, SEED, SEED, SEED]));
     })
+    .with_function("umash", move |b, &&size| {
+        b.iter(|| umash::hash64_with_seed(&DATA[..size], SEED));
+    })
     .with_function("wy", move |b, &&size| {
         b.iter(|| wy::hash64_with_seed(&DATA[..size], SEED));
     });
@@ -220,6 +223,9 @@ fn bench_hash128(c: &mut Criterion) {
     })
     .with_function("highway", move |b, &&size| {
         b.iter(|| highway::hash128_with_seed(&DATA[..size], [SEED, SEED, SEED, SEED]));
+    })
+    .with_function("umash", move |b, &&size| {
+        b.iter(|| umash::hash128_with_seed(&DATA[..size], SEED));
     });
 
     #[cfg(feature = "t1ha")]

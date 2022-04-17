@@ -42,6 +42,7 @@ all = [
   "seahash",
   "spooky",
   "t1ha",
+  "umash",
   "wy",
   "xx",
 ]
@@ -60,6 +61,7 @@ pengy = ["fasthash-sys/pengy"]
 prv = ["fasthash-sys/prv"]
 spooky = ["fasthash-sys/spooky"]
 t1ha = ["fasthash-sys/t1ha"]
+umash = ["fasthash-sys/umash"]
 wy = ["fasthash-sys/wy"]
 xx = ["fasthash-sys/xx"]
 

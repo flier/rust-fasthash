@@ -88,6 +88,7 @@ assert_eq!(map[&37], "c");
   - [Sea Hash](https://github.com/ticki/tfs/tree/master/seahash)
   - [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
   - [T1ha Hash](https://github.com/leo-yuriev/t1ha)
+  - [Umash](https://github.com/backtrace-labs/umash) **new**
   - [wyhash](https://github.com/wangyi-fudan/wyhash) (final3)
   - [xx Hash](https://github.com/Cyan4973/xxHash) with  **experimental** [XXH3](https://github.com/Cyan4973/xxHash#new-experimental-hash-algorithm) hash algorithm
 - Compatibility

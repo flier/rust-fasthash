@@ -171,6 +171,12 @@ void HighwayHash256(const HHKey key, const char *bytes, const uint64_t size, HHR
 
 #endif
 
+#ifdef UMASH
+
+#include "smhasher/umash.h"
+
+#endif
+
 #ifdef WY_HASH
 
 #include "wyhash/wyhash.h"

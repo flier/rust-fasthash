@@ -237,6 +237,14 @@ cfg_if! {
 }
 
 cfg_if! {
+    if #[cfg(all(feature = "umash", any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))] {
+        pub mod umash;
+
+        pub use crate::umash::{Hasher64 as Umasher, Hasher128 as UmasherExt};
+    }
+}
+
+cfg_if! {
     if #[cfg(feature = "wy")] {
         pub mod wy;
 
